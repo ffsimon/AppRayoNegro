@@ -1,5 +1,7 @@
 {
   "name": "App_rayo_negro",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
