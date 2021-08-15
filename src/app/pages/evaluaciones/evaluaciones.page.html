@@ -1,0 +1,134 @@
+<app-header></app-header>
+
+
+<ion-content>
+ 
+
+  <ion-row class="ion-padding-horizontal">
+    <ion-col size="9" style="padding-top: 14px;">
+      <span class="nombre-persona">{{usuarioSesion.user_sesion_apaterno }} {{usuarioSesion.user_sesion_amaterno }} {{usuarioSesion.user_sesion_nombre }}</span>
+    </ion-col>
+    <ion-col size="3" (click)="irEvaluaciones()">
+      <img src="assets/img/logo.png" alt="">
+    </ion-col>
+  </ion-row>
+
+  <br>
+
+  <ion-row>
+    <ion-col class="ion-text-center" size="11">
+      <span style="color: white;font-weight: bold;font-size: 18px;">JUNIO</span> <br>
+      <span style="color: white;font-size: 14px;">Tus evaluaciones</span>
+    </ion-col>
+    <ion-col size="1" (click)="regresarHome()">
+      <ion-icon name="close-outline" style="zoom: 1.5;"></ion-icon>
+    </ion-col>
+  </ion-row>
+
+
+  <ion-card style="color: white;" (click)="mostrarDetalle = !mostrarDetalle" class="contenedor-card" *ngFor="let item of listaEvaluacionesUsuario">
+      <ion-row *ngIf="mostrarDetalle">
+        <ion-col class="ion-text-center" size="12">
+          <ion-icon name="ellipse" style="color: #C00101;zoom: 1.5;"> &nbsp; &nbsp; </ion-icon> <span>{{item.evaluacion_nombre_establecimiento}}</span> <br>
+          <span>{{item.evaluacion_razon_social}}</span> <br>
+          <span>{{item.evaluacion_razon_social}} Tipo de comercio</span> <br>
+          <span>{{item.evaluacion_razon_social}} sub tipo comercio</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col offset='6' size='6' class="ion-text-center">
+          <span>{{item.evaluacion_fecha_registro | date:"shortDate"}}</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6">
+          <ion-row>
+            <ion-col size="12" class="ion-text-center" *ngIf="!mostrarDetalle">
+              <ion-icon name="ellipse" style="color: #C00101;zoom: 1.5;"></ion-icon>
+            </ion-col>
+
+            <ion-col size="12" *ngIf="!mostrarDetalle">
+              <span> <b>{{item.evaluacion_nombre_establecimiento}}</b></span>
+            </ion-col>
+            <ion-col size="12">
+              <span>Calle: </span> <span>{{item.evaluacion_calle}}</span>
+            </ion-col>
+            <ion-col size="12">
+              <span>Municipio / Alcaldía: </span> <span>{{item.evaluacion_colonia}}</span>
+            </ion-col>
+            <ion-col size="12">
+              <span>CP: </span> <span>{{item.evaluacion_cp}}</span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <ion-col size="6" class="ion-padding">
+          <!-- <img src="assets/img/ejemplo-mapa-dark.png" alt=""> -->
+          <app-mapa-filtro [coordenadas]="{lat: item.evaluacion_latitud, lng: item.evaluacion_longitud}"></app-mapa-filtro>
+        </ion-col>
+      </ion-row>
+      
+      <div *ngIf="mostrarDetalle">
+        <ion-card style="width: 80%;margin-left: 10%;border-radius: 20px;" class="contenedor-card" *ngFor="let img of item.list_fotografias">
+          <div style="color: white;" class="ion-text-center">
+            <ion-col size="10" class="ion-text-center">
+              <span>Fotografía de fachada</span> falta el nombre
+            </ion-col>
+            <ion-col size="6" class="ion-padding">
+              <div class="ion-padding">
+                <img src="{{'data:image/jpg;base64,' + img.fotografia_base64}}" alt="">
+              </div>
+            </ion-col>
+          </div>
+        </ion-card>
+      </div>
+      <br>
+  </ion-card>
+  <br>
+
+  <!-- <ion-card style="color: white;" class="contenedor-card">
+      <ion-row>
+        <ion-col offset='6' size='6' class="ion-text-center">
+          <span>22/06/21</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6">
+          <ion-row>
+            <ion-col size="12" class="ion-text-center">
+              <ion-icon name="ellipse" style="color: #87B375;zoom: 1.5;"></ion-icon>
+            </ion-col>
+
+            <ion-col size="12">
+              <span> <b>Tienda Lupita</b> </span>
+            </ion-col>
+            <ion-col size="12">
+              <span>Calle: </span> <span>Nebraska</span>
+            </ion-col>
+            <ion-col size="12">
+              <span>Municipio / Alcaldía: </span> <span>Benito Juárez</span>
+            </ion-col>
+            <ion-col size="12">
+              <span>CP: </span> <span>03900</span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <ion-col size="6" class="ion-padding">
+          <img src="assets/img/ejemplo-mapa-dark.png" alt="">
+        </ion-col>
+      </ion-row>
+  </ion-card> -->
+
+
+  <!-- <ion-row class="ion-padding-horizontal">
+    <ion-col size="12" class="ion-text-center">
+      <ion-button expand="block" class="btncolor" (click)="irEstablecimiento()">
+        <b><span>Siguiente</span></b>
+      </ion-button>
+    </ion-col>
+  </ion-row> -->
+</ion-content>

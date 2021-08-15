@@ -1,0 +1,54 @@
+<ion-content class="ion-padding">
+
+  <div class="contenedores-principal-logo ion-text-center">
+    <div class="ion-padding" style="height: 100%;">
+      <img src="assets/img/logo.png" alt="" class="ion-padding" style="height: 80%;"/>
+    </div>
+
+  </div>
+
+  <div class="contenedores-principal-formulario">
+    <form [formGroup]="form" (ngSubmit)="iniciarSesion()" class="padding-elementos">
+
+      <ion-item class="ion-item-input closed">
+        <ion-input type="text" formControlName="usuario" placeholder="Usuario">
+        </ion-input>
+        <ion-icon src="assets/img/user.svg" name="person-outline" slot="start" color="light"></ion-icon> 
+      </ion-item>
+
+      <br />
+
+      <ion-item class="ion-item-input closed">
+        <ion-input type="password" formControlName="contrasenia" (key.enter)="iniciarSesion()" placeholder="Contraseña"
+          #inputPassword>
+        </ion-input>
+        <ion-icon src="assets/img/user_password.svg" slot="start" color="light"></ion-icon>
+
+        <ion-icon name="eye-off-outline" slot="end" *ngIf="!verContrasena" (click)="mostrarContrasena()" color="light">
+        </ion-icon>
+        <ion-icon name="eye-outline" slot="end" *ngIf="verContrasena" (click)="mostrarContrasena()" color="light">
+        </ion-icon>
+      </ion-item>
+
+      <br><br>
+
+      <div class="ion-text-center">
+        <ion-button color="light" type="submit" size="default" shape="round" class="boton_login">
+          Entrar
+        </ion-button>
+        <br />
+      </div>
+
+      <ion-row class="recuperar_contraseña">
+        <span>Recupera contraseña</span>
+      </ion-row>
+      
+      <!-- <div class="ion-text-center">
+        <h5 style="color: white;">Recupera contraseña</h5>
+      </div> -->
+
+
+    </form>
+  </div>
+
+</ion-content>

@@ -1,0 +1,25 @@
+.nombre-persona{
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.contenedor-card{
+    background-color: rgb(56,65,71);
+    box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.2), 0 8px 25px 0 rgba(0, 0, 0, 0.4);
+    border-radius: 30px;
+}
+
+.border-redondos{
+    border-radius: 20px;
+}
+
+
+
+.btncolor {
+    --background:rgb(142,160,174)
+  }
+
+.togglecolor {
+    --background-checked:rgb(98,149,67)
+  }

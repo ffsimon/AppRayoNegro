@@ -1,0 +1,37 @@
+.contenedores-principal-logo{
+    height: 40%;
+}
+
+.contenedores-principal-formulario{
+    height: 40%;
+    padding: 20px;
+}
+
+.contenedor-boton-login{
+    background-color: white;
+    color: white;
+    height: 60%;
+}
+
+.closed {
+    --background: transparent;
+    color:white;
+    --highlight-background: white;
+    --border-color: white;
+    --padding-start: 0px;
+    --inner-padding-end: 0px;
+}
+
+.boton_login{
+    width: 65%;
+}
+
+.recuperar_contraseña{
+    padding: 10px;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    span{
+        font-size: 15px;
+    }
+}

@@ -1,3 +1,28 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="end" type="push" contentId="main" swipe-gesture="false" mode="ios">
+    <ion-header>
+      <ion-toolbar class="header-menu">
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item *ngFor="let opcion of opciones" (click)="proximasFuncionalidades()">
+          <span style="color: white;">{{opcion.nombre}}</span>
+        </ion-item>
+      </ion-list>
+  
+      <div class="contenedor-boton-cierre-sesion">
+        <ion-button (click)="cerrarSesion()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          Cerrar sesión
+        </ion-button>
+        <br><br>
+      </div>
+  
+    </ion-content>
+  </ion-menu>
+
+  <!-- <app-menu></app-menu> -->
+  <ion-router-outlet id="main"></ion-router-outlet>
 </ion-app>
