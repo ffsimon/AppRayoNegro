@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { MenuController, NavController } from '@ionic/angular';
+import { UtilitiesService } from './services/utilities.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,32 @@ import { Component } from '@angular/core';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
-  constructor() {}
+
+  public opciones: any[] = [
+    {
+      nombre: "Perfil",
+      ulr: "/perfil"
+    },
+    {
+      nombre: "Cambiar contraseña",
+      ulr: "/cambiar-contrasenia"
+    }
+
+  ]
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  constructor(private menuCtrl: MenuController,
+    private navCtrl: NavController,
+    private utilitiesService: UtilitiesService) {}
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  public cerrarSesion() {
+    this.navCtrl.navigateRoot("login");
+    this.menuCtrl.toggle();
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public proximasFuncionalidades() {
+    this.utilitiesService.alert("Aviso", "Próximas funcionalidades!")
+  }
 }

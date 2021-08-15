@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
+import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
+import { UtilitiesService } from 'src/app/services/utilities.service';
 
 @Component({
   selector: 'app-home',
@@ -59,6 +61,8 @@ export class HomePage implements OnInit {
   public barChartLabels: Label[] = ['L', 'M', 'M', 'J', 'V', 'S'];
   public barChartType: ChartType = 'bar';
   public barChartLegend = false;
+  public usuarioSesion: usuario_sesion_model; 
+  public mesActual: string = '';
   public barChartColors: Array<any> = [
     {
       backgroundColor: '#1C2226',
@@ -72,7 +76,13 @@ export class HomePage implements OnInit {
   public verObjetivos: boolean = true;
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  constructor(private navCtrl: NavController) { }
+  constructor(private navCtrl: NavController,  
+    private utilitiesService: UtilitiesService) { 
+    this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
+    console.log(this.usuarioSesion)
+
+   this.mesActual = this.utilitiesService.obtenerMesStringActual();
+  }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

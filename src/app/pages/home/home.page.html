@@ -21,7 +21,7 @@
     <ion-row class="ion-padding-horizontal">
         <ion-col size="2"></ion-col>
         <ion-col size="8"  class="ion-text-center">
-            <span class="nombre-persona">Fernanda González Gómez</span><br>
+            <span class="nombre-persona">{{usuarioSesion.user_sesion_apaterno }} {{usuarioSesion.user_sesion_amaterno }} {{usuarioSesion.user_sesion_nombre }}</span><br>
             <span class="ultima-sincronizacion">Última sincronización: 16/03/2021</span>
         </ion-col>
         <ion-col size="2" (click)="irEvaluaciones()" style="display: flex; justify-content: center;">
@@ -52,7 +52,7 @@
                                 <span style="color: white; font-size: 14px;">Mes</span>
                             </ion-row>
                             <ion-row style="justify-content: center; align-items: center;">
-                                <span style="color: white; font-size: 17px;">Junio</span>
+                                <span style="color: white; font-size: 17px;">{{mesActual}}</span>
                             </ion-row>
                         </div>
                     </ion-col>
@@ -85,7 +85,7 @@
             <ion-col size="12" class="ion-text-center">
                 <div style="height: 60px; background-color: rgb(56, 65, 71);padding-top: 20px;font-weight: bold;"
                     class="border-redondos">
-                    <span style="color: white; font-size: 16px;">CDMX - Benito Juárez - Nápoles</span>
+                    <span style="color: white; font-size: 16px;">{{usuarioSesion.user_sesion_municipio_alcadia}} - {{usuarioSesion.user_sesion_colonia}} - {{usuarioSesion.user_sesion_Calle}}</span>
                 </div>
             </ion-col>
         </ion-row>
