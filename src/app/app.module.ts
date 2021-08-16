@@ -16,10 +16,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { HTTP } from '@ionic-native/http/ngx';
 import { UtilitiesService } from './services/utilities.service';
 import { customTransition } from "./transition";
-import { MapaComponent } from './components/mapa/mapa.component';
+// import { MapaComponent } from './components/mapa/mapa.component';
 
 @NgModule({
-  declarations: [AppComponent, MapaComponent],
+  declarations: [AppComponent],
   entryComponents: [],
   imports: [IonicModule.forRoot({
     scrollAssist: false,

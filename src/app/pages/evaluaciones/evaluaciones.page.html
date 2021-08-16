@@ -26,10 +26,10 @@
   </ion-row>
 
 
-  <ion-card style="color: white;" (click)="mostrarDetalle = !mostrarDetalle" class="contenedor-card" *ngFor="let item of listaEvaluacionesUsuario">
-      <ion-row *ngIf="mostrarDetalle">
+  <ion-card style="color: white;" (click)="item.visible = !item.visible" class="contenedor-card" *ngFor="let item of listaEvaluacionesUsuario">
+      <ion-row *ngIf="item.visible">
         <ion-col class="ion-text-center" size="12">
-          <ion-icon name="ellipse" style="color: #87B375;zoom: 1.5;"> &nbsp; &nbsp; </ion-icon> <span>{{item.evaluacion_nombre_establecimiento}}</span> <br>
+          <ion-icon name="ellipse" style="color: #87B375;zoom: 1.5;margin-right: 5px;margin-top: 5px;"> &nbsp; &nbsp; </ion-icon> <span>{{item.evaluacion_nombre_establecimiento}}</span> <br>
           <span>{{item.evaluacion_razon_social}}</span> <br>
           <span>{{item.nombre_tipo_comercio}}</span> <br>
           <span>{{item.nombre_subtipo_comercio}}</span>
@@ -45,21 +45,24 @@
       <ion-row>
         <ion-col size="6">
           <ion-row>
-            <ion-col size="12" class="ion-text-center" *ngIf="!mostrarDetalle">
+            <ion-col size="12" class="ion-text-center" *ngIf="!item.visible">
               <ion-icon name="ellipse" style="color: #87B375;zoom: 1.5;"></ion-icon>
             </ion-col>
 
-            <ion-col size="12" *ngIf="!mostrarDetalle">
+            <ion-col size="12" *ngIf="!item.visible">
               <span> <b>{{item.evaluacion_nombre_establecimiento}}</b></span>
             </ion-col>
             <ion-col size="12">
-              <span>Calle: </span> <span>{{item.evaluacion_calle}}</span>
+              <span><b>Calle:</b>  </span> <span>{{item.evaluacion_calle}}</span>
             </ion-col>
             <ion-col size="12">
-              <span>Municipio / Alcaldía: </span> <span>{{item.evaluacion_colonia}}</span>
+              <span><b>Colonia:</b> </span> <span>{{item.evaluacion_colonia}}</span>
             </ion-col>
             <ion-col size="12">
-              <span>CP: </span> <span>{{item.evaluacion_cp}}</span>
+              <span><b>Municipio / Alcaldía:</b>  </span> <span>{{item.evaluacion_municipio_alcadia}}</span>
+            </ion-col>
+            <ion-col size="12">
+              <span><b>CP:</b>  </span> <span>{{item.evaluacion_cp}}</span>
             </ion-col>
           </ion-row>
         </ion-col>
@@ -69,7 +72,7 @@
         </ion-col>
       </ion-row>
       
-      <div *ngIf="mostrarDetalle">
+      <div *ngIf="item.visible">
         <ion-card style="width: 80%;margin-left: 10%;border-radius: 20px;" class="contenedor-card" *ngFor="let img of item.list_fotografias">
           <div style="color: white;" class="ion-text-center">
             <ion-col size="10" class="ion-text-center">
@@ -85,10 +88,10 @@
       </div>
       <br>
   </ion-card>
+  <div>
+
+  </div>
   <br>
-  <!-- <div>
-    <app-mapa-filtro [coordenadas]="{lat: 19.755419000000003, lng: -99.2126249 }" *ngFor="let s of saludos"></app-mapa-filtro>
-  </div> -->
-  
+ 
 
 </ion-content>

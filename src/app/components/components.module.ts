@@ -4,7 +4,7 @@ import { HeaderComponent } from './header/header.component';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { MenuComponent } from './menu/menu.component';
-// import { MapaComponent } from './mapa/mapa.component';
+import { MapaComponent } from './mapa/mapa.component';
 import { MapaFiltroComponent } from './mapa-filtro/mapa-filtro.component';
 
 
@@ -13,13 +13,13 @@ import { MapaFiltroComponent } from './mapa-filtro/mapa-filtro.component';
     declarations: [
         HeaderComponent,
         MenuComponent,
-        // MapaComponent,
+        MapaComponent,
         MapaFiltroComponent
     ],
     exports: [
         HeaderComponent,
         MenuComponent,
-        // MapaComponent,
+        MapaComponent,
         MapaFiltroComponent
     ],
     imports: [

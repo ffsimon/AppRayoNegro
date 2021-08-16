@@ -45,6 +45,9 @@ export class EvaluacionesPage implements OnInit {
       this.listaEvaluacionesUsuario = [];
     } else {
       this.listaEvaluacionesUsuario = respuesta.response;
+      for (let i = 0; i < this.listaEvaluacionesUsuario.length; i++) {
+        this.listaEvaluacionesUsuario[i].visible = false;
+      }
     }
   }
 
