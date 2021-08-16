@@ -16,7 +16,7 @@ export class EvaluacionesRequest {
   evaluacion_razon_social?: string;
   evaluacion_ca_tipo_comercio?: number;
   evaluacion_ca_tipo_sub_comercio?: number;
-  evaluacion_outlet?: boolean;
+  evaluacion_outlet?: number;
   evaluacion_nombre_outlet?: string;
   evaluacion_numero?: string;
   evaluacion_calle?: string;
