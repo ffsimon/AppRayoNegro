@@ -405,7 +405,7 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
       evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
       list_fotografias: this.ordenarListaFotos(),
-      // lista_competencias: ,
+      lista_competencias: this.ordenarCompetencias(),
       evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
     }
     console.log(objeto)
@@ -423,14 +423,29 @@ export class AltaEstablecimientoPage implements OnInit {
     // la foto de fachada que va por default que efotografia_catalogo_id_evidencia lleva
     let listafotos: Array<Fotografias> = [];
 
+    // limpiamos la foto por default
+    let stringBase64: string = "data:image/jpeg;base64," 
+    let seEncuentraStringBase64 = this.tempImg.indexOf(stringBase64);
+    if (seEncuentraStringBase64 !== -1){
+      this.tempImg = this.tempImg.slice(0, 23)
+    }
+
     // agregamos la foto de fachada que esta por default
      let imagenFachadaDefault: Fotografias = { efotografia_catalogo_id_evidencia: 0, imagBase64: this.tempImg }
      listafotos.push(imagenFachadaDefault)
      
      // se agregan las imagene para el carrusel
      for (let i = 0; i < this.opcionesParafoto.length; i++) {
+
+      let seEncuentraStringBase64 = this.tempImg.indexOf(this.opcionesParafoto[i].fotoBase64);
+      if (seEncuentraStringBase64 !== -1){
+        this.opcionesParafoto[i].fotoBase64 = this.opcionesParafoto[i].fotoBase64.slice(0, 23)
+      }
+      
       let imagenesCarrusel: Fotografias = { efotografia_catalogo_id_evidencia: this.opcionesParafoto[i].cagenerico_clave, imagBase64: this.opcionesParafoto[i].fotoBase64 }
       listafotos.push(imagenesCarrusel);
+
+     
     }
     return listafotos;
   }
@@ -438,24 +453,49 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public ordenarCompetencias(){
     let listaCompetencias: Array<Competencias> = [];
-    let listaPreeliminar: Array<Competencias> = [];
-    console.log(this.lstaCompetencia)
-
+    let listaPreeliminar: Array<any> = [];
+   
     for (let i = 0; i < this.lstaCompetencia.length; i++) {
-      console.log(this.lstaCompetencia[i].arregloHijos);
       for (let j = 0; j < this.lstaCompetencia[i].arregloHijos.length; j++) {
-        console.log(this.lstaCompetencia[i].arregloHijos[j])
         if(this.lstaCompetencia[i].arregloHijos[j].estatus == true){
           listaPreeliminar.push(this.lstaCompetencia[i].arregloHijos[j])
         }
       }
     }
 
+    console.log(listaPreeliminar)
+   
+    // agregamos las competencias que vienen de catalogos
     for (let i = 0; i < listaPreeliminar.length; i++) {
-      
-      
+      let competencia: Competencias = {
+        ecompentencia_comentario: "",
+        ecompentencia_catalogo_competencia: listaPreeliminar[i].crelacion_id_hijo,
+        ecompentencia_catalogo_competencia_material: listaPreeliminar[i].crelacion_id_padre,
+        ecompentencia_foto: ""
+      }
+      listaCompetencias.push(competencia);
     }
 
-    return listaPreeliminar;
+    // limpiamos la foto de idetificaste nueva publicidad
+    if(this.fotoIdentificastePublicidad != ''){
+    let stringBase64: string = "data:image/jpeg;base64," 
+    let seEncuentraStringBase64 = this.tempImg.indexOf(this.fotoIdentificastePublicidad);
+      if (seEncuentraStringBase64 !== -1){
+        this.fotoIdentificastePublicidad = this.fotoIdentificastePublicidad.slice(0, 23)
+      }
+    }
+    
+
+    // agregamos las competencias que vienen por default
+    let competenciaCatalogo: Competencias = {
+      ecompentencia_comentario: this.comentarios,
+        ecompentencia_catalogo_competencia: 0,
+        ecompentencia_catalogo_competencia_material: 0,
+        ecompentencia_foto: this.fotoIdentificastePublicidad != '' ? this.fotoIdentificastePublicidad : ''
+    }
+
+    listaCompetencias.push(competenciaCatalogo);
+
+    return listaCompetencias;
   }
 }

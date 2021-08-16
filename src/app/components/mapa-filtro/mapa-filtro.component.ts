@@ -59,8 +59,8 @@ export class MapaFiltroComponent implements OnInit {
 
     let maker = {
       position : {
-        lat: this.coordenadas.lat,
-        lng: this.coordenadas.lng
+        lat: parseFloat(this.coordenadas.lat),
+        lng: parseFloat(this.coordenadas.lng)
       },
       title: "Mi ubicación"
     }

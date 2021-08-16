@@ -136,7 +136,7 @@
   <div *ngIf="pasoFormulario == 2">
     <form [formGroup]="datosUbicacion" class="padding-elementos">
       <ion-item class="ion-item-input">
-        <ion-input type="text" formControlName="numeroEstablecimiento" placeholder="Número del establecimiento">
+        <ion-input type="text" formControlName="numeroEstablecimiento" placeholder="Número del establecimiento" maxlength="10">
         </ion-input>
       </ion-item>
     </form>
@@ -146,23 +146,6 @@
         <app-mapa [nombreEstablecimiento]="datosGenerales.value.nombreEstablecimiento"></app-mapa>
       </ion-col>
     </div>
-
-    <!-- <ion-col size="6" style="color: white;font-size: 12px;">
-      <ion-row>
-        <ion-col size="12">
-        <span>Nombre del establecimiento: </span>  <span>{{datosGenerales.value.nombreEstablecimiento}}</span>
-        </ion-col>
-        <ion-col size="12">
-          <span>Calle: </span> <span>Nebraska</span>
-        </ion-col>
-        <ion-col size="12">
-          <span>Municipio / Alcaldía: </span> <span>Benito Juárez</span>
-        </ion-col>
-        <ion-col size="12">
-          <span>CP: </span> <span>03900</span>
-        </ion-col>
-      </ion-row>
-    </ion-col> -->
 
   </div>
 

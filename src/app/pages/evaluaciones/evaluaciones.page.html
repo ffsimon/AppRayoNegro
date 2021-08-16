@@ -31,8 +31,8 @@
         <ion-col class="ion-text-center" size="12">
           <ion-icon name="ellipse" style="color: #87B375;zoom: 1.5;"> &nbsp; &nbsp; </ion-icon> <span>{{item.evaluacion_nombre_establecimiento}}</span> <br>
           <span>{{item.evaluacion_razon_social}}</span> <br>
-          <span>{{item.evaluacion_razon_social}} Tipo de comercio</span> <br>
-          <span>{{item.evaluacion_razon_social}} sub tipo comercio</span>
+          <span>{{item.nombre_tipo_comercio}}</span> <br>
+          <span>{{item.nombre_subtipo_comercio}}</span>
         </ion-col>
       </ion-row>
 
@@ -66,6 +66,7 @@
 
         <ion-col size="6" class="ion-padding">
           <!-- <img src="assets/img/ejemplo-mapa-dark.png" alt=""> -->
+          <!-- <div>ssss</div> -->
           <app-mapa-filtro [coordenadas]="{lat: item.evaluacion_latitud, lng: item.evaluacion_longitud}"></app-mapa-filtro>
         </ion-col>
       </ion-row>
@@ -74,11 +75,11 @@
         <ion-card style="width: 80%;margin-left: 10%;border-radius: 20px;" class="contenedor-card" *ngFor="let img of item.list_fotografias">
           <div style="color: white;" class="ion-text-center">
             <ion-col size="10" class="ion-text-center">
-              <span>Fotografía de fachada</span> falta el nombre
+              <!-- <span>Fotografía de fachada</span> falta el nombre -->
             </ion-col>
             <ion-col size="6" class="ion-padding">
-              <div class="ion-padding">
-                <img src="{{'data:image/jpg;base64,' + img.fotografia_base64}}" alt="">
+              <div class="ion-padding" style="height: 150px;">
+                <img src="{{'data:image/jpg;base64,' + img.fotografia_base64}}" alt="" width="80%" height="100%">
               </div>
             </ion-col>
           </div>
