@@ -165,7 +165,6 @@ export class AltaEstablecimientoPage implements OnInit {
 
     let bandera = false;
     if (this.pasoFormulario == 4) {
-      debugger
       if (this.opcionesParafoto.length === 0) {
         if (this.tempImg === '' || this.tempImg === null) {
           bandera = true;
