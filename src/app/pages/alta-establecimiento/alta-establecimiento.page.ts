@@ -408,7 +408,7 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
       evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
       list_fotografias: this.ordenarListaFotos(),
-      lista_competencias: this.ordenarCompetencias(),
+      // lista_competencias: this.ordenarCompetencias(),
       evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
     }
     console.log(objeto)
