@@ -24,7 +24,7 @@ export class AltaEstablecimientoPage implements OnInit {
   public comentarios = null;
   public compartieronRazonSocial = false;
   public estasEnOutlet = false;
-  public pasoFormulario = 1;
+  public pasoFormulario = 5;
   public opcionesParafoto: any = [];
   public sliderOne: any;
   public listaMastercardRadio: any[] = [
@@ -190,6 +190,8 @@ export class AltaEstablecimientoPage implements OnInit {
     }
 
     if(this.pasoFormulario === 5){
+      this.ordenarCompetencias();
+      return;
       if(this.tercerOpcionPasoCinco && this.fotoIdentificastePublicidad === ''){
         console.log('falta foto');
         this.utilitiesService.alert('', 'Captura foto de publicidad nueva.');
@@ -427,8 +429,10 @@ export class AltaEstablecimientoPage implements OnInit {
     let stringBase64: string = "data:image/jpeg;base64," 
     let seEncuentraStringBase64 = this.tempImg.indexOf(stringBase64);
     if (seEncuentraStringBase64 !== -1){
-      this.tempImg = this.tempImg.slice(0, 23)
+      this.tempImg = this.tempImg.replace(stringBase64, "")
     }
+
+       
 
     // agregamos la foto de fachada que esta por default
      let imagenFachadaDefault: Fotografias = { efotografia_catalogo_id_evidencia: 0, imagBase64: this.tempImg }
@@ -436,11 +440,12 @@ export class AltaEstablecimientoPage implements OnInit {
      
      // se agregan las imagene para el carrusel
      for (let i = 0; i < this.opcionesParafoto.length; i++) {
-
-      let seEncuentraStringBase64 = this.tempImg.indexOf(this.opcionesParafoto[i].fotoBase64);
+      let stringBase64: string = "data:image/jpeg;base64," 
+      let seEncuentraStringBase64 = this.opcionesParafoto[i].fotoBase64.indexOf(stringBase64);
       if (seEncuentraStringBase64 !== -1){
-        this.opcionesParafoto[i].fotoBase64 = this.opcionesParafoto[i].fotoBase64.slice(0, 23)
+        this.opcionesParafoto[i].fotoBase64 = this.opcionesParafoto[i].fotoBase64.replace(stringBase64, "")
       }
+      
       
       let imagenesCarrusel: Fotografias = { efotografia_catalogo_id_evidencia: this.opcionesParafoto[i].cagenerico_clave, imagBase64: this.opcionesParafoto[i].fotoBase64 }
       listafotos.push(imagenesCarrusel);
@@ -479,9 +484,10 @@ export class AltaEstablecimientoPage implements OnInit {
     // limpiamos la foto de idetificaste nueva publicidad
     if(this.fotoIdentificastePublicidad != ''){
     let stringBase64: string = "data:image/jpeg;base64," 
-    let seEncuentraStringBase64 = this.tempImg.indexOf(this.fotoIdentificastePublicidad);
+    let seEncuentraStringBase64 = this.fotoIdentificastePublicidad.indexOf(this.fotoIdentificastePublicidad);
       if (seEncuentraStringBase64 !== -1){
-        this.fotoIdentificastePublicidad = this.fotoIdentificastePublicidad.slice(0, 23)
+        this.fotoIdentificastePublicidad = this.fotoIdentificastePublicidad.replace(stringBase64, "")
+        console.log(this.fotoIdentificastePublicidad)
       }
     }
     
