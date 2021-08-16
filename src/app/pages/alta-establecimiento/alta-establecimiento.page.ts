@@ -414,10 +414,11 @@ export class AltaEstablecimientoPage implements OnInit {
     console.log(objeto)
     const url = 'Operaciones/Evaluacion';
     const respuesta: any = await this.webRayoService.postAsync(url, objeto);
-    if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+    if ( respuesta == null || respuesta.success === false ) {
       loading.dismiss();
       return false;
     } else
+      loading.dismiss();
       return true;
   }
 
