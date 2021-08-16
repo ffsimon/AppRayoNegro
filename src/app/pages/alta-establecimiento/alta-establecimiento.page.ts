@@ -24,7 +24,7 @@ export class AltaEstablecimientoPage implements OnInit {
   public comentarios = null;
   public compartieronRazonSocial = false;
   public estasEnOutlet = false;
-  public pasoFormulario = 5;
+  public pasoFormulario =1;
   public opcionesParafoto: any = [];
   public sliderOne: any;
   public listaMastercardRadio: any[] = [
