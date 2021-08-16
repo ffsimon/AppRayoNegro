@@ -17,6 +17,7 @@ export class EvaluacionesPage implements OnInit {
   public nombreTipoComercio = '';
   public listaTipoComercio: any = [];
   public usuarioSesion: usuario_sesion_model;
+  public saludos = [1,2,3];
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,
     private webRayoService: WebRayoService,

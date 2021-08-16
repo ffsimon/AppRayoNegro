@@ -21,6 +21,7 @@ export class AltaEstablecimientoPage implements OnInit {
   public usuarioSesion: usuario_sesion_model; 
   public tempImg: string;
   public fotoIdentificastePublicidad = '';
+  public fotoDefault: string = '';
   public comentarios = null;
   public compartieronRazonSocial = false;
   public estasEnOutlet = false;
@@ -190,8 +191,8 @@ export class AltaEstablecimientoPage implements OnInit {
     }
 
     if(this.pasoFormulario === 5){
-      this.ordenarCompetencias();
-      return;
+      // this.ordenarCompetencias();
+      // return;
       if(this.tercerOpcionPasoCinco && this.fotoIdentificastePublicidad === ''){
         console.log('falta foto');
         this.utilitiesService.alert('', 'Captura foto de publicidad nueva.');
@@ -482,11 +483,12 @@ export class AltaEstablecimientoPage implements OnInit {
     }
 
     // limpiamos la foto de idetificaste nueva publicidad
+    this.fotoDefault = '';
     if(this.fotoIdentificastePublicidad != ''){
     let stringBase64: string = "data:image/jpeg;base64," 
     let seEncuentraStringBase64 = this.fotoIdentificastePublicidad.indexOf(this.fotoIdentificastePublicidad);
       if (seEncuentraStringBase64 !== -1){
-        this.fotoIdentificastePublicidad = this.fotoIdentificastePublicidad.replace(stringBase64, "")
+        this.fotoDefault = this.fotoIdentificastePublicidad.replace(stringBase64, "")
         console.log(this.fotoIdentificastePublicidad)
       }
     }
@@ -497,7 +499,7 @@ export class AltaEstablecimientoPage implements OnInit {
       ecompentencia_comentario: this.comentarios,
         ecompentencia_catalogo_competencia: 0,
         ecompentencia_catalogo_competencia_material: 0,
-        ecompentencia_foto: this.fotoIdentificastePublicidad != '' ? this.fotoIdentificastePublicidad : ''
+        ecompentencia_foto: this.fotoIdentificastePublicidad != '' ? this.fotoDefault : ''
     }
 
     listaCompetencias.push(competenciaCatalogo);

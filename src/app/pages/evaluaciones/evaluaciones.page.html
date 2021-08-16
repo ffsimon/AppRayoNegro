@@ -65,8 +65,6 @@
         </ion-col>
 
         <ion-col size="6" class="ion-padding">
-          <!-- <img src="assets/img/ejemplo-mapa-dark.png" alt=""> -->
-          <!-- <div>ssss</div> -->
           <app-mapa-filtro [coordenadas]="{lat: item.evaluacion_latitud, lng: item.evaluacion_longitud}"></app-mapa-filtro>
         </ion-col>
       </ion-row>
@@ -88,48 +86,9 @@
       <br>
   </ion-card>
   <br>
+  <!-- <div>
+    <app-mapa-filtro [coordenadas]="{lat: 19.755419000000003, lng: -99.2126249 }" *ngFor="let s of saludos"></app-mapa-filtro>
+  </div> -->
+  
 
-  <!-- <ion-card style="color: white;" class="contenedor-card">
-      <ion-row>
-        <ion-col offset='6' size='6' class="ion-text-center">
-          <span>22/06/21</span>
-        </ion-col>
-      </ion-row>
-
-      <ion-row>
-        <ion-col size="6">
-          <ion-row>
-            <ion-col size="12" class="ion-text-center">
-              <ion-icon name="ellipse" style="color: #87B375;zoom: 1.5;"></ion-icon>
-            </ion-col>
-
-            <ion-col size="12">
-              <span> <b>Tienda Lupita</b> </span>
-            </ion-col>
-            <ion-col size="12">
-              <span>Calle: </span> <span>Nebraska</span>
-            </ion-col>
-            <ion-col size="12">
-              <span>Municipio / Alcaldía: </span> <span>Benito Juárez</span>
-            </ion-col>
-            <ion-col size="12">
-              <span>CP: </span> <span>03900</span>
-            </ion-col>
-          </ion-row>
-        </ion-col>
-
-        <ion-col size="6" class="ion-padding">
-          <img src="assets/img/ejemplo-mapa-dark.png" alt="">
-        </ion-col>
-      </ion-row>
-  </ion-card> -->
-
-
-  <!-- <ion-row class="ion-padding-horizontal">
-    <ion-col size="12" class="ion-text-center">
-      <ion-button expand="block" class="btncolor" (click)="irEstablecimiento()">
-        <b><span>Siguiente</span></b>
-      </ion-button>
-    </ion-col>
-  </ion-row> -->
 </ion-content>
