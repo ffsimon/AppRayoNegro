@@ -429,7 +429,7 @@ export class AltaEstablecimientoPage implements OnInit {
      
      // se agregan las imagene para el carrusel
      for (let i = 0; i < this.opcionesParafoto.length; i++) {
-      let imagenesCarrusel: Fotografias = { efotografia_catalogo_id_evidencia: this.opcionesParafoto[i].cagenerico_clave, imagBase64: this.opcionesParafoto.fotoBase64 }
+      let imagenesCarrusel: Fotografias = { efotografia_catalogo_id_evidencia: this.opcionesParafoto[i].cagenerico_clave, imagBase64: this.opcionesParafoto[i].fotoBase64 }
       listafotos.push(imagenesCarrusel);
     }
     return listafotos;
