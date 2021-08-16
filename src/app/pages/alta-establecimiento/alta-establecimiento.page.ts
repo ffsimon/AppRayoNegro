@@ -6,6 +6,9 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { promise } from 'protractor';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
+import { Competencias, EvaluacionesRequest, Fotografias } from 'src/app/models/evaluacion_request_model';
+import { GeocoderResult } from 'src/app/models/geocoder_model';
+import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 
 @Component({
   selector: 'app-alta-establecimiento',
@@ -15,6 +18,7 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
 export class AltaEstablecimientoPage implements OnInit {
 
   @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
+  public usuarioSesion: usuario_sesion_model; 
   public tempImg: string;
   public fotoIdentificastePublicidad = '';
   public comentarios = null;
@@ -79,6 +83,7 @@ export class AltaEstablecimientoPage implements OnInit {
     private webRayoService: WebRayoService,
     private camera: Camera) {
       console.log(this.opcionesParafoto.length);
+      this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
     this.sliderOne =
     {
       initialSlide: 0,
@@ -119,7 +124,7 @@ export class AltaEstablecimientoPage implements OnInit {
     }
   }
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  public validacionDatosGenerales() {
+  public async validacionDatosGenerales() {
 
     console.log(this.pasoFormulario);
 
@@ -188,6 +193,12 @@ export class AltaEstablecimientoPage implements OnInit {
       if(this.tercerOpcionPasoCinco && this.fotoIdentificastePublicidad === ''){
         console.log('falta foto');
         this.utilitiesService.alert('', 'Captura foto de publicidad nueva.');
+        return;
+      }
+
+      let envioEvaluacion = await this.enviarEvaluacion();
+      if(!envioEvaluacion){
+        await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
         return;
       }
     }
@@ -366,5 +377,85 @@ export class AltaEstablecimientoPage implements OnInit {
     } else if (opt === 3){
       this.fotoIdentificastePublicidad = await this.camara();
     }
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async enviarEvaluacion(){
+
+    let datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder")); 
+    console.log(datosUbicacion);
+    
+    const loading = await this.utilitiesService.loadingAsync();
+    loading.present();
+    let objeto: EvaluacionesRequest = {
+      evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
+      evaluacion_razon_social: this.compartieronRazonSocial ? this.datosGenerales.value.razonSocial : null,
+      evaluacion_ca_tipo_comercio: this.datosGenerales.value.tipoComercio.cagenerico_clave,
+      evaluacion_ca_tipo_sub_comercio: this.datosGenerales.value.subTipoComercio,
+      evaluacion_outlet: this.estasEnOutlet,
+      evaluacion_nombre_outlet: this.estasEnOutlet ?  this.datosGenerales.value.nombreOutlet: null,
+      // evaluacion_numero?: string;
+      evaluacion_calle: datosUbicacion != null ? datosUbicacion.thoroughfare: null,
+      evaluacion_colonia: datosUbicacion != null ? datosUbicacion.subLocality : null,
+      evaluacion_municipio_alcadia:  datosUbicacion != null ? datosUbicacion.administrativeArea: null,
+      evaluacion_cp: datosUbicacion != null ? datosUbicacion.postalCode: null,
+      evaluacion_latitud: datosUbicacion != null ? datosUbicacion.latitude: null,
+      evaluacion_longitud: datosUbicacion != null ? datosUbicacion.longitude: null,
+      evaluacion_renovacion: 0,
+      evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
+      evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
+      list_fotografias: this.ordenarListaFotos(),
+      // lista_competencias: ,
+      evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
+    }
+    console.log(objeto)
+    const url = 'Operaciones/Evaluacion';
+    const respuesta: any = await this.webRayoService.postAsync(url, objeto);
+    if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+      loading.dismiss();
+      return false;
+    } else
+      return true;
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public ordenarListaFotos(){
+    // la foto de fachada que va por default que efotografia_catalogo_id_evidencia lleva
+    let listafotos: Array<Fotografias> = [];
+
+    // agregamos la foto de fachada que esta por default
+     let imagenFachadaDefault: Fotografias = { efotografia_catalogo_id_evidencia: 0, imagBase64: this.tempImg }
+     listafotos.push(imagenFachadaDefault)
+     
+     // se agregan las imagene para el carrusel
+     for (let i = 0; i < this.opcionesParafoto.length; i++) {
+      let imagenesCarrusel: Fotografias = { efotografia_catalogo_id_evidencia: this.opcionesParafoto[i].cagenerico_clave, imagBase64: this.opcionesParafoto.fotoBase64 }
+      listafotos.push(imagenesCarrusel);
+    }
+    return listafotos;
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public ordenarCompetencias(){
+    let listaCompetencias: Array<Competencias> = [];
+    let listaPreeliminar: Array<Competencias> = [];
+    console.log(this.lstaCompetencia)
+
+    for (let i = 0; i < this.lstaCompetencia.length; i++) {
+      console.log(this.lstaCompetencia[i].arregloHijos);
+      for (let j = 0; j < this.lstaCompetencia[i].arregloHijos.length; j++) {
+        console.log(this.lstaCompetencia[i].arregloHijos[j])
+        if(this.lstaCompetencia[i].arregloHijos[j].estatus == true){
+          listaPreeliminar.push(this.lstaCompetencia[i].arregloHijos[j])
+        }
+      }
+    }
+
+    for (let i = 0; i < listaPreeliminar.length; i++) {
+      
+      
+    }
+
+    return listaPreeliminar;
   }
 }
