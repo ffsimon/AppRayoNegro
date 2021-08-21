@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { MenuComponent } from './menu/menu.component';
 import { MapaComponent } from './mapa/mapa.component';
 import { MapaFiltroComponent } from './mapa-filtro/mapa-filtro.component';
+import { SlideDrawerComponent } from './slide-drawer/slide-drawer.component';
 
 
 
@@ -14,13 +15,15 @@ import { MapaFiltroComponent } from './mapa-filtro/mapa-filtro.component';
         HeaderComponent,
         MenuComponent,
         MapaComponent,
-        MapaFiltroComponent
+        MapaFiltroComponent,
+        SlideDrawerComponent
     ],
     exports: [
         HeaderComponent,
         MenuComponent,
         MapaComponent,
-        MapaFiltroComponent
+        MapaFiltroComponent,
+        SlideDrawerComponent
     ],
     imports: [
         CommonModule,
