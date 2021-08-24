@@ -18,7 +18,7 @@
   <ion-row style="color: white;">
     <ion-col size="1"></ion-col>
     <ion-col class="ion-text-center" size="10">
-      <span style="color: white;font-weight: bold;font-size: 18px;">JUNIO</span> <br>
+      <!-- <span style="color: white;font-weight: bold;font-size: 18px;">JUNIO</span> <br> -->
       <span style="color: white;font-size: 14px;">Tus evaluaciones</span>
     </ion-col>
     <ion-col size="1" (click)="regresarHome()">
@@ -89,6 +89,14 @@
         </ion-card>
       </div>
       <br>
+
+      <div style="display: flex; justify-content: center; align-items: center">
+        <ion-button (click)="enviarEditarEvaluacion(item)" color="light" size="default" shape="round" class="boton_login">
+          Editar
+        </ion-button>
+        <br>
+      </div>
+     
   </ion-card>
   <div>
 

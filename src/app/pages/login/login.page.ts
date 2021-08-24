@@ -14,8 +14,9 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
 })
 export class LoginPage implements OnInit {
   @ViewChild('inputPassword', { static: false }) inputPassword: IonInput;
+  public usuarioSesion: usuario_sesion_model;
   public verContrasena: boolean = false;
-
+  public mensajeError: string = "";
   public form: FormGroup = this.formBuilder.group({
     usuario: ["", Validators.required],
     contrasenia: ["", Validators.required]
@@ -25,7 +26,13 @@ export class LoginPage implements OnInit {
   constructor(private formBuilder: FormBuilder,
     private navCtrl: NavController, private platform: Platform,
      public webRayoService: WebRayoService, public geolocationService: GeolocationService,
-     public utilitiesService: UtilitiesService) { }
+     public utilitiesService: UtilitiesService) { 
+      this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
+      if(this.usuarioSesion != null){
+        this.navCtrl.navigateRoot("home");
+      }
+      console.log(this.usuarioSesion)
+    }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
@@ -56,7 +63,7 @@ export class LoginPage implements OnInit {
   public async iniciarSesion() {
 
     console.log(this.form.valid)
-
+    this.mensajeError = "";
     if(!this.form.valid){
       return;
     }
@@ -73,6 +80,7 @@ export class LoginPage implements OnInit {
     let respuesta: any = await this.webRayoService.postAsync("Usuarios/UsuarioSesion/Get", params);
    
     if (respuesta == null || respuesta.success == false || respuesta.response == null || respuesta.response.length == 0) {
+      this.mensajeError = "Usuario o contraseña incorrectos"
       loading.dismiss();
       return;
     }

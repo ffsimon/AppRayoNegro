@@ -15,7 +15,7 @@
   <ion-row class="ion-text-center" style="color: white;">
 
     <ion-col size="1" *ngIf="pasoFormulario != 1" style="display: flex; justify-content: center; align-items: center;">
-      <ion-row (click)="pasoFormulario = pasoFormulario - 1">
+      <ion-row (click)="irPasoAtras()">
         <ion-icon name="chevron-back-outline"></ion-icon>
       </ion-row>
     </ion-col>
@@ -83,7 +83,7 @@
         <ion-item class="ion-item-input">
           <ion-label><span>Tipo de comercio</span></ion-label>
           <ion-select formControlName="tipoComercio" class="myCustomSelect" (ionChange)="cambiarValores()">
-            <ion-select-option *ngFor="let item of listaTipoComercio" [value]="item">
+            <ion-select-option *ngFor="let item of listaTipoComercio" [value]="item.cagenerico_clave">
               {{  item.cagenerico_nombre | titlecase }}
             </ion-select-option>
           </ion-select>

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { DataResolveService } from './services/params/data-resolve.service';
 
 const routes: Routes = [
   // {
@@ -25,6 +26,11 @@ const routes: Routes = [
   },
   {
     path: 'alta-establecimiento',
+    loadChildren: () => import('./pages/alta-establecimiento/alta-establecimiento.module').then( m => m.AltaEstablecimientoPageModule)
+  },
+  {
+    path: 'alta-establecimiento/:id',
+    resolve: { establecimiento: DataResolveService},
     loadChildren: () => import('./pages/alta-establecimiento/alta-establecimiento.module').then( m => m.AltaEstablecimientoPageModule)
   },
 ];

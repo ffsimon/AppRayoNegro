@@ -1,13 +1,17 @@
 export class objetivos_usuario {
-    latitude?: string;
-    longitude?: string;
-    countryCode?: string;
-    countryName?: string;
-    postalCode?: string;
-    administrativeArea?: string;
-    subAdministrativeArea?: string;
-    locality?: string;
-    subLocality?: string;
-    thoroughfare?: string;
-    subThoroughfare?: string;
+    horas: number;
+    num_evaluaciones: number;
+    list_objetivos?: Array<objetivos>;
+    informacion_graficas?:  Array<graficas>;
   }
+
+export class objetivos{
+    dia: number;
+    semana: number;
+    tipo_objetivo: number;
+}
+
+export class graficas{
+    dia: string;
+		evaluaciones: number;
+}

@@ -4,12 +4,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonSlides, NavController } from '@ionic/angular';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { promise } from 'protractor';
+import { element, promise } from 'protractor';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
 import { Competencias, EvaluacionesRequest, Fotografias } from 'src/app/models/evaluacion_request_model';
 import { GeocoderResult } from 'src/app/models/geocoder_model';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { ConnectivityService } from 'src/app/services/connectivity.service';
+import { ActivatedRoute } from '@angular/router';
+
 
 @Component({
   selector: 'app-alta-establecimiento',
@@ -26,10 +28,12 @@ export class AltaEstablecimientoPage implements OnInit {
   public comentarios = null;
   public compartieronRazonSocial = false;
   public estasEnOutlet = false;
-  public pasoFormulario =1;
+  public pasoFormulario = 1;
   public opcionesParafoto: any = [];
   public sliderOne: any;
   public hayInternet: boolean = true;
+  public esEdicion: boolean = false;
+  public evaluacion = null;
   public listaMastercardRadio: any[] = [
     { nombre: 'Sticker', valor: 'sticker' },
     { nombre: 'Reloj (open / close)', valor: 'reloj' },
@@ -51,6 +55,7 @@ export class AltaEstablecimientoPage implements OnInit {
     comunicacion: ['', Validators.required],
     localizacionItem: ['', Validators.required]
   });
+
   public listaTipoComercio: any = [];
   public subListaTipoComercio: any = [];
   public subListaTipoComunicacion: any = [];
@@ -76,6 +81,12 @@ export class AltaEstablecimientoPage implements OnInit {
   get nombreOutlet() {
     return this.datosGenerales.get('nombreOutlet');
   }
+  get comunicacion() {
+    return this.seleccioneMaterial.get('comunicacion');
+  }
+  get localizacionItem() {
+    return this.seleccioneMaterial.get('localizacionItem');
+  }
 
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -84,9 +95,17 @@ export class AltaEstablecimientoPage implements OnInit {
     private navCtrl: NavController,
     private utilitiesService: UtilitiesService,
     private webRayoService: WebRayoService,
-    private camera: Camera, private connectivity: ConnectivityService) {
-      console.log(this.opcionesParafoto.length);
-      this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
+    private camera: Camera, 
+    private connectivity: ConnectivityService,
+    private route: ActivatedRoute) {
+    
+    if(this.route.snapshot.data["establecimiento"]){
+      this.esEdicion = true;
+      this.evaluacion = this.route.snapshot.data["establecimiento"];
+      console.log("route  ", this.evaluacion)
+    }
+
+    this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
     this.sliderOne =
     {
       initialSlide: 0,
@@ -121,6 +140,11 @@ export class AltaEstablecimientoPage implements OnInit {
     await this.obtenerListaLocalizacion();
     await this.obtenerBaners();
     await this.obtenerCompetencia();
+    
+    if (this.esEdicion) {
+      this.llenarDatos(this.evaluacion);
+    }
+
     loading.dismiss();
   }
 
@@ -163,6 +187,12 @@ export class AltaEstablecimientoPage implements OnInit {
           this.utilitiesService.alert('', 'Agrega nombre del outlet.');
           return;
       }
+
+      if (this.esEdicion) {
+        this.pasoFormulario = 3;
+        return;
+      }
+
     }
 
     if(this.pasoFormulario === 2){
@@ -213,31 +243,20 @@ export class AltaEstablecimientoPage implements OnInit {
         return;
       }
 
-      let envioEvaluacion = await this.enviarEvaluacion();
+      if(this.esEdicion){
+        let putEvaluacion = await this.editarEvaluacion();  
+        if(!putEvaluacion){
+          await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
+          return;
+        }
 
-      // console.log("envio eval",envioEvaluacion)
-
-      //  // si no hay internet vamos a guardarlo en el store and foward
-      //  if(!this.hayInternet){
-      //   // revismos si no hay evaluaciones guardadas en la memoria
-      //   let evaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
-      //   console.log(evaluacionesGuardadasLocal);
-
-      //   // si no hay registros guardados, solo es un objeto en el arreglo
-      //   if(evaluacionesGuardadasLocal == null){
-      //     let arregloEvaluaciones = [];
-      //     arregloEvaluaciones.push(envioEvaluacion)
-      //     localStorage.setItem("evaluaciones_store_foward", JSON.stringify(arregloEvaluaciones))
-      //   }
-
-      //   return;
-      // }
-
-
-      if(!envioEvaluacion){
-        await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
-        return;
-      }
+      }else{
+        let envioEvaluacion = await this.enviarEvaluacion();
+        if(!envioEvaluacion){
+          await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
+          return;
+        }
+      }  
     }
 
     this.pasoFormulario = this.pasoFormulario + 1;
@@ -363,7 +382,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async cambiarValores(){
-    const valor = this.datosGenerales.value.tipoComercio.cagenerico_clave;
+    const valor = this.datosGenerales.value.tipoComercio;
     this.subListaTipoComercio = await this.buscarSubtipoComercio(valor);
   }
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -390,10 +409,10 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public limpiarInput(tipo: number){
     //1 para limpiar input de razon social, 2 para limpiar outlet
-    if (tipo === 1) {
+    if (tipo === 1 && this.compartieronRazonSocial == false) {
       this.razonSocial.setValue(null);
       return;
-    } else {
+    } else if(tipo != 1 && this.estasEnOutlet == false){
       this.nombreOutlet.setValue(null);
     }
   }
@@ -427,7 +446,7 @@ export class AltaEstablecimientoPage implements OnInit {
     let objeto: EvaluacionesRequest = {
       evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
       evaluacion_razon_social: this.compartieronRazonSocial ? this.datosGenerales.value.razonSocial : null,
-      evaluacion_ca_tipo_comercio: this.datosGenerales.value.tipoComercio.cagenerico_clave,
+      evaluacion_ca_tipo_comercio: this.datosGenerales.value.tipoComercio,
       evaluacion_ca_tipo_sub_comercio: this.datosGenerales.value.subTipoComercio,
       evaluacion_outlet: this.estasEnOutlet == false? 0: 1,
       evaluacion_nombre_outlet: this.estasEnOutlet ?  this.datosGenerales.value.nombreOutlet: null,
@@ -469,13 +488,9 @@ export class AltaEstablecimientoPage implements OnInit {
     if (seEncuentraStringBase64 !== -1){
       this.tempImg = this.tempImg.replace(stringBase64, "")
     }
-
-       
-
     // agregamos la foto de fachada que esta por default
      let imagenFachadaDefault: Fotografias = { efotografia_catalogo_id_evidencia: 0, imagBase64: this.tempImg }
      listafotos.push(imagenFachadaDefault)
-     
      // se agregan las imagene para el carrusel
      for (let i = 0; i < this.opcionesParafoto.length; i++) {
       let stringBase64: string = "data:image/jpeg;base64," 
@@ -483,13 +498,10 @@ export class AltaEstablecimientoPage implements OnInit {
       if (seEncuentraStringBase64 !== -1){
         this.opcionesParafoto[i].fotoBase64 = this.opcionesParafoto[i].fotoBase64.replace(stringBase64, "")
       }
-      
-      
       let imagenesCarrusel: Fotografias = { efotografia_catalogo_id_evidencia: this.opcionesParafoto[i].cagenerico_clave, imagBase64: this.opcionesParafoto[i].fotoBase64 }
       listafotos.push(imagenesCarrusel);
-
-     
     }
+    console.log(listafotos)
     return listafotos;
   }
 
@@ -506,8 +518,6 @@ export class AltaEstablecimientoPage implements OnInit {
       }
     }
 
-    console.log(listaPreeliminar)
-   
     // agregamos las competencias que vienen de catalogos
     for (let i = 0; i < listaPreeliminar.length; i++) {
       let competencia: Competencias = {
@@ -530,7 +540,6 @@ export class AltaEstablecimientoPage implements OnInit {
       }
     }
     
-
     // agregamos las competencias que vienen por default
     let competenciaCatalogo: Competencias = {
       ecompentencia_comentario: this.comentarios,
@@ -540,8 +549,108 @@ export class AltaEstablecimientoPage implements OnInit {
     }
 
     listaCompetencias.push(competenciaCatalogo);
-
     return listaCompetencias;
   }
 
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async llenarDatos(evaluacion){
+    console.log("llenar datos")
+    if(evaluacion.evaluacion_nombre_outlet != null && evaluacion.evaluacion_nombre_outlet != '')
+      this.estasEnOutlet = true;
+
+    if(evaluacion.evaluacion_razon_social != null && evaluacion.evaluacion_razon_social != '')
+      this.compartieronRazonSocial = true;
+
+    if (this.listaTipoComercio.find(item => item.cagenerico_clave == evaluacion.evaluacion_ca_tipo_comercio) != null) {
+      console.log("es diferente de null")
+      this.tipoComercio.setValue(evaluacion.evaluacion_ca_tipo_comercio);
+      await this.buscarSubtipoComercio(evaluacion.evaluacion_ca_tipo_comercio)
+    }
+    // paso 1:
+    this.nombreEstablecimiento.setValue(evaluacion.evaluacion_nombre_establecimiento);  
+    this.razonSocial.setValue(evaluacion.evaluacion_razon_social == null? null: evaluacion.evaluacion_razon_social);
+    this.subTipoComercio.setValue(evaluacion.evaluacion_ca_tipo_sub_comercio);
+    this.nombreOutlet.setValue(evaluacion.evaluacion_nombre_outlet == null? null: evaluacion.evaluacion_nombre_outlet);
+
+    // paso 3:
+    this.comunicacion.setValue(evaluacion.evaluacion_ca_id_comunicacion)
+    this.localizacionItem.setValue(evaluacion.evaluacion_localizacion_id)
+    console.log(this.sliderOne.slidesItems)
+
+    if (evaluacion.list_fotografias) {
+
+      this.sliderOne.slidesItems.forEach(slide => {
+        evaluacion.list_fotografias.forEach(evaluacion => {
+            if (evaluacion.efotografia_catalogo_id_evidencia == slide.cagenerico_clave) {
+              slide.seleccionado = true;
+            }
+          });
+      });
+    }
+
+    // paso 4:
+    // aquí se hace match para la foto de fachada
+    evaluacion.list_fotografias.forEach(foto => {
+      if(foto.efotografia_catalogo_id_evidencia == 0){
+        console.log("Estamos entrando")
+        this.tempImg = "data:image/jpeg;base64," + foto.fotografia_base64
+      }
+
+      this.sliderOne.slidesItems.forEach(sliders => {
+        if (sliders.cagenerico_clave == foto.efotografia_catalogo_id_evidencia) {
+          sliders.fotoBase64 = "data:image/jpeg;base64," + foto.fotografia_base64;
+        }
+      });
+    });
+    console.log(this.tempImg)
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public irPasoAtras(){
+    if (!this.esEdicion) {
+      this.pasoFormulario = this.pasoFormulario - 1
+    }else{
+      if (this.pasoFormulario == 3) {
+        this.pasoFormulario = 1;
+      }
+    }
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async editarEvaluacion(){
+    const loading = await this.utilitiesService.loadingAsync();
+    loading.present();
+
+    let objeto: any = {
+      evaluacion_id: this.evaluacion.evaluacion_id,
+      evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
+      evaluacion_razon_social: this.compartieronRazonSocial ? this.datosGenerales.value.razonSocial : null,
+      evaluacion_ca_tipo_comercio: this.datosGenerales.value.tipoComercio.cagenerico_clave,
+      evaluacion_ca_tipo_sub_comercio: this.datosGenerales.value.subTipoComercio,
+      evaluacion_outlet: this.estasEnOutlet == false? 0: 1,
+      evaluacion_nombre_outlet: this.estasEnOutlet ?  this.datosGenerales.value.nombreOutlet: null,
+      evaluacion_numero: this.datosUbicacion.value.numeroEstablecimiento,
+      evaluacion_renovacion: 0,
+      evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
+      evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
+      list_fotografias: this.ordenarListaFotos(),
+      evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
+    }
+
+    objeto.list_fotografias.forEach(foto => {
+      foto.efotografia_bandera_modificacion = 1;
+    });
+
+    console.log(objeto);
+    const url = 'Operaciones/Evaluacion/Put';
+    const respuesta: any = await this.webRayoService.putAsync(url, objeto);
+    if ( respuesta == null || respuesta.success === false ) {
+      loading.dismiss();
+      return false;
+    } else
+      loading.dismiss();
+      return true;
+  }
+
+  
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
+import { objetivos_usuario } from 'src/app/models/objetivos';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
@@ -59,7 +60,7 @@ export class HomePage implements OnInit {
     }
   };
 
-  public barChartLabels: Label[] = ['L', 'M', 'M', 'J', 'V', 'S'];
+  public barChartLabels: any[] = [];
   public barChartType: ChartType = 'bar';
   public barChartLegend = false;
   public usuarioSesion: usuario_sesion_model; 
@@ -70,25 +71,52 @@ export class HomePage implements OnInit {
       borderColor: '#41719C',
       borderWidth: 2
     }];
-  public barChartData: ChartDataSets[] = [
-    { data: [3, 5, 2, 8, 10, 0] },
-
-  ];
+  public barChartData= [];
   public verObjetivos: boolean = true;
-
+  public objetivos: objetivos_usuario = null;
+  public trabajadas : any;
+  public realizadas: any;
+  public objetivoTrabajadas: any;
+  public objetivoRealizadas: any;
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
     private utilitiesService: UtilitiesService, private webRayoService: WebRayoService) { 
     this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
-    console.log(this.usuarioSesion)
-
-   this.mesActual = this.utilitiesService.obtenerMesStringActual();
+    this.mesActual = this.utilitiesService.obtenerMesStringActual();
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ngOnInit() {
-    console.log(this.barChartData)
-    console.log(this.datasets)
+  async ngOnInit() {
+    await this.obtenerObjetivos();
+    let valoresGraficas = [];
+    let valoresLabels = [];
+
+    if(this.objetivos != null){
+      for (let i = 0; i < this.objetivos.list_objetivos.length; i++) {
+        if(this.objetivos.list_objetivos[i].tipo_objetivo == 1){
+          this.trabajadas = this.objetivos.list_objetivos[i];
+          
+        } 
+        if(this.objetivos.list_objetivos[i].tipo_objetivo == 2){
+          this.realizadas = this.objetivos.list_objetivos[i];
+        } 
+        if(this.objetivos.list_objetivos[i].tipo_objetivo == 3){
+          this.objetivoTrabajadas = this.objetivos.list_objetivos[i];
+        } 
+        if(this.objetivos.list_objetivos[i].tipo_objetivo == 4){
+          this.objetivoRealizadas = this.objetivos.list_objetivos[i];
+        }   
+      }
+  
+       // asignamos los valores de las graficas 
+       for (let i = 0; i < this.objetivos.informacion_graficas.length; i++) {
+         valoresGraficas.push(this.objetivos.informacion_graficas[i].evaluaciones);
+         valoresLabels.push(this.objetivos.informacion_graficas[i].dia)
+       }
+       this.barChartData = [{ data: valoresGraficas}]
+       this.barChartLabels = valoresLabels;
+    }
+    
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -103,17 +131,24 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async obtenerObjetivos(){
+    const loading = await this.utilitiesService.loadingAsync();
+    loading.present();
 
     let objeto = {
-      objetivos_usuario_id: this.usuarioSesion.user_id,
-	    objetivos_fecha: ""
+      objetivos_usuario_id: this.usuarioSesion.user_id
     }
-    const url = 'Operaciones/Evaluacion';
+    const url = 'Operaciones/ObjetivosUsuario/Get';
     const respuesta: any = await this.webRayoService.postAsync(url, objeto);
     if ( respuesta == null || respuesta.success === false ) {
-      return false;
-    } else
-      return true;
+      this.objetivos = null;
+      loading.dismiss();
+      return;
+    } else{
+      this.objetivos = respuesta.response[0];
+      console.log(this.objetivos)
+      loading.dismiss();
+      return;
+    }
   }
 
 }

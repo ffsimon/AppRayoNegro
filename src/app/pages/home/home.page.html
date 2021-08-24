@@ -113,8 +113,8 @@
             </ion-row>
 
             <ion-row>
-                <ion-col size="6" class="ion-text-center">
-                    <circle-progress [percent]="90" radius="50" outerStrokeWidth="4" innerStrokeWidth="2"
+                <ion-col size="6" class="ion-text-center" *ngIf="objetivos != null">
+                    <circle-progress [percent]="objetivos.horas" radius="50" outerStrokeWidth="4" innerStrokeWidth="2"
                         [showInnerStroke]="true" innerStrokeColor="#FFFFFF" space="-2" animation="true"
                         outerStrokeColor='#C00101' animationDuration="400" titleColor='#FFFFFF' unitsColor='#FFFFFF'
                         [showSubtitle]='false'>
@@ -123,8 +123,8 @@
                         <span style="color: white;font-size: 18;">Horas</span>
                     </div>
                 </ion-col>
-                <ion-col size="6" class="ion-text-center">
-                    <circle-progress [percent]="90" radius="50" outerStrokeWidth="4" innerStrokeWidth="2"
+                <ion-col size="6" class="ion-text-center" *ngIf="objetivos != null">
+                    <circle-progress [percent]="objetivos.num_evaluaciones" radius="50" outerStrokeWidth="4" innerStrokeWidth="2"
                         [showInnerStroke]="true" innerStrokeColor="#FFFFFF" space="-2" animation="true"
                         outerStrokeColor='#87B375' animationDuration="400" titleColor='#FFFFFF' unitsColor='#FFFFFF'
                         [showSubtitle]='false'>
@@ -136,48 +136,51 @@
             </ion-row>
             <br>
 
-            <ion-row class="ion-text-center">
-                <ion-col size="6">
-                    <div class="contenedores-evaluaciones">
-                        <span class="letra-contenedores-evaluaciones">Trabajadas</span> <br>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                        <span class="letra-contenedores-evaluaciones-numeros">4 | 20 </span>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
-                    </div>
-                </ion-col>
-                <ion-col size="6">
-                    <div class="contenedores-evaluaciones">
-                        <span class="letra-contenedores-evaluaciones">Realizadas</span> <br>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                        <span class="letra-contenedores-evaluaciones-numeros">4 | 20 </span>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
-                    </div>
-                </ion-col>
-            </ion-row>
-            <ion-row class="ion-text-center">
-                <ion-col size="6">
-                    <div class="contenedores-evaluaciones">
-                        <span class="letra-contenedores-evaluaciones">Objetivo</span> <br>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                        <span class="letra-contenedores-evaluaciones-numeros">4 | 20 </span>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
-                    </div>
-                </ion-col>
-                <ion-col size="6">
-                    <div class="contenedores-evaluaciones">
-                        <span class="letra-contenedores-evaluaciones">Objetivo</span> <br>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                        <span class="letra-contenedores-evaluaciones-numeros">4 | 20 </span>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
-                    </div>
-                </ion-col>
-            </ion-row>
+            <div *ngIf="objetivos != null">
+                <ion-row class="ion-text-center">
+                    <ion-col size="6">
+                        <div class="contenedores-evaluaciones">
+                            <span class="letra-contenedores-evaluaciones">Trabajadas</span> <br>
+                            <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
+                            <span class="letra-contenedores-evaluaciones-numeros">{{trabajadas.dia}} | {{trabajadas.semana}} </span>
+                            <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
+                        </div>
+                    </ion-col>
+                    <ion-col size="6">
+                        <div class="contenedores-evaluaciones">
+                            <span class="letra-contenedores-evaluaciones">Realizadas</span> <br>
+                            <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
+                            <span class="letra-contenedores-evaluaciones-numeros">{{realizadas.dia}} | {{realizadas.semana}} </span>
+                            <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
+                        </div>
+                    </ion-col>
+                </ion-row>
+                <ion-row class="ion-text-center">
+                    <ion-col size="6">
+                        <div class="contenedores-evaluaciones">
+                            <span class="letra-contenedores-evaluaciones">Objetivo</span> <br>
+                            <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
+                            <span class="letra-contenedores-evaluaciones-numeros">{{objetivoTrabajadas.dia}} | {{objetivoTrabajadas.semana}} </span>
+                            <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
+                        </div>
+                    </ion-col>
+                    <ion-col size="6">
+                        <div class="contenedores-evaluaciones">
+                            <span class="letra-contenedores-evaluaciones">Objetivo</span> <br>
+                            <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
+                            <span class="letra-contenedores-evaluaciones-numeros">{{objetivoRealizadas.dia}} | {{objetivoRealizadas.semana}}  </span>
+                            <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
+                        </div>
+                    </ion-col>
+                </ion-row>
+            </div>
+            
 
-            <div class="ion-padding ion-text-center" style="background-color: rgb(28,35,41);width: 100%;">
+            <div class="ion-padding ion-text-center" style="background-color: rgb(28,35,41);width: 100%;" *ngIf="barChartData != null">
                 <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" chartType="bar" [legend]="false"
                     [options]="barChartOptions" height="150" [colors]="barChartColors"></canvas>
                 <br>
-                <span style="color: white;">21/06/2021 al 25/06/2021</span>
+                <span style="color: white;" *ngIf="objetivos != null">21/06/2021 al 25/06/2021</span>
             </div>
         </div>
     </ion-row>

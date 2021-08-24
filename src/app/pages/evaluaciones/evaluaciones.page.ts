@@ -4,6 +4,7 @@ import { NavController } from '@ionic/angular';
 import { GeolocationModel } from 'src/app/models/geolocation_model';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { GeolocationService } from 'src/app/services/geolocation.service';
+import { DataService } from 'src/app/services/params/data.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
 
@@ -37,7 +38,8 @@ export class EvaluacionesPage implements OnInit {
   constructor(private navCtrl: NavController,
     private webRayoService: WebRayoService,
     private utilitiesService: UtilitiesService,
-    private geolocationService: GeolocationService) {
+    private geolocationService: GeolocationService,
+    private dataService: DataService) {
     this.usuarioSesion = JSON.parse(sessionStorage.getItem('usuario_sesion'));
     console.log(this.usuarioSesion);
   }
@@ -241,6 +243,13 @@ export class EvaluacionesPage implements OnInit {
       map: this.map,
       title: marker.title
     });
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public enviarEditarEvaluacion(evaluacion){
+    this.dataService.setData("establecimiento", evaluacion)
+    this.navCtrl.navigateForward("alta-establecimiento/establecimiento");
+    console.log(evaluacion);
   }
   //#endregion
 }
