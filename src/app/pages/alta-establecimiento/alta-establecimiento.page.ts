@@ -9,6 +9,7 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
 import { Competencias, EvaluacionesRequest, Fotografias } from 'src/app/models/evaluacion_request_model';
 import { GeocoderResult } from 'src/app/models/geocoder_model';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
+import { ConnectivityService } from 'src/app/services/connectivity.service';
 
 @Component({
   selector: 'app-alta-establecimiento',
@@ -28,6 +29,7 @@ export class AltaEstablecimientoPage implements OnInit {
   public pasoFormulario =1;
   public opcionesParafoto: any = [];
   public sliderOne: any;
+  public hayInternet: boolean = true;
   public listaMastercardRadio: any[] = [
     { nombre: 'Sticker', valor: 'sticker' },
     { nombre: 'Reloj (open / close)', valor: 'reloj' },
@@ -82,7 +84,7 @@ export class AltaEstablecimientoPage implements OnInit {
     private navCtrl: NavController,
     private utilitiesService: UtilitiesService,
     private webRayoService: WebRayoService,
-    private camera: Camera) {
+    private camera: Camera, private connectivity: ConnectivityService) {
       console.log(this.opcionesParafoto.length);
       this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
     this.sliderOne =
@@ -100,6 +102,17 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
+    this.connectivity.appIsOnline$.subscribe(online => {
+      this.hayInternet = online;
+      console.log(online)
+      if (online) {
+          console.log("App is online")
+      } else {
+          console.log("App is offline")
+      }
+    })
+
+
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
 
@@ -127,7 +140,8 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async validacionDatosGenerales() {
 
-    console.log(this.pasoFormulario);
+    let evaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
+        console.log(evaluacionesGuardadasLocal);
 
     if(this.pasoFormulario === 1){
       console.log(this.datosGenerales.valid);
@@ -200,6 +214,26 @@ export class AltaEstablecimientoPage implements OnInit {
       }
 
       let envioEvaluacion = await this.enviarEvaluacion();
+
+      // console.log("envio eval",envioEvaluacion)
+
+      //  // si no hay internet vamos a guardarlo en el store and foward
+      //  if(!this.hayInternet){
+      //   // revismos si no hay evaluaciones guardadas en la memoria
+      //   let evaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
+      //   console.log(evaluacionesGuardadasLocal);
+
+      //   // si no hay registros guardados, solo es un objeto en el arreglo
+      //   if(evaluacionesGuardadasLocal == null){
+      //     let arregloEvaluaciones = [];
+      //     arregloEvaluaciones.push(envioEvaluacion)
+      //     localStorage.setItem("evaluaciones_store_foward", JSON.stringify(arregloEvaluaciones))
+      //   }
+
+      //   return;
+      // }
+
+
       if(!envioEvaluacion){
         await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
         return;
@@ -412,6 +446,8 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
     }
     console.log(objeto)
+
+
     const url = 'Operaciones/Evaluacion';
     const respuesta: any = await this.webRayoService.postAsync(url, objeto);
     if ( respuesta == null || respuesta.success === false ) {
@@ -507,4 +543,5 @@ export class AltaEstablecimientoPage implements OnInit {
 
     return listaCompetencias;
   }
+
 }

@@ -7,7 +7,7 @@
         <ion-col size="4"></ion-col>
         <ion-col size="4">
             <div class="avatar">
-                <img src="assets/img/foto-perfil.jpg" alt="" class="avatar">
+                <img src="{{'data:image/jpg;base64,' + usuarioSesion.user_sesion_foto}}" alt="" class="avatar">  
             </div>
         </ion-col>
         <ion-col size="4" class="ion-text-center" >
@@ -22,7 +22,7 @@
         <ion-col size="2"></ion-col>
         <ion-col size="8"  class="ion-text-center">
             <span class="nombre-persona">{{usuarioSesion.user_sesion_apaterno }} {{usuarioSesion.user_sesion_amaterno }} {{usuarioSesion.user_sesion_nombre }}</span><br>
-            <span class="ultima-sincronizacion">Última sincronización: 16/03/2021</span>
+            <span class="ultima-sincronizacion">Última sincronización: {{usuarioSesion.ultima_sincronizacion | date:"shortDate"}}</span>
         </ion-col>
         <ion-col size="2" (click)="irEvaluaciones()" style="display: flex; justify-content: center;">
             <img src="assets/img/comercio.png" alt="" class="img-comercio">
@@ -99,97 +99,7 @@
             </ion-col>
         </ion-row>
     </div>
-
-
     <br>
-
-    <!-- sección para velocimetro -->
-    <!-- <ion-row>
-        <div class="contenedor-principal">
-            <ion-row class="ion-text-center">
-                <ion-col size=" 4.5" class="ion-no-padding">
-                </ion-col>
-                <ion-col size="3" class="ion-no-padding">
-                    <div style="background-color: white;height: 6px;"></div>
-                </ion-col>
-                <ion-col size="4.5" class="ion-no-padding"></ion-col>
-            </ion-row>
-
-            <ion-row (click)="verObjetivos = !verObjetivos">
-                <ion-col size="12" class="ion-text-center">
-                    <span style="color: white;font-size: 14;font-weight: bold;"><b>Objetivos por semana</b></span>
-                </ion-col>
-            </ion-row>
-
-            <ion-row>
-                <ion-col size="6" class="ion-text-center">
-                    <circle-progress [percent]="90" radius="50" outerStrokeWidth="4" innerStrokeWidth="2"
-                        [showInnerStroke]="true" innerStrokeColor="#FFFFFF" space="-2" animation="true"
-                        outerStrokeColor='#C00101' animationDuration="400" titleColor='#FFFFFF' unitsColor='#FFFFFF'
-                        [showSubtitle]='false'>
-                    </circle-progress>
-                    <div>
-                        <span style="color: white;font-size: 18;">Horas</span>
-                    </div>
-                </ion-col>
-                <ion-col size="6" class="ion-text-center">
-                    <circle-progress [percent]="90" radius="50" outerStrokeWidth="4" innerStrokeWidth="2"
-                        [showInnerStroke]="true" innerStrokeColor="#FFFFFF" space="-2" animation="true"
-                        outerStrokeColor='#87B375' animationDuration="400" titleColor='#FFFFFF' unitsColor='#FFFFFF'
-                        [showSubtitle]='false'>
-                    </circle-progress>
-                    <div>
-                        <span style="color: white;font-size: 18;">Evaluaciones</span>
-                    </div>
-                </ion-col>
-            </ion-row>
-            <br>
-
-            <ion-row class="ion-text-center">
-                <ion-col size="6">
-                    <div class="contenedores-evaluaciones">
-                        <span class="letra-contenedores-evaluaciones">Trabajadas</span> <br>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                        <span class="letra-contenedores-evaluaciones-numeros">4 | 20 </span>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
-                    </div>
-                </ion-col>
-                <ion-col size="6">
-                    <div class="contenedores-evaluaciones">
-                        <span class="letra-contenedores-evaluaciones">Realizadas</span> <br>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                        <span class="letra-contenedores-evaluaciones-numeros">4 | 20 </span>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
-                    </div>
-                </ion-col>
-            </ion-row>
-            <ion-row class="ion-text-center">
-                <ion-col size="6">
-                    <div class="contenedores-evaluaciones">
-                        <span class="letra-contenedores-evaluaciones">Objetivo</span> <br>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                        <span class="letra-contenedores-evaluaciones-numeros">4 | 20 </span>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
-                    </div>
-                </ion-col>
-                <ion-col size="6">
-                    <div class="contenedores-evaluaciones">
-                        <span class="letra-contenedores-evaluaciones">Objetivo</span> <br>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                        <span class="letra-contenedores-evaluaciones-numeros">4 | 20 </span>
-                        <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
-                    </div>
-                </ion-col>
-            </ion-row>
-        </div>
-
-        <div class="ion-padding ion-text-center" style="background-color: rgb(28,35,41);width: 100%;">
-            <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" chartType="bar" [legend]="false"
-                [options]="barChartOptions" height="150" [colors]="barChartColors"></canvas>
-            <br>
-            <span style="color: white;">21/06/2021 al 25/06/2021</span>
-        </div>
-    </ion-row> -->    
 
 </ion-content>
 

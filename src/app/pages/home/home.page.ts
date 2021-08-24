@@ -4,6 +4,7 @@ import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { UtilitiesService } from 'src/app/services/utilities.service';
+import { WebRayoService } from 'src/app/services/web-rayo.service';
 
 @Component({
   selector: 'app-home',
@@ -77,7 +78,7 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
-    private utilitiesService: UtilitiesService) { 
+    private utilitiesService: UtilitiesService, private webRayoService: WebRayoService) { 
     this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
     console.log(this.usuarioSesion)
 
@@ -85,7 +86,6 @@ export class HomePage implements OnInit {
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
   ngOnInit() {
     console.log(this.barChartData)
     console.log(this.datasets)
@@ -100,4 +100,20 @@ export class HomePage implements OnInit {
   public irNuevaEvaluacion() {
     this.navCtrl.navigateRoot("alta-establecimiento");
   }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async obtenerObjetivos(){
+
+    let objeto = {
+      objetivos_usuario_id: this.usuarioSesion.user_id,
+	    objetivos_fecha: ""
+    }
+    const url = 'Operaciones/Evaluacion';
+    const respuesta: any = await this.webRayoService.postAsync(url, objeto);
+    if ( respuesta == null || respuesta.success === false ) {
+      return false;
+    } else
+      return true;
+  }
+
 }

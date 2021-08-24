@@ -16,6 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HTTP } from '@ionic-native/http/ngx';
 import { UtilitiesService } from './services/utilities.service';
 import { customTransition } from "./transition";
+import { Network } from '@ionic-native/network/ngx';
 // import { MapaComponent } from './components/mapa/mapa.component';
 
 @NgModule({
@@ -38,6 +39,7 @@ import { customTransition } from "./transition";
     HttpClientModule,
     LocationAccuracy,
     UtilitiesService,
+    Network,
     HTTP,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
