@@ -608,11 +608,13 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public irPasoAtras(){
     if (!this.esEdicion) {
-      this.pasoFormulario = this.pasoFormulario - 1
+      this.pasoFormulario = this.pasoFormulario - 1;
     }else{
       if (this.pasoFormulario == 3) {
         this.pasoFormulario = 1;
+        return;
       }
+      this.pasoFormulario = this.pasoFormulario - 1
     }
   }
 
