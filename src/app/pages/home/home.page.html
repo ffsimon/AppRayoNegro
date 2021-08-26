@@ -7,7 +7,11 @@
         <ion-col size="4"></ion-col>
         <ion-col size="4">
             <div class="avatar">
-                <img src="{{'data:image/jpg;base64,' + usuarioSesion.user_sesion_foto}}" alt="" class="avatar">  
+                <img src="{{'data:image/jpg;base64,' + usuarioSesion.user_sesion_foto}}" alt="" class="avatar" 
+                *ngIf="usuarioSesion.user_sesion_foto != '' && usuarioSesion.user_sesion_foto != null"> 
+
+                <img src="assets/img/image-anonima.jpeg" alt="" class="avatar" 
+                *ngIf="usuarioSesion.user_sesion_foto == '' || usuarioSesion.user_sesion_foto == null">  
             </div>
         </ion-col>
         <ion-col size="4" class="ion-text-center" >

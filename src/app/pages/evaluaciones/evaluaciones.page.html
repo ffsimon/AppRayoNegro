@@ -2,8 +2,6 @@
 
 
 <ion-content>
- 
-
   <ion-row class="ion-padding-horizontal">
     <ion-col size="9" style="padding-top: 14px;">
       <span class="nombre-persona">{{usuarioSesion.user_sesion_apaterno }} {{usuarioSesion.user_sesion_amaterno }} {{usuarioSesion.user_sesion_nombre }}</span>
@@ -12,20 +10,16 @@
       <img src="assets/img/logo.png" alt="">
     </ion-col>
   </ion-row>
-
   <br>
-
   <ion-row style="color: white;">
     <ion-col size="1"></ion-col>
     <ion-col class="ion-text-center" size="10">
-      <!-- <span style="color: white;font-weight: bold;font-size: 18px;">JUNIO</span> <br> -->
       <span style="color: white;font-size: 14px;">Tus evaluaciones</span>
     </ion-col>
     <ion-col size="1" (click)="regresarHome()">
       <ion-icon name="close-outline" style="zoom: 1.5;" style="display: flex; justify-content: center; align-items: center;"></ion-icon>
     </ion-col>
   </ion-row>
-
 
   <ion-card style="color: white;" (click)="item.visible = !item.visible" class="contenedor-card" *ngFor="let item of listaEvaluacionesUsuario">
       <ion-row *ngIf="item.visible">
@@ -49,7 +43,6 @@
             <ion-col size="12" class="ion-text-center" *ngIf="!item.visible">
               <ion-icon name="ellipse" style="color: #87B375;zoom: 1.5;"></ion-icon>
             </ion-col>
-
             <ion-col size="12" *ngIf="!item.visible">
               <span> <b>{{item.evaluacion_nombre_establecimiento}}</b></span>
             </ion-col>
@@ -67,9 +60,7 @@
             </ion-col>
           </ion-row>
         </ion-col>
-
         <ion-col size="6" class="ion-padding">
-          <!-- <app-mapa-filtro [coordenadas]="{lat: item.evaluacion_latitud, lng: item.evaluacion_longitud}"></app-mapa-filtro> -->
           <div id="map{{item.evaluacion_id}}" class="map"></div>
         </ion-col>
       </ion-row>
@@ -78,11 +69,11 @@
         <ion-card style="width: 80%;margin-left: 10%;border-radius: 20px;" class="contenedor-card" *ngFor="let img of item.list_fotografias">
           <div style="color: white;" class="ion-text-center">
             <ion-col size="10" class="ion-text-center">
-              <!-- <span>Fotografía de fachada</span> falta el nombre -->
             </ion-col>
             <ion-col size="6" class="ion-padding">
               <div class="ion-padding" style="height: 150px;">
-                <img src="{{'data:image/jpg;base64,' + img.fotografia_base64}}" alt="" width="80%" height="100%">
+                <img src="assets/img/publicidad.png" alt="" width="80%" height="100%" *ngIf="img.fotografia_base64 == null || img.fotografia_base64 == ''">
+                <img src="{{'data:image/jpg;base64,' + img.fotografia_base64}}" alt="" width="80%" height="100%" *ngIf="img.fotografia_base64 != null && img.fotografia_base64 != ''">
               </div>
             </ion-col>
           </div>
@@ -96,12 +87,8 @@
         </ion-button>
         <br>
       </div>
-     
   </ion-card>
   <div>
-
   </div>
   <br>
- 
-
 </ion-content>

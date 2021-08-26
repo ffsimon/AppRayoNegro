@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonSlides, NavController } from '@ionic/angular';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
-import { element, promise } from 'protractor';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
 import { Competencias, EvaluacionesRequest, Fotografias } from 'src/app/models/evaluacion_request_model';
 import { GeocoderResult } from 'src/app/models/geocoder_model';
@@ -168,9 +166,6 @@ export class AltaEstablecimientoPage implements OnInit {
         console.log(evaluacionesGuardadasLocal);
 
     if(this.pasoFormulario === 1){
-      console.log(this.datosGenerales.valid);
-      console.log(this.datosGenerales, this.compartieronRazonSocial, this.estasEnOutlet);
-
       if(!this.datosGenerales.valid){
         this.utilitiesService.alert('', 'Verifica que los datos esten completos.');
           return;
@@ -207,10 +202,7 @@ export class AltaEstablecimientoPage implements OnInit {
         this.utilitiesService.alert('', 'Agregue todos los campos requeridos.');
         return;
       }
-
-      console.log(this.sliderOne.slidesItems);
       this.opcionesParafoto = this.sliderOne.slidesItems.filter(item => item.seleccionado === true);
-      console.log(this.opcionesParafoto);
     }
 
     let bandera = false;
@@ -221,7 +213,6 @@ export class AltaEstablecimientoPage implements OnInit {
         }
       } else {
         this.opcionesParafoto.forEach(element => {
-          console.log(element.fotoBase64, this.tempImg);
           if (element.fotoBase64 === '' || this.tempImg === '') {
             bandera = true;
           }
@@ -328,7 +319,6 @@ export class AltaEstablecimientoPage implements OnInit {
        this.lstaCompetencia[i].arregloHijos = hijoCompetencia;
       }
     }
-    console.log(this.lstaCompetencia)
   }
 
 
@@ -345,7 +335,6 @@ export class AltaEstablecimientoPage implements OnInit {
       for (let i = 0; i < respuesta.response.length; i++) {
         respuesta.response[i].estatus = false;
       }
-      console.log(respuesta.response);
       return respuesta.response;
     }
   }
@@ -358,7 +347,6 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async camara(): Promise<string> {
-    console.log('tomar foto');
     let fotoBase64 = '';
     const options: CameraOptions = {
       quality: 50,
@@ -374,9 +362,7 @@ export class AltaEstablecimientoPage implements OnInit {
       fotoBase64 = base64Image;
     }, (err) => {
       fotoBase64 = '';
-      console.log('error', err);
     });
-
     return fotoBase64;
   }
 
@@ -400,7 +386,6 @@ export class AltaEstablecimientoPage implements OnInit {
       loading.dismiss();
       return this.subListaTipoComercio = [];
     } else {
-      console.log(this.subListaTipoComercio);
       loading.dismiss();
       return this.subListaTipoComercio = respuesta.response;
     }
@@ -437,10 +422,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async enviarEvaluacion(){
-
-    let datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder")); 
-    console.log(datosUbicacion);
-    
+    let datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));    
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
     let objeto: EvaluacionesRequest = {
@@ -464,9 +446,6 @@ export class AltaEstablecimientoPage implements OnInit {
       // lista_competencias: this.ordenarCompetencias(),
       evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
     }
-    console.log(objeto)
-
-
     const url = 'Operaciones/Evaluacion';
     const respuesta: any = await this.webRayoService.postAsync(url, objeto);
     if ( respuesta == null || respuesta.success === false ) {
@@ -501,7 +480,6 @@ export class AltaEstablecimientoPage implements OnInit {
       let imagenesCarrusel: Fotografias = { efotografia_catalogo_id_evidencia: this.opcionesParafoto[i].cagenerico_clave, imagBase64: this.opcionesParafoto[i].fotoBase64 }
       listafotos.push(imagenesCarrusel);
     }
-    console.log(listafotos)
     return listafotos;
   }
 
@@ -536,7 +514,6 @@ export class AltaEstablecimientoPage implements OnInit {
     let seEncuentraStringBase64 = this.fotoIdentificastePublicidad.indexOf(this.fotoIdentificastePublicidad);
       if (seEncuentraStringBase64 !== -1){
         this.fotoDefault = this.fotoIdentificastePublicidad.replace(stringBase64, "")
-        console.log(this.fotoIdentificastePublicidad)
       }
     }
     
@@ -554,7 +531,6 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async llenarDatos(evaluacion){
-    console.log("llenar datos")
     if(evaluacion.evaluacion_nombre_outlet != null && evaluacion.evaluacion_nombre_outlet != '')
       this.estasEnOutlet = true;
 
@@ -562,7 +538,6 @@ export class AltaEstablecimientoPage implements OnInit {
       this.compartieronRazonSocial = true;
 
     if (this.listaTipoComercio.find(item => item.cagenerico_clave == evaluacion.evaluacion_ca_tipo_comercio) != null) {
-      console.log("es diferente de null")
       this.tipoComercio.setValue(evaluacion.evaluacion_ca_tipo_comercio);
       await this.buscarSubtipoComercio(evaluacion.evaluacion_ca_tipo_comercio)
     }
@@ -575,7 +550,6 @@ export class AltaEstablecimientoPage implements OnInit {
     // paso 3:
     this.comunicacion.setValue(evaluacion.evaluacion_ca_id_comunicacion)
     this.localizacionItem.setValue(evaluacion.evaluacion_localizacion_id)
-    console.log(this.sliderOne.slidesItems)
 
     if (evaluacion.list_fotografias) {
 
@@ -592,17 +566,17 @@ export class AltaEstablecimientoPage implements OnInit {
     // aquí se hace match para la foto de fachada
     evaluacion.list_fotografias.forEach(foto => {
       if(foto.efotografia_catalogo_id_evidencia == 0){
-        console.log("Estamos entrando")
         this.tempImg = "data:image/jpeg;base64," + foto.fotografia_base64
       }
 
       this.sliderOne.slidesItems.forEach(sliders => {
         if (sliders.cagenerico_clave == foto.efotografia_catalogo_id_evidencia) {
-          sliders.fotoBase64 = "data:image/jpeg;base64," + foto.fotografia_base64;
+          sliders.fotoBase64 = "data:image/jpeg;base64," + foto.fotografia_base64
         }
       });
     });
-    console.log(this.tempImg)
+
+    console.log(this.sliderOne.slidesItems)
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -638,12 +612,24 @@ export class AltaEstablecimientoPage implements OnInit {
       list_fotografias: this.ordenarListaFotos(),
       evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
     }
-
     objeto.list_fotografias.forEach(foto => {
-      foto.efotografia_bandera_modificacion = 1;
+      foto.efotografia_bandera_modificacion = 1
     });
 
-    console.log(objeto);
+    for (let i = 0; i < this.evaluacion.list_fotografias.length; i++) {
+      for (let j = 0; j < objeto.list_fotografias.length; j++) {
+        if(this.evaluacion.list_fotografias[i].efotografia_catalogo_id_evidencia == objeto.list_fotografias[j].efotografia_catalogo_id_evidencia){
+          console.log(this.evaluacion.list_fotografias[i])
+          console.log(objeto.list_fotografias[j])
+          objeto.list_fotografias[j].efotografia_fotografia = this.evaluacion.list_fotografias[i].efotografia_fotografia
+          objeto.list_fotografias[j].efotografia_id = this.evaluacion.list_fotografias[i].efotografia_id
+        }
+
+      }
+    }
+    console.log(objeto)
+    // return;
+    
     const url = 'Operaciones/Evaluacion/Put';
     const respuesta: any = await this.webRayoService.putAsync(url, objeto);
     if ( respuesta == null || respuesta.success === false ) {
