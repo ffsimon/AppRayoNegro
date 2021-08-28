@@ -161,10 +161,6 @@ export class AltaEstablecimientoPage implements OnInit {
   }
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async validacionDatosGenerales() {
-
-    let evaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
-        console.log(evaluacionesGuardadasLocal);
-
     if(this.pasoFormulario === 1){
       if(!this.datosGenerales.valid){
         this.utilitiesService.alert('', 'Verifica que los datos esten completos.');
@@ -242,6 +238,36 @@ export class AltaEstablecimientoPage implements OnInit {
         }
 
       }else{
+        
+        // revisamos si hay internet y si no hay lo mandamos a stored and foward
+        if(!this.hayInternet){
+          await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
+          let datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
+          let objeto: EvaluacionesRequest = {
+            evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
+            evaluacion_razon_social: this.compartieronRazonSocial ? this.datosGenerales.value.razonSocial : null,
+            evaluacion_ca_tipo_comercio: this.datosGenerales.value.tipoComercio,
+            evaluacion_ca_tipo_sub_comercio: this.datosGenerales.value.subTipoComercio,
+            evaluacion_outlet: this.estasEnOutlet == false? 0: 1,
+            evaluacion_nombre_outlet: this.estasEnOutlet ?  this.datosGenerales.value.nombreOutlet: null,
+            evaluacion_numero: this.datosUbicacion.value.numeroEstablecimiento,
+            evaluacion_calle: datosUbicacion != null ? datosUbicacion.thoroughfare: null,
+            evaluacion_colonia: datosUbicacion != null ? datosUbicacion.subLocality : null,
+            evaluacion_municipio_alcadia:  datosUbicacion != null ? datosUbicacion.administrativeArea: null,
+            evaluacion_cp: datosUbicacion != null ? datosUbicacion.postalCode: null,
+            evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitude): null,
+            evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitude): null,
+            evaluacion_renovacion: 0,
+            evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
+            evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
+            list_fotografias: this.ordenarListaFotos(),
+            lista_competencias: this.ordenarCompetencias(),
+            evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
+          }
+          await this.guardarEnStoredFoward(objeto)
+          return;
+        }
+
         let envioEvaluacion = await this.enviarEvaluacion();
         if(!envioEvaluacion){
           await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
@@ -443,7 +469,7 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
       evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
       list_fotografias: this.ordenarListaFotos(),
-      // lista_competencias: this.ordenarCompetencias(),
+      lista_competencias: this.ordenarCompetencias(),
       evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
     }
     const url = 'Operaciones/Evaluacion';
@@ -507,25 +533,28 @@ export class AltaEstablecimientoPage implements OnInit {
       listaCompetencias.push(competencia);
     }
 
-    // limpiamos la foto de idetificaste nueva publicidad
-    this.fotoDefault = '';
-    if(this.fotoIdentificastePublicidad != ''){
-    let stringBase64: string = "data:image/jpeg;base64," 
-    let seEncuentraStringBase64 = this.fotoIdentificastePublicidad.indexOf(this.fotoIdentificastePublicidad);
-      if (seEncuentraStringBase64 !== -1){
-        this.fotoDefault = this.fotoIdentificastePublicidad.replace(stringBase64, "")
+    if (this.tercerOpcionPasoCinco) {
+      // limpiamos la foto de idetificaste nueva publicidad
+      this.fotoDefault = '';
+      if(this.fotoIdentificastePublicidad != ''){
+      let stringBase64: string = "data:image/jpeg;base64," 
+      let seEncuentraStringBase64 = this.fotoIdentificastePublicidad.indexOf(this.fotoIdentificastePublicidad);
+        if (seEncuentraStringBase64 !== -1){
+          this.fotoDefault = this.fotoIdentificastePublicidad.replace(stringBase64, "")
+        }
       }
-    }
-    
-    // agregamos las competencias que vienen por default
-    let competenciaCatalogo: Competencias = {
-      ecompentencia_comentario: this.comentarios,
-        ecompentencia_catalogo_competencia: 0,
-        ecompentencia_catalogo_competencia_material: 0,
-        ecompentencia_foto: this.fotoIdentificastePublicidad != '' ? this.fotoDefault : ''
-    }
+      
+      // agregamos las competencias que vienen por default
+      let competenciaCatalogo: Competencias = {
+        ecompentencia_comentario: this.comentarios,
+          ecompentencia_catalogo_competencia: 0,
+          ecompentencia_catalogo_competencia_material: 0,
+          ecompentencia_foto: this.fotoIdentificastePublicidad != '' ? this.fotoDefault : ''
+      }
 
-    listaCompetencias.push(competenciaCatalogo);
+      listaCompetencias.push(competenciaCatalogo);
+    }
+   
     return listaCompetencias;
   }
 
@@ -576,7 +605,43 @@ export class AltaEstablecimientoPage implements OnInit {
       });
     });
 
-    console.log(this.sliderOne.slidesItems)
+    // paso 5: 
+    // primero se va a hacer lo de comentarios
+    let arregloCompetenciasSeleccionadas = [];
+
+    for (let i = 0; i < evaluacion.lista_competencias.length; i++) {
+      // la seccion que viene por default
+      if(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico == 0){
+        // activamos el toogle
+        this.tercerOpcionPasoCinco = true;
+        if(evaluacion.lista_competencias[i].ecompentencia_comentario != null && evaluacion.lista_competencias[i].ecompentencia_comentario != ''){
+          this.comentarios = evaluacion.lista_competencias[i].ecompentencia_comentario;
+        }
+
+        //se va a poner la foto
+        if (evaluacion.lista_competencias[i].fotografia_base64 != null && evaluacion.lista_competencias[i].fotografia_base64 != '') {
+          this.fotoIdentificastePublicidad = evaluacion.lista_competencias[i].fotografia_base64;
+        }
+      }
+
+      // las opciones que vienen de los catalogos
+      if(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico != 0){
+        arregloCompetenciasSeleccionadas.push(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico)
+      }
+      
+    }
+
+    // con esto colocamos lo de las competencias
+    for (let i = 0; i < this.lstaCompetencia.length; i++) {
+      for (let j = 0; j < this.lstaCompetencia[i].arregloHijos.length; j++) {
+        for (let k = 0; k < arregloCompetenciasSeleccionadas.length; k++) {
+          if(this.lstaCompetencia[i].arregloHijos[j].crelacion_id_hijo == arregloCompetenciasSeleccionadas[k]){
+            this.lstaCompetencia[i].prendido = true;
+            this.lstaCompetencia[i].arregloHijos[j].estatus = true;
+          }
+        }
+      } 
+    }
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -610,6 +675,7 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
       evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
       list_fotografias: this.ordenarListaFotos(),
+      lista_competencias: this.ordenarCompetencias(),
       evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
     }
     objeto.list_fotografias.forEach(foto => {
@@ -619,14 +685,35 @@ export class AltaEstablecimientoPage implements OnInit {
     for (let i = 0; i < this.evaluacion.list_fotografias.length; i++) {
       for (let j = 0; j < objeto.list_fotografias.length; j++) {
         if(this.evaluacion.list_fotografias[i].efotografia_catalogo_id_evidencia == objeto.list_fotografias[j].efotografia_catalogo_id_evidencia){
-          console.log(this.evaluacion.list_fotografias[i])
-          console.log(objeto.list_fotografias[j])
           objeto.list_fotografias[j].efotografia_fotografia = this.evaluacion.list_fotografias[i].efotografia_fotografia
           objeto.list_fotografias[j].efotografia_id = this.evaluacion.list_fotografias[i].efotografia_id
         }
 
       }
     }
+
+    // evaluacion.lista_competencias.ecompentencia_id
+
+    for (let i = 0; i < this.evaluacion.lista_competencias.length; i++) {
+
+      for (let j = 0; j < objeto.lista_competencias.length; j++) {
+        
+        if(objeto.lista_competencias[j].ecompentencia_catalogo_competencia == 0 && objeto.lista_competencias[j].ecompentencia_foto != ''){
+          objeto.lista_competencias[j].img_modificada = 1
+          objeto.lista_competencias[j].imagBase64 = objeto.lista_competencias[j].ecompentencia_foto
+        }else{
+          objeto.lista_competencias[j].img_modificada = 0
+        }
+
+        if (this.evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico == objeto.lista_competencias[j].ecompentencia_catalogo_competencia) {
+          objeto.lista_competencias[j].ecompentencia_id = this.evaluacion.lista_competencias[i].ecompentencia_id
+          objeto.lista_competencias[j].ecompentencia_evaluacion_id = this.evaluacion.lista_competencias[i].ecompentencia_evaluacion_id
+        }
+      }
+    }
+    
+      // "mensaje": "string",
+      // "imagBase64": "string"
     console.log(objeto)
     // return;
     
@@ -640,5 +727,18 @@ export class AltaEstablecimientoPage implements OnInit {
       return true;
   }
 
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async guardarEnStoredFoward(evaluacion:Object){
+    let evaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
+
+    if (evaluacionesGuardadasLocal == null) {
+      // si no hay evaluaciones esto se hace
+      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(evaluacion));
+    }else{
+      // si hay evaluaciones
+      evaluacionesGuardadasLocal.push(evaluacion);
+    }
+    
+  }
   
 }

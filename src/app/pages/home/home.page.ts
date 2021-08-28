@@ -13,7 +13,7 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-
+  public evaluacionesGuardadasLocal: any = null;
   public datasets: [{
     label: 'My First Dataset',
     data: [65, 59, 80, 81, 56, 55, 40],
@@ -83,6 +83,8 @@ export class HomePage implements OnInit {
     private utilitiesService: UtilitiesService, private webRayoService: WebRayoService) { 
     this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
+    this.evaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
+    console.log(this.evaluacionesGuardadasLocal);
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -145,7 +147,6 @@ export class HomePage implements OnInit {
       return;
     } else{
       this.objetivos = respuesta.response[0];
-      console.log(this.objetivos)
       loading.dismiss();
       return;
     }

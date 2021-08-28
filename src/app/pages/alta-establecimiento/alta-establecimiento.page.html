@@ -331,7 +331,7 @@
             padding: 0px; border-radius: 20px;">
             <div class="ion-text-center" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;">
               <img *ngIf="fotoIdentificastePublicidad == '' || fotoIdentificastePublicidad == null" src="assets/img/foto.png" alt="" style="height: 80%;width: 45%;">
-              <img *ngIf="fotoIdentificastePublicidad != ''" [src]="fotoIdentificastePublicidad" alt="" class="foto">
+              <img *ngIf="fotoIdentificastePublicidad != ''" src="{{'data:image/jpg;base64,' + fotoIdentificastePublicidad}}" alt="" class="foto">
             </div>
           </ion-col>
         </ion-row>
