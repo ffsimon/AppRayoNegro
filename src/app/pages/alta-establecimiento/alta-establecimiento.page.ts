@@ -372,7 +372,8 @@ export class AltaEstablecimientoPage implements OnInit {
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  public async camara(): Promise<string> {
+  public async camara(opcion?:number): Promise<string> {
+    let baseString = 'data:image/jpg;base64,'
     let fotoBase64 = '';
     const options: CameraOptions = {
       quality: 50,
@@ -389,7 +390,12 @@ export class AltaEstablecimientoPage implements OnInit {
     }, (err) => {
       fotoBase64 = '';
     });
-    return fotoBase64;
+    if (opcion == 5 && this.esEdicion) {
+      return baseString + fotoBase64;
+    }else{
+      return fotoBase64;
+    }
+    
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -442,7 +448,7 @@ export class AltaEstablecimientoPage implements OnInit {
       this.opcionesParafoto[posicion].fotoBase64 = await this.camara();
       console.log(this.opcionesParafoto);
     } else if (opt === 3){
-      this.fotoIdentificastePublicidad = await this.camara();
+      this.fotoIdentificastePublicidad = await this.camara(5);
     }
   }
 
