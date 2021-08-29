@@ -373,7 +373,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async camara(opcion?:number): Promise<string> {
-    let baseString = 'data:image/jpg;base64,'
+    // let baseString = 'data:image/jpg;base64,'
     let fotoBase64 = '';
     const options: CameraOptions = {
       quality: 50,
@@ -390,11 +390,12 @@ export class AltaEstablecimientoPage implements OnInit {
     }, (err) => {
       fotoBase64 = '';
     });
-    if (opcion == 5 && this.esEdicion) {
-      return baseString + fotoBase64;
-    }else{
-      return fotoBase64;
-    }
+    // if (opcion == 5 && this.esEdicion) {
+    //   return fotoBase64;
+    // }else{
+    //   return fotoBase64;
+    // }
+    return fotoBase64;
     
   }
 
