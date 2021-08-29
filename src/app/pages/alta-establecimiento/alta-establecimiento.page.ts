@@ -641,7 +641,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
         //se va a poner la foto
         if (evaluacion.lista_competencias[i].fotografia_base64 != null && evaluacion.lista_competencias[i].fotografia_base64 != '') {
-          this.fotoIdentificastePublicidad = evaluacion.lista_competencias[i].fotografia_base64;
+          this.fotoIdentificastePublicidad = "data:image/jpeg;base64," + evaluacion.lista_competencias[i].fotografia_base64;
         }
       }
 
