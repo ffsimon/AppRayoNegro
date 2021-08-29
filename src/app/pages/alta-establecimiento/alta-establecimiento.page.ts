@@ -528,7 +528,8 @@ export class AltaEstablecimientoPage implements OnInit {
         ecompentencia_comentario: "",
         ecompentencia_catalogo_competencia: listaPreeliminar[i].crelacion_id_hijo,
         ecompentencia_catalogo_competencia_material: listaPreeliminar[i].crelacion_id_padre,
-        ecompentencia_foto: ""
+        ecompentencia_foto: "",
+        ecompentencia_evaluacion_id: 0
       }
       listaCompetencias.push(competencia);
     }
@@ -546,6 +547,7 @@ export class AltaEstablecimientoPage implements OnInit {
       
       // agregamos las competencias que vienen por default
       let competenciaCatalogo: Competencias = {
+        ecompentencia_evaluacion_id: 0,
         ecompentencia_comentario: this.comentarios,
           ecompentencia_catalogo_competencia: 0,
           ecompentencia_catalogo_competencia_material: 0,

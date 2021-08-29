@@ -9,6 +9,7 @@ export class Competencias {
   ecompentencia_catalogo_competencia?: number;
   ecompentencia_catalogo_competencia_material?: number;
   ecompentencia_foto?: string;
+  ecompentencia_evaluacion_id?: number;
 }
 
 export class EvaluacionesRequest {
