@@ -510,6 +510,19 @@ export class AltaEstablecimientoPage implements OnInit {
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // limpiar fotos
+  public limpiarFotos(imgBase64: string){
+
+    let stringBase64: string = "data:image/jpeg;base64," 
+    let seEncuentraStringBase64 = this.tempImg.indexOf(stringBase64);
+    if (seEncuentraStringBase64 !== -1){
+      imgBase64 = this.tempImg.replace(stringBase64, "")
+    }
+
+    return imgBase64;
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public ordenarCompetencias(){
     let listaCompetencias: Array<Competencias> = [];
     let listaPreeliminar: Array<any> = [];
@@ -702,7 +715,7 @@ export class AltaEstablecimientoPage implements OnInit {
         
         if(objeto.lista_competencias[j].ecompentencia_catalogo_competencia == 0 && objeto.lista_competencias[j].ecompentencia_foto != ''){
           objeto.lista_competencias[j].img_modificada = 1
-          objeto.lista_competencias[j].imagBase64 = this.fotoIdentificastePublicidad
+          objeto.lista_competencias[j].imagBase64 = this.limpiarFotos(this.fotoIdentificastePublicidad)
           objeto.lista_competencias[j].ecompentencia_foto = this.evaluacion.lista_competencias[i].ecompentencia_foto
           // ecompentencia_foto
           console.log("objeto edcion", this.evaluacion.lista_competencias[i].ecompentencia_foto)
