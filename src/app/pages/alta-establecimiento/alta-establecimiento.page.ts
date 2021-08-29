@@ -222,8 +222,8 @@ export class AltaEstablecimientoPage implements OnInit {
     }
 
     if(this.pasoFormulario === 5){
-      // this.ordenarCompetencias();
-      // return;
+      
+      debugger;
       if(this.tercerOpcionPasoCinco && this.fotoIdentificastePublicidad === ''){
         console.log('falta foto');
         this.utilitiesService.alert('', 'Captura foto de publicidad nueva.');
@@ -373,7 +373,6 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async camara(opcion?:number): Promise<string> {
-    // let baseString = 'data:image/jpg;base64,'
     let fotoBase64 = '';
     const options: CameraOptions = {
       quality: 50,
@@ -390,13 +389,7 @@ export class AltaEstablecimientoPage implements OnInit {
     }, (err) => {
       fotoBase64 = '';
     });
-    // if (opcion == 5 && this.esEdicion) {
-    //   return fotoBase64;
-    // }else{
-    //   return fotoBase64;
-    // }
     return fotoBase64;
-    
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -519,9 +512,6 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // limpiar fotos
   public limpiarFotos(imgBase64: string){
-    debugger;
-    
-
     let stringBase64: string = "data:image/jpeg;base64," 
     let seEncuentraStringBase64 = imgBase64.indexOf(stringBase64);
     if (seEncuentraStringBase64 !== -1){
@@ -689,7 +679,6 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async editarEvaluacion(){
-    debugger;
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
 
