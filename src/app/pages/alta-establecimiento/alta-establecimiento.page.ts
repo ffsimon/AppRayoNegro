@@ -700,7 +700,11 @@ export class AltaEstablecimientoPage implements OnInit {
         
         if(objeto.lista_competencias[j].ecompentencia_catalogo_competencia == 0 && objeto.lista_competencias[j].ecompentencia_foto != ''){
           objeto.lista_competencias[j].img_modificada = 1
-          objeto.lista_competencias[j].imagBase64 = objeto.lista_competencias[j].ecompentencia_foto
+          objeto.lista_competencias[j].imagBase64 = this.evaluacion.lista_competencias[i].fotografia_base64
+          objeto.lista_competencias[j].ecompentencia_foto = this.evaluacion.lista_competencias[i].ecompentencia_foto
+          // ecompentencia_foto
+          console.log("objeto edcion", this.evaluacion.lista_competencias[i].ecompentencia_foto)
+          console.log("objeto a enviar", objeto.lista_competencias[j])
         }else{
           objeto.lista_competencias[j].img_modificada = 0
         }
