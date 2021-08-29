@@ -514,7 +514,7 @@ export class AltaEstablecimientoPage implements OnInit {
   public limpiarFotos(imgBase64: string){
 
     let stringBase64: string = "data:image/jpeg;base64," 
-    let seEncuentraStringBase64 = this.tempImg.indexOf(stringBase64);
+    let seEncuentraStringBase64 = imgBase64.indexOf(stringBase64);
     if (seEncuentraStringBase64 !== -1){
       imgBase64 = imgBase64.replace(stringBase64, "")
     }
