@@ -516,7 +516,7 @@ export class AltaEstablecimientoPage implements OnInit {
     let stringBase64: string = "data:image/jpeg;base64," 
     let seEncuentraStringBase64 = this.tempImg.indexOf(stringBase64);
     if (seEncuentraStringBase64 !== -1){
-      imgBase64 = this.tempImg.replace(stringBase64, "")
+      imgBase64 = imgBase64.replace(stringBase64, "")
     }
 
     return imgBase64;
