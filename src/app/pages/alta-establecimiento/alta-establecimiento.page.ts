@@ -680,6 +680,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async editarEvaluacion(){
+    debugger;
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
 
