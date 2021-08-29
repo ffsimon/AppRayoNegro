@@ -240,6 +240,7 @@ export class AltaEstablecimientoPage implements OnInit {
       }else{
         
         // revisamos si hay internet y si no hay lo mandamos a stored and foward
+        console.log(this.hayInternet)
         if(!this.hayInternet){
           await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
           let datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
