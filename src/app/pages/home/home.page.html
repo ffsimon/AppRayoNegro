@@ -44,7 +44,7 @@
                     <ion-col size="12" style="padding: 0px 5px 5px 0px;">
                         <div style="height: 100%; background-color: rgb(142,160,174); font-size: 17px; display: flex;
                         justify-content: center; align-items: center;" class="border-redondos">
-                            <span style="font-weight: bold;color: white;">Sincronizar</span>
+                            <span style="font-weight: bold;color: white;" (click)="guardarStoredFoward()">Sincronizar</span>
                         </div>
                     </ion-col>
                 </ion-row>
@@ -77,7 +77,7 @@
                                 </ion-row>
                             </ion-row>
                             <ion-row style="justify-content: center; align-items: center;">
-                                <span style="color: white; font-size: 35px;">-</span>
+                                <span style="color: white; font-size: 35px;">{{numeroEvaluacionesGuardadasLocal}}</span>
                             </ion-row>
                         </div>
                     </ion-col>

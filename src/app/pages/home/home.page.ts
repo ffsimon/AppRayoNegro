@@ -13,7 +13,11 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-  public evaluacionesGuardadasLocal: any = null;
+  public numeroEvaluacionesGuardadasLocal: any = null;
+  public evaluacionesStoredFoward: any = null;
+  public espejoEvaluacionesStoredFoward: any = null;
+  public seDieronDeAltaTodasLasEvaluaciones: boolean = true;
+  public cuantasEvaluacionesSeDieronDeAlta: number = null;
   public datasets: [{
     label: 'My First Dataset',
     data: [65, 59, 80, 81, 56, 55, 40],
@@ -83,8 +87,27 @@ export class HomePage implements OnInit {
     private utilitiesService: UtilitiesService, private webRayoService: WebRayoService) { 
     this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
-    this.evaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
-    console.log(this.evaluacionesGuardadasLocal);
+    this.numeroEvaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
+    
+    if(this.numeroEvaluacionesGuardadasLocal == null){
+      this.numeroEvaluacionesGuardadasLocal = 0;
+    } else{
+        this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal.length;
+        this.evaluacionesStoredFoward = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
+      }   
+      
+      console.log(this.numeroEvaluacionesGuardadasLocal)
+      
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public refrescarPantalla(){
+    if(this.numeroEvaluacionesGuardadasLocal == null){
+      this.numeroEvaluacionesGuardadasLocal = 0;
+    } else{
+        this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal.length;
+        this.evaluacionesStoredFoward = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
+      }
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -150,6 +173,54 @@ export class HomePage implements OnInit {
       loading.dismiss();
       return;
     }
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async guardarStoredFoward(){
+    // debugger;
+    if(this.numeroEvaluacionesGuardadasLocal == null || this.numeroEvaluacionesGuardadasLocal == 0){
+      await this.utilitiesService.alert("", "Por el momento no hay evaluaciones guardadas en el teléfono.");
+      return;
+    }
+
+    // vamos a dar de alta los registros guardados en memoria
+   let respuesta = await this.utilitiesService.presentAlertConfirm("A continuación se darán " + this.numeroEvaluacionesGuardadasLocal + 
+   " evaluaciones de alta, ¿Deseas continuar?");
+  
+    if(respuesta == false)
+      return;
+
+    // ahora si a dar de alta las evaluaciones
+    const loading = await this.utilitiesService.loadingAsync();
+    loading.present();
+    this.cuantasEvaluacionesSeDieronDeAlta = 0;
+    // vamos a ver hacer el recorrido de las evaluaciones
+    console.log(this.evaluacionesStoredFoward)
+    this.espejoEvaluacionesStoredFoward = this.evaluacionesStoredFoward;
+
+    for (let i = 0; i < this.evaluacionesStoredFoward.length; i++) {
+      console.log(i)
+      const url = 'Operaciones/Evaluacion';
+      const respuestaPost: any = await this.webRayoService.postAsync(url, this.evaluacionesStoredFoward[i]);
+      if ( respuestaPost == null || respuestaPost.success === false ) {
+        loading.dismiss();
+        this.seDieronDeAltaTodasLasEvaluaciones = false;
+      }else{
+        this.cuantasEvaluacionesSeDieronDeAlta = this.cuantasEvaluacionesSeDieronDeAlta + 1;
+        this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal - 1;
+        this.espejoEvaluacionesStoredFoward.splice(i, 1);
+      }
+    }
+    localStorage.removeItem("evaluaciones_store_foward");
+    localStorage.setItem('evaluaciones_store_foward', JSON.stringify(this.espejoEvaluacionesStoredFoward));
+    loading.dismiss();
+
+    if (this.cuantasEvaluacionesSeDieronDeAlta == this.numeroEvaluacionesGuardadasLocal) {
+      await this.utilitiesService.alert("", "Se dieron de alta todas las evaluaciones guardadas en local.");
+    }else{
+      await this.utilitiesService.alert("", "Se produjo un error, se dieron de alta. " + this.cuantasEvaluacionesSeDieronDeAlta + " evaluacion(es).");
+    }
+    this.refrescarPantalla();
   }
 
 }

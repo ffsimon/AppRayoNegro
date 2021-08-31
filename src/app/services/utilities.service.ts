@@ -97,4 +97,30 @@ export class UtilitiesService {
     });
   }
 
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async presentAlertConfirm(message: string): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+        const alert = await this.alertCtrl.create({
+            cssClass: 'my-custom-class',
+            message: message,
+            buttons: [
+                {
+                    text: 'cancelar',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                    handler: (blah) => {
+                        return resolve(false);
+                    }
+                }, {
+                    text: 'aceptar',
+                    handler: () => {
+                        return resolve(true)
+                    }
+                }
+            ]
+        });
+        alert.present();
+    });
+  }
+
 }

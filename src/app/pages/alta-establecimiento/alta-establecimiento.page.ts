@@ -9,6 +9,7 @@ import { GeocoderResult } from 'src/app/models/geocoder_model';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { ConnectivityService } from 'src/app/services/connectivity.service';
 import { ActivatedRoute } from '@angular/router';
+import { Network } from '@ionic-native/network/ngx';
 
 
 @Component({
@@ -95,8 +96,8 @@ export class AltaEstablecimientoPage implements OnInit {
     private webRayoService: WebRayoService,
     private camera: Camera, 
     private connectivity: ConnectivityService,
-    private route: ActivatedRoute) {
-    
+    private route: ActivatedRoute,
+    private network: Network) {    
     if(this.route.snapshot.data["establecimiento"]){
       this.esEdicion = true;
       this.evaluacion = this.route.snapshot.data["establecimiento"];
@@ -128,7 +129,6 @@ export class AltaEstablecimientoPage implements OnInit {
           console.log("App is offline")
       }
     })
-
 
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
@@ -204,7 +204,7 @@ export class AltaEstablecimientoPage implements OnInit {
     let bandera = false;
     if (this.pasoFormulario === 4) {
       if (this.opcionesParafoto.length === 0) {
-        if (this.tempImg === '' || this.tempImg === null) {
+        if (this.tempImg === '' || this.tempImg == null) {
           bandera = true;
         }
       } else {
@@ -222,8 +222,6 @@ export class AltaEstablecimientoPage implements OnInit {
     }
 
     if(this.pasoFormulario === 5){
-      
-      debugger;
       if(this.tercerOpcionPasoCinco && this.fotoIdentificastePublicidad === ''){
         console.log('falta foto');
         this.utilitiesService.alert('', 'Captura foto de publicidad nueva.');
@@ -265,7 +263,32 @@ export class AltaEstablecimientoPage implements OnInit {
             lista_competencias: this.ordenarCompetencias(),
             evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
           }
+
+          // let objeto: EvaluacionesRequest = {
+          //   evaluacion_nombre_establecimiento: "store and forward",
+          //   evaluacion_razon_social: "razon social",
+          //   evaluacion_ca_tipo_comercio: 14,
+          //   evaluacion_ca_tipo_sub_comercio: 19,
+          //   evaluacion_outlet: this.estasEnOutlet == false? 0: 1,
+          //   evaluacion_nombre_outlet: this.estasEnOutlet ?  "siii" : null,
+          //   evaluacion_numero: "bc123",
+          //   evaluacion_calle: "Calle Santa Rosa",
+          //   evaluacion_colonia: "",
+          //   evaluacion_municipio_alcadia:  "Estado de México",
+          //   evaluacion_cp: "",
+          //   evaluacion_latitud: "19.755419000000003",
+          //   evaluacion_longitud: "-99.2126249",
+          //   evaluacion_renovacion: 0,
+          //   evaluacion_ca_id_comunicacion: 36,
+          //   evaluacion_localizacion_id: 40,
+          //   list_fotografias: [],
+          //   lista_competencias: [],
+          //   evaluacion_tbl_usuarios_id: 4
+          // }
+
+          
           await this.guardarEnStoredFoward(objeto)
+          this.navCtrl.navigateRoot('home');
           return;
         }
 
@@ -737,11 +760,7 @@ export class AltaEstablecimientoPage implements OnInit {
       }
     }
     
-      // "mensaje": "string",
-      // "imagBase64": "string"
     console.log(objeto)
-    // return;
-    
     const url = 'Operaciones/Evaluacion/Put';
     const respuesta: any = await this.webRayoService.putAsync(url, objeto);
     if ( respuesta == null || respuesta.success === false ) {
@@ -754,14 +773,19 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarEnStoredFoward(evaluacion:Object){
+    let arrayEvaluaciones = [];
     let evaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
-
+ 
     if (evaluacionesGuardadasLocal == null) {
       // si no hay evaluaciones esto se hace
-      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(evaluacion));
+      arrayEvaluaciones.push(evaluacion)
+      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(arrayEvaluaciones));
     }else{
-      // si hay evaluaciones
+      // si hay evaluaciones las eliminamos
+      localStorage.removeItem("evaluaciones_store_foward");
       evaluacionesGuardadasLocal.push(evaluacion);
+      // guardamos todo nuevamente
+      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(evaluacionesGuardadasLocal));
     }
     
   }
