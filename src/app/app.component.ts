@@ -30,7 +30,7 @@ export class AppComponent {
   public cerrarSesion() {
     this.navCtrl.navigateRoot("login");
     this.menuCtrl.toggle();
-    sessionStorage.removeItem("usuario_sesion")
+    localStorage.removeItem("usuario_sesion")
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

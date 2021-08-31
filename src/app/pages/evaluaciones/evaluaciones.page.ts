@@ -40,7 +40,7 @@ export class EvaluacionesPage implements OnInit {
     private utilitiesService: UtilitiesService,
     private geolocationService: GeolocationService,
     private dataService: DataService) {
-    this.usuarioSesion = JSON.parse(sessionStorage.getItem('usuario_sesion'));
+    this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
     console.log(this.usuarioSesion);
   }
 

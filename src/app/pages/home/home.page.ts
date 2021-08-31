@@ -85,7 +85,7 @@ export class HomePage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
     private utilitiesService: UtilitiesService, private webRayoService: WebRayoService) { 
-    this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
+    this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
     this.numeroEvaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
     

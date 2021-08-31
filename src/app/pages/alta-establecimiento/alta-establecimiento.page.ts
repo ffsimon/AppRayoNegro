@@ -104,7 +104,7 @@ export class AltaEstablecimientoPage implements OnInit {
       console.log("route  ", this.evaluacion)
     }
 
-    this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
+    this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
     this.sliderOne =
     {
       initialSlide: 0,

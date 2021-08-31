@@ -27,7 +27,7 @@ export class LoginPage implements OnInit {
     private navCtrl: NavController, private platform: Platform,
      public webRayoService: WebRayoService, public geolocationService: GeolocationService,
      public utilitiesService: UtilitiesService) { 
-      this.usuarioSesion = JSON.parse(sessionStorage.getItem("usuario_sesion"));
+      this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
       if(this.usuarioSesion != null){
         this.navCtrl.navigateRoot("home");
       }
@@ -86,7 +86,7 @@ export class LoginPage implements OnInit {
     }
     let usuario_sesion: usuario_sesion_model = respuesta.response[0];
     localStorage.setItem("token_jwt", usuario_sesion.auth_token);
-    sessionStorage.setItem("usuario_sesion", JSON.stringify(usuario_sesion));
+    localStorage.setItem("usuario_sesion", JSON.stringify(usuario_sesion));
     this.navCtrl.navigateRoot("home");
     loading.dismiss();
   }
