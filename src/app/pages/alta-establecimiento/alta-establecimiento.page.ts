@@ -116,11 +116,22 @@ export class AltaEstablecimientoPage implements OnInit {
       },
       slidesItems: []
     };
+
+    this.network.onDisconnect().subscribe(() => {
+      console.log('network was disconnected :-(');
+      this.hayInternet = false;
+    });
+
+    this.network.onConnect().subscribe(() => {
+      console.log('network connected!');
+      this.hayInternet = true;
+    });
+
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
-    this.connectivity.appIsOnline$.subscribe(online => {
+    /* this.connectivity.appIsOnline$.subscribe(online => {
       this.hayInternet = online;
       console.log(online)
       if (online) {
@@ -128,7 +139,7 @@ export class AltaEstablecimientoPage implements OnInit {
       } else {
           console.log("App is offline")
       }
-    })
+    }) */
 
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();

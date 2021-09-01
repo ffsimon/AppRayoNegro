@@ -198,7 +198,22 @@ export class HomePage implements OnInit {
     console.log(this.evaluacionesStoredFoward)
     this.espejoEvaluacionesStoredFoward = this.evaluacionesStoredFoward;
 
-    for (let i = 0; i < this.evaluacionesStoredFoward.length; i++) {
+    /* if (this.evaluacionesStoredFoward.length >= 0) {
+      this.evaluacionesStoredFoward.forEach( async (element, index) => {
+        const url = 'Operaciones/Evaluacion';
+        const respuestaPost: any = await this.webRayoService.postAsync(url, element);
+        if (respuestaPost == null || respuestaPost.success === false ) {
+          loading.dismiss();
+          this.seDieronDeAltaTodasLasEvaluaciones = false;
+        } else {
+          this.cuantasEvaluacionesSeDieronDeAlta = this.cuantasEvaluacionesSeDieronDeAlta + 1;
+          //this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal - 1;
+          this.espejoEvaluacionesStoredFoward.splice(index, 1);
+        }
+      });
+    } */
+
+    for (let i = 0; i < this.evaluacionesStoredFoward.length - 1; i++) {
       console.log(i)
       const url = 'Operaciones/Evaluacion';
       const respuestaPost: any = await this.webRayoService.postAsync(url, this.evaluacionesStoredFoward[i]);
@@ -207,12 +222,15 @@ export class HomePage implements OnInit {
         this.seDieronDeAltaTodasLasEvaluaciones = false;
       }else{
         this.cuantasEvaluacionesSeDieronDeAlta = this.cuantasEvaluacionesSeDieronDeAlta + 1;
-        this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal - 1;
+        //this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal - 1;
         this.espejoEvaluacionesStoredFoward.splice(i, 1);
       }
     }
     localStorage.removeItem("evaluaciones_store_foward");
-    localStorage.setItem('evaluaciones_store_foward', JSON.stringify(this.espejoEvaluacionesStoredFoward));
+    if(this.espejoEvaluacionesStoredFoward.length == 0)
+      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(null));
+    else
+      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(this.espejoEvaluacionesStoredFoward));
     loading.dismiss();
 
     if (this.cuantasEvaluacionesSeDieronDeAlta == this.numeroEvaluacionesGuardadasLocal) {
