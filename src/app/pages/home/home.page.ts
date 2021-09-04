@@ -19,7 +19,6 @@ export class HomePage implements OnInit {
   public evaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
   public espejoEvaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
   public seDieronDeAltaTodasLasEvaluaciones: boolean = true;
-  public cuantasEvaluacionesSeDieronDeAlta: number = null;
   public datasets: [{
     label: 'My First Dataset',
     data: [65, 59, 80, 81, 56, 55, 40],
@@ -179,15 +178,14 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarStoredFoward(){
-    // debugger;
     if(this.numeroEvaluacionesGuardadasLocal == null || this.numeroEvaluacionesGuardadasLocal == 0){
       await this.utilitiesService.alert("", "Por el momento no hay evaluaciones guardadas en el teléfono.");
       return;
     }
 
     // vamos a dar de alta los registros guardados en memoria
-   let respuesta = await this.utilitiesService.presentAlertConfirm("A continuación se darán " + this.numeroEvaluacionesGuardadasLocal + 
-   " evaluaciones de alta, ¿Deseas continuar?");
+   let respuesta = await this.utilitiesService.presentAlertConfirm("A continuación se dar(án) " + this.numeroEvaluacionesGuardadasLocal + 
+   " evaluacion(es) de alta, ¿Deseas continuar?");
   
     if(respuesta == false)
       return;
@@ -195,41 +193,40 @@ export class HomePage implements OnInit {
     // ahora si a dar de alta las evaluaciones
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
-    this.cuantasEvaluacionesSeDieronDeAlta = 0;
     // vamos a ver hacer el recorrido de las evaluaciones
-    console.log(this.evaluacionesStoredFoward)
-    let arregloIndicesDadosAlta = [];
-    
-    const listaEvaluaciones = this.evaluacionesStoredFoward as Array<EvaluacionesRequest>;
-    let espejoEvaluacionesStoredFoward = listaEvaluaciones;
+    const evaluacionesGuardadas: Array<EvaluacionesRequest> = [];
+    const evalaucionesNoGuardadas: Array<EvaluacionesRequest> = [];
 
-    for (let i = 0; i < this.evaluacionesStoredFoward.length - 1; i++) {
-      console.log(i)
-      const url = 'Operaciones/Evaluacion';
-      const respuestaPost: any = await this.webRayoService.postAsync(url, this.evaluacionesStoredFoward[i]);
-      if ( respuestaPost == null || respuestaPost.success === false ) {
-        loading.dismiss();
-        this.seDieronDeAltaTodasLasEvaluaciones = false;
-      }else{
-        this.cuantasEvaluacionesSeDieronDeAlta = this.cuantasEvaluacionesSeDieronDeAlta + 1;
-        arregloIndicesDadosAlta.push(i)
-        espejoEvaluacionesStoredFoward.splice(i, 1);
-      }
+    if (this.evaluacionesStoredFoward.length > 0) {
+      this.evaluacionesStoredFoward.forEach(async element => {
+        const url = 'Operaciones/Evaluacion';
+        const respuestaPost: any = await this.webRayoService.postAsync(url, element);
+        if ( respuestaPost == null || respuestaPost.success === false ) {
+          evalaucionesNoGuardadas.push(element);
+        } else{
+          evaluacionesGuardadas.push(element);
+        }
+      });
     }
 
-    localStorage.removeItem("evaluaciones_store_foward");
-    if(espejoEvaluacionesStoredFoward.length == 0)
-      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(null));
-    else
-      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(espejoEvaluacionesStoredFoward));
     loading.dismiss();
 
-    if (this.cuantasEvaluacionesSeDieronDeAlta == this.numeroEvaluacionesGuardadasLocal) {
-      await this.utilitiesService.alert("", "Se dieron de alta todas las evaluaciones guardadas en local.");
-    }else{
-      await this.utilitiesService.alert("", "Se produjo un error, se dieron de alta. " + this.cuantasEvaluacionesSeDieronDeAlta + " evaluacion(es).");
+    localStorage.removeItem('evaluaciones_store_foward');
+    if (evalaucionesNoGuardadas.length === 0) {
+      localStorage.setItem('evaluaciones_store_foward', null);
+    } else {
+      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(evalaucionesNoGuardadas));
     }
-    this.refrescarPantalla();
+
+    this.numeroEvaluacionesGuardadasLocal = evalaucionesNoGuardadas.length;
+    console.log('Numero de evaluaciones por sincronizar', evalaucionesNoGuardadas.length);
+
+    if (evalaucionesNoGuardadas.length === 0) {
+      await this.utilitiesService.alert("", "Se dieron de alta todas las evaluaciones guardadas en local.");
+    } else {
+      await this.utilitiesService.alert("", "Al menos una evaluación no se dio de alta.");
+    }
+    // this.refrescarPantalla();
   }
 
 }
