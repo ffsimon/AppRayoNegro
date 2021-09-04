@@ -197,7 +197,8 @@ export class HomePage implements OnInit {
     this.cuantasEvaluacionesSeDieronDeAlta = 0;
     // vamos a ver hacer el recorrido de las evaluaciones
     console.log(this.evaluacionesStoredFoward)
-    this.espejoEvaluacionesStoredFoward = this.evaluacionesStoredFoward;
+    const listaEvaluaciones = this.evaluacionesStoredFoward;
+    this.espejoEvaluacionesStoredFoward = listaEvaluaciones;
 
     /* if (this.evaluacionesStoredFoward.length >= 0) {
       this.evaluacionesStoredFoward.forEach( async (element, index) => {
@@ -208,7 +209,7 @@ export class HomePage implements OnInit {
           this.seDieronDeAltaTodasLasEvaluaciones = false;
         } else {
           this.cuantasEvaluacionesSeDieronDeAlta = this.cuantasEvaluacionesSeDieronDeAlta + 1;
-          //this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal - 1;
+          this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal - 1;
           this.espejoEvaluacionesStoredFoward.splice(index, 1);
         }
       });
@@ -223,7 +224,6 @@ export class HomePage implements OnInit {
         this.seDieronDeAltaTodasLasEvaluaciones = false;
       }else{
         this.cuantasEvaluacionesSeDieronDeAlta = this.cuantasEvaluacionesSeDieronDeAlta + 1;
-        //this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal - 1;
         this.espejoEvaluacionesStoredFoward.splice(i, 1);
       }
     }
