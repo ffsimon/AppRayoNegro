@@ -23,9 +23,9 @@ export class SlideDrawerComponent implements AfterViewInit {
   async ngAfterViewInit() {
     const windowHeight = window.innerHeight;
     console.log('windowHeight', windowHeight);
-    const drawerHeight = (windowHeight - this.handleHeight) - 190;
+    const drawerHeight = (windowHeight - this.handleHeight) - 205;
     // const drawerHeight = windowHeight - 118;
-    this.renderer.setStyle(this.element.nativeElement, 'top', ((windowHeight - this.handleHeight) + 80 ) + 'px');
+    this.renderer.setStyle(this.element.nativeElement, 'top', ((windowHeight - this.handleHeight) + 65 ) + 'px');
 
     const options: GestureConfig = {
       el: document.querySelector('#header'),

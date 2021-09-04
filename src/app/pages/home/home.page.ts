@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, LOCALE_ID } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
@@ -6,6 +6,7 @@ import { objetivos_usuario } from 'src/app/models/objetivos';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
+
 
 @Component({
   selector: 'app-home',

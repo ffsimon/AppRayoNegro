@@ -26,7 +26,8 @@
         <ion-col size="2"></ion-col>
         <ion-col size="8"  class="ion-text-center">
             <span class="nombre-persona">{{usuarioSesion.user_sesion_apaterno }} {{usuarioSesion.user_sesion_amaterno }} {{usuarioSesion.user_sesion_nombre }}</span><br>
-            <span class="ultima-sincronizacion">Última sincronización: {{usuarioSesion.ultima_sincronizacion | date:"shortDate"}}</span>
+            <span class="ultima-sincronizacion">Última sincronización: </span> <br>
+            <span class="ultima-sincronizacion">{{usuarioSesion.ultima_sincronizacion | date:"fullDate" | titlecase}}</span>
         </ion-col>
         <ion-col size="2" (click)="irEvaluaciones()" style="display: flex; justify-content: center;">
             <img src="assets/img/comercio.png" alt="" class="img-comercio">
@@ -188,4 +189,5 @@
             </div>
         </div>
     </ion-row>
+    <br>
 </app-slide-drawer>
