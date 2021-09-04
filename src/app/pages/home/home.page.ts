@@ -2,6 +2,7 @@ import { Component, OnInit, LOCALE_ID } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
+import { EvaluacionesRequest } from 'src/app/models/evaluacion_request_model';
 import { objetivos_usuario } from 'src/app/models/objetivos';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { UtilitiesService } from 'src/app/services/utilities.service';
@@ -15,8 +16,8 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
 })
 export class HomePage implements OnInit {
   public numeroEvaluacionesGuardadasLocal: any = null;
-  public evaluacionesStoredFoward: any = null;
-  public espejoEvaluacionesStoredFoward: any = null;
+  public evaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
+  public espejoEvaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
   public seDieronDeAltaTodasLasEvaluaciones: boolean = true;
   public cuantasEvaluacionesSeDieronDeAlta: number = null;
   public datasets: [{
@@ -197,23 +198,10 @@ export class HomePage implements OnInit {
     this.cuantasEvaluacionesSeDieronDeAlta = 0;
     // vamos a ver hacer el recorrido de las evaluaciones
     console.log(this.evaluacionesStoredFoward)
-    const listaEvaluaciones = this.evaluacionesStoredFoward;
-    this.espejoEvaluacionesStoredFoward = listaEvaluaciones;
-
-    /* if (this.evaluacionesStoredFoward.length >= 0) {
-      this.evaluacionesStoredFoward.forEach( async (element, index) => {
-        const url = 'Operaciones/Evaluacion';
-        const respuestaPost: any = await this.webRayoService.postAsync(url, element);
-        if (respuestaPost == null || respuestaPost.success === false ) {
-          loading.dismiss();
-          this.seDieronDeAltaTodasLasEvaluaciones = false;
-        } else {
-          this.cuantasEvaluacionesSeDieronDeAlta = this.cuantasEvaluacionesSeDieronDeAlta + 1;
-          this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal - 1;
-          this.espejoEvaluacionesStoredFoward.splice(index, 1);
-        }
-      });
-    } */
+    let arregloIndicesDadosAlta = [];
+    
+    const listaEvaluaciones = this.evaluacionesStoredFoward as Array<EvaluacionesRequest>;
+    let espejoEvaluacionesStoredFoward = listaEvaluaciones;
 
     for (let i = 0; i < this.evaluacionesStoredFoward.length - 1; i++) {
       console.log(i)
@@ -224,14 +212,16 @@ export class HomePage implements OnInit {
         this.seDieronDeAltaTodasLasEvaluaciones = false;
       }else{
         this.cuantasEvaluacionesSeDieronDeAlta = this.cuantasEvaluacionesSeDieronDeAlta + 1;
-        this.espejoEvaluacionesStoredFoward.splice(i, 1);
+        arregloIndicesDadosAlta.push(i)
+        espejoEvaluacionesStoredFoward.splice(i, 1);
       }
     }
+
     localStorage.removeItem("evaluaciones_store_foward");
-    if(this.espejoEvaluacionesStoredFoward.length == 0)
+    if(espejoEvaluacionesStoredFoward.length == 0)
       localStorage.setItem('evaluaciones_store_foward', JSON.stringify(null));
     else
-      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(this.espejoEvaluacionesStoredFoward));
+      localStorage.setItem('evaluaciones_store_foward', JSON.stringify(espejoEvaluacionesStoredFoward));
     loading.dismiss();
 
     if (this.cuantasEvaluacionesSeDieronDeAlta == this.numeroEvaluacionesGuardadasLocal) {
