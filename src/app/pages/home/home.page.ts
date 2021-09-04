@@ -1,5 +1,6 @@
 import { Component, OnInit, LOCALE_ID } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { FCM } from '@ionic-native/fcm/ngx';
+import { NavController, Platform } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
 import { EvaluacionesRequest } from 'src/app/models/evaluacion_request_model';
@@ -85,11 +86,30 @@ export class HomePage implements OnInit {
   public objetivoRealizadas: any;
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
-    private utilitiesService: UtilitiesService, private webRayoService: WebRayoService) { 
+    private utilitiesService: UtilitiesService, 
+    private webRayoService: WebRayoService, 
+    private fcm: FCM, private plt: Platform) { 
     this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
     this.numeroEvaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
     
+
+    this.plt.ready()
+      .then(() => {
+        this.fcm.onNotification().subscribe(data => {
+          if (data.wasTapped) {
+            console.log("Received in background");
+          } else {
+            console.log("Received in foreground");
+          };
+        });
+
+        this.fcm.onTokenRefresh().subscribe(token => {
+          // Register your new token in your back-end if you want
+          // backend.registerToken(token);
+        });
+      })
+
     if(this.numeroEvaluacionesGuardadasLocal == null){
       this.numeroEvaluacionesGuardadasLocal = 0;
     } else{
@@ -229,4 +249,18 @@ export class HomePage implements OnInit {
     // this.refrescarPantalla();
   }
 
+  subscribeToTopic() {
+    this.fcm.subscribeToTopic('enappd');
+  }
+  getToken() {
+    this.fcm.getToken().then(token => {
+      // Register your new token in your back-end if you want
+      // backend.registerToken(token);
+    });
+  }
+  unsubscribeFromTopic() {
+    this.fcm.unsubscribeFromTopic('enappd');
+  }
+  
 }
+
