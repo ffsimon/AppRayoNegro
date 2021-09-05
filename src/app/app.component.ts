@@ -32,6 +32,7 @@ export class AppComponent {
       platform.ready().then(() => {
         this.oneSignal.startInit(this.oneSignalId, this.firebaseId);
         this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.InAppAlert);
+        
         this.oneSignal.handleNotificationReceived().subscribe((res) => {
           console.log(res)
         });
@@ -40,7 +41,14 @@ export class AppComponent {
           // do something when a notification is opened
           console.log(res)
         });
+        
+        // intentando obtener el token
+        this.oneSignal.getIds().subscribe((resp) =>{
+          console.log(resp)
+        })
+
         this.oneSignal.endInit();
+        
       })
     }
 
