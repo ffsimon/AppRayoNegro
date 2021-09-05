@@ -15,8 +15,9 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP } from '@ionic-native/http/ngx';
 import { UtilitiesService } from './services/utilities.service';
-import { customTransition } from "./transition";
+import { customTransition } from './transition';
 import { Network } from '@ionic-native/network/ngx';
+import { OneSignal } from '@ionic-native/onesignal/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,7 +25,7 @@ import { Network } from '@ionic-native/network/ngx';
   imports: [IonicModule.forRoot({
     scrollAssist: false,
     navAnimation: customTransition
-  }),BrowserModule, 
+  }),BrowserModule,
   IonicModule.forRoot(),
   AppRoutingModule,
   FormsModule,
@@ -40,6 +41,7 @@ import { Network } from '@ionic-native/network/ngx';
     UtilitiesService,
     Network,
     HTTP,
+    OneSignal,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent],
