@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "438127086671",
+    "project_id": "rayo-17c43",
+    "storage_bucket": "rayo-17c43.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:438127086671:android:33500c1fb6e5e6385c6e3a",
+        "android_client_info": {
+          "package_name": "com.rayo.negro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "438127086671-7se1efnhqrv25vpqgqc2vpum9qicoifv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBowIGUtsp5FYrelrFQ2Ng9drcTF-6pMH8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "438127086671-7se1efnhqrv25vpqgqc2vpum9qicoifv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
