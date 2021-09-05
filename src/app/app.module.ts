@@ -17,8 +17,6 @@ import { HTTP } from '@ionic-native/http/ngx';
 import { UtilitiesService } from './services/utilities.service';
 import { customTransition } from "./transition";
 import { Network } from '@ionic-native/network/ngx';
-import { FCM } from '@ionic-native/fcm/ngx';
-// import { MapaComponent } from './components/mapa/mapa.component';
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,7 +40,6 @@ import { FCM } from '@ionic-native/fcm/ngx';
     UtilitiesService,
     Network,
     HTTP,
-    FCM,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent],

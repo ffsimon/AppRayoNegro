@@ -1,5 +1,4 @@
 import { Component, OnInit, LOCALE_ID } from '@angular/core';
-import { FCM } from '@ionic-native/fcm/ngx';
 import { NavController, Platform } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
@@ -87,38 +86,18 @@ export class HomePage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
     private utilitiesService: UtilitiesService, 
-    private webRayoService: WebRayoService, 
-    private fcm: FCM, private plt: Platform) { 
-    this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
+    private webRayoService: WebRayoService) { 
+    this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
-    this.numeroEvaluacionesGuardadasLocal = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
-    
-
-    this.plt.ready()
-      .then(() => {
-        this.fcm.onNotification().subscribe(data => {
-          if (data.wasTapped) {
-            console.log("Received in background");
-          } else {
-            console.log("Received in foreground");
-          };
-        });
-
-        this.fcm.onTokenRefresh().subscribe(token => {
-          // Register your new token in your back-end if you want
-          // backend.registerToken(token);
-        });
-      })
+    this.numeroEvaluacionesGuardadasLocal = JSON.parse(localStorage.getItem('evaluaciones_store_foward'));
 
     if(this.numeroEvaluacionesGuardadasLocal == null){
       this.numeroEvaluacionesGuardadasLocal = 0;
-    } else{
+    } else {
         this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal.length;
-        this.evaluacionesStoredFoward = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
-      }   
-      
-      console.log(this.numeroEvaluacionesGuardadasLocal)
-      
+        this.evaluacionesStoredFoward = JSON.parse(localStorage.getItem('evaluaciones_store_foward'));
+    }
+    console.log(this.numeroEvaluacionesGuardadasLocal);
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -127,7 +106,7 @@ export class HomePage implements OnInit {
       this.numeroEvaluacionesGuardadasLocal = 0;
     } else{
         this.numeroEvaluacionesGuardadasLocal = this.numeroEvaluacionesGuardadasLocal.length;
-        this.evaluacionesStoredFoward = JSON.parse(localStorage.getItem("evaluaciones_store_foward"));
+        this.evaluacionesStoredFoward = JSON.parse(localStorage.getItem('evaluaciones_store_foward'));
       }
   }
 
@@ -167,12 +146,12 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public irEvaluaciones() {
-    this.navCtrl.navigateRoot("evaluaciones");
+    this.navCtrl.navigateRoot('evaluaciones');
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public irNuevaEvaluacion() {
-    this.navCtrl.navigateRoot("alta-establecimiento");
+    this.navCtrl.navigateRoot('alta-establecimiento');
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -199,14 +178,14 @@ export class HomePage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarStoredFoward(){
     if(this.numeroEvaluacionesGuardadasLocal == null || this.numeroEvaluacionesGuardadasLocal == 0){
-      await this.utilitiesService.alert("", "Por el momento no hay evaluaciones guardadas en el teléfono.");
+      await this.utilitiesService.alert('', 'Por el momento no hay evaluaciones guardadas en el teléfono.');
       return;
     }
 
     // vamos a dar de alta los registros guardados en memoria
-   let respuesta = await this.utilitiesService.presentAlertConfirm("A continuación se dar(án) " + this.numeroEvaluacionesGuardadasLocal + 
-   " evaluacion(es) de alta, ¿Deseas continuar?");
-  
+   let respuesta = await this.utilitiesService.presentAlertConfirm('A continuación se dar(án) ' + this.numeroEvaluacionesGuardadasLocal + 
+   ' evaluacion(es) de alta, ¿Deseas continuar?');
+
     if(respuesta == false)
       return;
 
@@ -242,25 +221,11 @@ export class HomePage implements OnInit {
     console.log('Numero de evaluaciones por sincronizar', evalaucionesNoGuardadas.length);
 
     if (evalaucionesNoGuardadas.length === 0) {
-      await this.utilitiesService.alert("", "Se dieron de alta todas las evaluaciones guardadas en local.");
+      await this.utilitiesService.alert('', 'Se dieron de alta todas las evaluaciones guardadas en local.');
     } else {
-      await this.utilitiesService.alert("", "Al menos una evaluación no se dio de alta.");
+      await this.utilitiesService.alert('', 'Al menos una evaluación no se dio de alta.');
     }
     // this.refrescarPantalla();
   }
-
-  subscribeToTopic() {
-    this.fcm.subscribeToTopic('enappd');
-  }
-  getToken() {
-    this.fcm.getToken().then(token => {
-      // Register your new token in your back-end if you want
-      // backend.registerToken(token);
-    });
-  }
-  unsubscribeFromTopic() {
-    this.fcm.unsubscribeFromTopic('enappd');
-  }
-  
 }
 

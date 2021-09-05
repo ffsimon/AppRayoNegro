@@ -23,7 +23,6 @@
     "@ionic-native/android-permissions": "^5.35.0",
     "@ionic-native/camera": "^5.35.0",
     "@ionic-native/core": "^5.35.0",
-    "@ionic-native/fcm": "^5.36.0",
     "@ionic-native/geolocation": "^5.35.0",
     "@ionic-native/http": "^5.35.0",
     "@ionic-native/location-accuracy": "^5.35.0",
@@ -31,7 +30,6 @@
     "@ionic-native/network": "^5.36.0",
     "@ionic/angular": "^5.5.2",
     "chart.js": "^2.9.4",
-    "cordova-plugin-fcm-with-dependecy-updated": "^7.8.0",
     "ng-circle-progress": "^1.5.1",
     "ng2-charts": "^2.4.2",
     "rxjs": "~6.6.0",
@@ -103,12 +101,11 @@
       "cordova-plugin-camera": {},
       "cordova-plugin-nativegeocoder": {},
       "cordova-plugin-advanced-http": {},
-      "cordova-plugin-network-information": {},
-      "cordova-plugin-fcm-with-dependecy-updated": {}
+      "cordova-plugin-network-information": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }
