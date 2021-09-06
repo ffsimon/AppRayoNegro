@@ -6,6 +6,7 @@ import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { GeolocationService } from 'src/app/services/geolocation.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-login',
@@ -21,12 +22,15 @@ export class LoginPage implements OnInit {
     usuario: ["", Validators.required],
     contrasenia: ["", Validators.required]
   });
+  public idNotificacion: string = null;
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private formBuilder: FormBuilder,
     private navCtrl: NavController, private platform: Platform,
-     public webRayoService: WebRayoService, public geolocationService: GeolocationService,
-     public utilitiesService: UtilitiesService) { 
+     public webRayoService: WebRayoService, 
+     public geolocationService: GeolocationService,
+     public utilitiesService: UtilitiesService,
+     public appComponent: AppComponent) { 
       this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
       if(this.usuarioSesion != null){
         this.navCtrl.navigateRoot("home");
@@ -87,6 +91,13 @@ export class LoginPage implements OnInit {
     let usuario_sesion: usuario_sesion_model = respuesta.response[0];
     localStorage.setItem("token_jwt", usuario_sesion.auth_token);
     localStorage.setItem("usuario_sesion", JSON.stringify(usuario_sesion));
+    
+    //ingresamos el id de la notificacion
+    this.idNotificacion =  this.appComponent.oneSignalUserId;
+    if(this.idNotificacion != null){
+      this.agregarIdNotificacionUsuario(usuario_sesion.user_id, this.idNotificacion);
+    }
+    
     this.navCtrl.navigateRoot("home");
     loading.dismiss();
   }
@@ -111,5 +122,18 @@ export class LoginPage implements OnInit {
     return respuesta.token;
   } 
 
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async agregarIdNotificacionUsuario(userId,idNoticacion: string){
+    let url = "Usuarios/Usuario/Put";
+    let objetoUsuario = {
+      usuario_id: userId,
+      usuario_token_notificacion: idNoticacion
+    }
+    let respuesta: any = await this.webRayoService.putAsync(url, objetoUsuario);
+    console.log(respuesta)
+    if (respuesta == null || respuesta.token == null) {
+      return null;
+    }
+  }
 
 }
