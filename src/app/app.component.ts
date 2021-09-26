@@ -36,7 +36,12 @@ export class AppComponent implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public ngOnInit() {
     this.platform.ready().then(async() => {
-      await this.obtenerTokenJWTAsync(const_jwt_credentials);
+      let temporalTokenJWT = await this.obtenerTokenJWTAsync(const_jwt_credentials);
+      if (temporalTokenJWT != null) {
+        localStorage.setItem("token_jwt", temporalTokenJWT);
+        return;
+      }
+      
       this.oneSignal.startInit(this.oneSignalId, this.firebaseId);
       this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.InAppAlert);
       this.oneSignal.handleNotificationReceived().subscribe((res) => {

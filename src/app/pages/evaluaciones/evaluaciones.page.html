@@ -82,7 +82,7 @@
       <br>
 
       <div style="display: flex; justify-content: center; align-items: center">
-        <ion-button (click)="enviarEditarEvaluacion(item)" color="light" size="default" shape="round" class="boton_login">
+        <ion-button (click)="enviarEditarEvaluacion(item)" color="light" size="default" shape="round" class="boton_login" *ngIf="item.evaluacion_status == 2">
           Editar
         </ion-button>
         <br>

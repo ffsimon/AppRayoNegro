@@ -48,19 +48,6 @@ export class LoginPage implements OnInit {
         this.geolocationService.checkGPSPermission();
       }
     })
-
-    let loading = await this.utilitiesService.loadingAsync();
-    loading.present();
-
-     let temporalTokenJWT = await this.obtenerTokenJWTAsync(const_jwt_credentials);
-     if (temporalTokenJWT == null) {
-      // this.mensajeError = "i18n_ERROR.err_general";
-      loading.dismiss();
-      return;
-    }
-    // Guardamos el token genérico para hacer la petición al login (Ojo este no es el token final);
-    localStorage.setItem("token_jwt", temporalTokenJWT);
-    loading.dismiss();
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
