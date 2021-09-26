@@ -18,6 +18,7 @@ import { UtilitiesService } from './services/utilities.service';
 import { customTransition } from './transition';
 import { Network } from '@ionic-native/network/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
+// import { SplashScreen } from '@ionic-native/splash-screen';
 
 @NgModule({
   declarations: [AppComponent],
@@ -40,7 +41,7 @@ import { OneSignal } from '@ionic-native/onesignal/ngx';
     LocationAccuracy,
     UtilitiesService,
     Network,
-    HTTP,
+    HTTP, 
     OneSignal,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
