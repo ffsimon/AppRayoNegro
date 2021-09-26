@@ -18,8 +18,7 @@ import { UtilitiesService } from './services/utilities.service';
 import { customTransition } from './transition';
 import { Network } from '@ionic-native/network/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
-// import { SplashScreen } from '@ionic-native/splash-screen';
-
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -34,6 +33,7 @@ import { OneSignal } from '@ionic-native/onesignal/ngx';
   HttpClientModule],
   providers: [
     Camera,
+    SplashScreen,
     AndroidPermissions,
     Geolocation,
     NativeGeocoder,
