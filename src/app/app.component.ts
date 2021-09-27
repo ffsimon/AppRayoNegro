@@ -5,6 +5,7 @@ import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { WebRayoService } from './services/web-rayo.service';
 import { const_jwt_credentials } from './constants';
+import { usuario_sesion_model } from './models/usuario_sesion';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -13,6 +14,7 @@ import { const_jwt_credentials } from './constants';
 export class AppComponent implements OnInit {
 
   public oneSignalUserId: string = null;
+  public usuarioSesion: usuario_sesion_model;
   public opciones: any[] = [
     {
       nombre: 'Perfil',
@@ -31,7 +33,9 @@ export class AppComponent implements OnInit {
   constructor(private menuCtrl: MenuController,
     private navCtrl: NavController, private oneSignal: OneSignal,
     private utilitiesService: UtilitiesService, private splashScreen: SplashScreen,
-    private platform: Platform, public webRayoService: WebRayoService) {}
+    private platform: Platform, public webRayoService: WebRayoService) {
+      this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
+    }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public ngOnInit() {
@@ -64,10 +68,14 @@ export class AppComponent implements OnInit {
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  public cerrarSesion() {
+  public async cerrarSesion() {
+    const loading = await this.utilitiesService.loadingAsync();
+    loading.present();
+    await this.cerrarSesionAsync(this.usuarioSesion.user_id)
     this.navCtrl.navigateRoot('login');
     this.menuCtrl.toggle();
     localStorage.removeItem('usuario_sesion');
+    loading.dismiss();
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -86,5 +94,18 @@ export class AppComponent implements OnInit {
   
       return respuesta.token;
     } 
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async cerrarSesionAsync(sesion_usuario: any) {
+    let usuario = {
+      id_usuario: sesion_usuario
+    }
+    let url = "Usuarios/UsuarioSesion/logout";
+    let respuesta: any = await this.webRayoService.postAsync(url, usuario);
+    if (respuesta == null || respuesta.token == null) {
+      return false;
+    }
+    return true;
+  } 
 
 }
