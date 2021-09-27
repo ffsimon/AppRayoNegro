@@ -113,7 +113,7 @@
         <div class="contenedor-principal">
             <ion-row (click)="verObjetivos = !verObjetivos">
                 <ion-col size="12" class="ion-text-center">
-                    <span style="color: white;font-size: 14;font-weight: bold;"><b>Objetivos por semana</b></span>
+                    <span style="color: white;font-size: 14;font-weight: bold;"><b>Objetivos</b></span>
                 </ion-col>
             </ion-row>
 
@@ -125,7 +125,7 @@
                         [showSubtitle]='false'>
                     </circle-progress>
                     <div>
-                        <span style="color: white;font-size: 18;">Horas</span>
+                        <span style="color: white;font-size: 18;">Días</span>
                     </div>
                 </ion-col>
                 <ion-col size="6" class="ion-text-center" *ngIf="objetivos != null">
@@ -145,36 +145,68 @@
                 <ion-row class="ion-text-center">
                     <ion-col size="6">
                         <div class="contenedores-evaluaciones">
-                            <span class="letra-contenedores-evaluaciones">Trabajadas</span> <br>
-                            <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                            <span class="letra-contenedores-evaluaciones-numeros">{{trabajadas.dia}} | {{trabajadas.semana}} </span>
-                            <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
+                            <ion-row style="height: 30%; justify-content: center; align-items: center;">
+                                <span class="letra-contenedores-evaluaciones">Trabajados</span>
+                            </ion-row>
+                            <ion-row style="height: 30%; justify-content: center; align-items: center;">
+                                <span style="font-size: 10px; color: white;">x semana</span>
+                            </ion-row>
+                            <ion-row style="height: 40%; justify-content: center; align-items: center;">
+                                <span class="letra-contenedores-evaluaciones-numeros">
+                                    {{ trabajadas.dia !== null ? trabajadas.dia : '0' }} | 
+                                    {{ trabajadas.semana !== null ? trabajadas.semana : '0' }}
+                                </span>
+                            </ion-row>
                         </div>
                     </ion-col>
                     <ion-col size="6">
                         <div class="contenedores-evaluaciones">
-                            <span class="letra-contenedores-evaluaciones">Realizadas</span> <br>
-                            <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                            <span class="letra-contenedores-evaluaciones-numeros">{{realizadas.dia}} | {{realizadas.semana}} </span>
-                            <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
+                            <ion-row style="height: 30%; justify-content: center; align-items: center;">
+                                <span class="letra-contenedores-evaluaciones">Realizadas</span>
+                            </ion-row>
+                            <ion-row style="height: 30%; justify-content: center; align-items: center;">
+                                <span style="font-size: 10px; color: white;">x semana</span>
+                            </ion-row>
+                            <ion-row style="height: 40%; justify-content: center; align-items: center;">
+                                <span class="letra-contenedores-evaluaciones-numeros">
+                                    {{ realizadas.dia !== null ? realizadas.dia : '0' }} | 
+                                    {{ realizadas.semana !== null ? realizadas.semana : '0' }}
+                                </span>
+                            </ion-row>
                         </div>
                     </ion-col>
                 </ion-row>
                 <ion-row class="ion-text-center">
                     <ion-col size="6">
                         <div class="contenedores-evaluaciones">
-                            <span class="letra-contenedores-evaluaciones">Objetivo</span> <br>
-                            <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                            <span class="letra-contenedores-evaluaciones-numeros">{{objetivoTrabajadas.dia}} | {{objetivoTrabajadas.semana}} </span>
-                            <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
+                            <ion-row style="height: 30%; justify-content: center; align-items: center;">
+                                <span class="letra-contenedores-evaluaciones">Objetivo</span>
+                            </ion-row>
+                            <ion-row style="height: 30%; justify-content: center; align-items: center;">
+                                <span style="font-size: 10px; color: white;">x mes</span>
+                            </ion-row>
+                            <ion-row style="height: 40%; justify-content: center; align-items: center;">
+                                <span class="letra-contenedores-evaluaciones-numeros">
+                                    {{ objetivoTrabajadas.dia !== null ? objetivoTrabajadas.dia : '0' }} | 
+                                    {{ objetivoTrabajadas.semana !== null ? objetivoTrabajadas.semana : '0' }}
+                                </span>
+                            </ion-row>
                         </div>
                     </ion-col>
                     <ion-col size="6">
                         <div class="contenedores-evaluaciones">
-                            <span class="letra-contenedores-evaluaciones">Objetivo</span> <br>
-                            <span class="letra-contenedores-evaluaciones-secundaria">Día </span>
-                            <span class="letra-contenedores-evaluaciones-numeros">{{objetivoRealizadas.dia}} | {{objetivoRealizadas.semana}}  </span>
-                            <span class="letra-contenedores-evaluaciones-secundaria">Semana</span>
+                            <ion-row style="height: 30%; justify-content: center; align-items: center;">
+                                <span class="letra-contenedores-evaluaciones">Objetivo</span>
+                            </ion-row>
+                            <ion-row style="height: 30%; justify-content: center; align-items: center;">
+                                <span style="font-size: 10px; color: white;">x mes</span>
+                            </ion-row>
+                            <ion-row style="height: 40%; justify-content: center; align-items: center;">
+                                <span class="letra-contenedores-evaluaciones-numeros">
+                                    {{ objetivoRealizadas.dia !== null ? objetivoRealizadas.dia : '0' }} | 
+                                    {{ objetivoRealizadas.semana !== null ? objetivoRealizadas.semana : '0' }}
+                                </span>
+                            </ion-row>
                         </div>
                     </ion-col>
                 </ion-row>
