@@ -1,0 +1,117 @@
+<ion-header>
+  <ion-toolbar class="header">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="login" color="medium"></ion-back-button>
+    </ion-buttons>
+    <ion-title color="light">Recuperar cuenta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <br><br>
+  <!-- Paso 1 agregar correo para recuperacion de la cuenta  -->
+  <form [formGroup]="formVerificaCorreo" (ngSubmit)="recuperarContrasenia()" class="content" *ngIf="step == 1">
+    <span style="margin-bottom: 8px; width: 100%;">
+      Ingrese su correo de contacto
+    </span>
+    <ion-item class="ion-item-input" style="margin-bottom: 8px; width: 100%;">
+      <ion-label position="floating"><span class="error">* Correo</span></ion-label>
+      <ion-input type="text" formControlName="correoContacto" autofocus clearInput>
+      </ion-input>
+    </ion-item>
+    <div *ngFor="let error of mensajesValidacion.correoContacto">
+      <ng-container *ngIf="correoContacto.hasError(error.type) && (correoContacto.dirty || correoContacto.touched)">
+        <small style="color: white;">{{error.message}}</small>
+      </ng-container>
+    </div>
+
+    <span style="color: white;"> {{mensajeErrorCorreo }}</span>
+
+    <br>
+    <ion-button color="medium" type="submit">
+      <span>Recuperar cuenta</span>
+    </ion-button>
+    <a (click)="irLogin()" style="text-decoration: none; padding-top: 1.5rem;color: white;">
+      Regresar
+    </a>
+  </form>
+
+    <!-- Paso 2 agregar el código de verificacion  -->
+    <form [formGroup]="formVerificaCodigo" (ngSubmit)="verificarCodigo()" class="content" *ngIf="step == 2">
+      <div class="info ion-text-center" style="color: white;">
+        {{this.correoRecuperacion}}
+      </div>
+      <br>
+  
+      <span style="margin-bottom: 8px; width: 100%; text-align: center;">
+        Si su correo existe en el sistema, recibirá un código de seguridad, por favor ingresalo.
+      </span>
+      <br>
+      <ion-item class="ion-item-input" style="margin-bottom: 8px; width: 100%;">
+        <ion-label position="floating"><span class="error">* Código</span></ion-label>
+        <ion-input type="text" formControlName="codigo" inputmode="numeric" autofocus clearInput
+          (ionChange)="mensajeErrorCodigo = ''">
+        </ion-input>
+      </ion-item>
+      <div *ngFor="let error of mensajesValidacion.codigo">
+        <ng-container *ngIf="codigo.hasError(error.type) && (codigo.dirty || codigo.touched)">
+          <small style="color: white;">{{error.message}}</small>
+        </ng-container>
+      </div>
+  
+      <span *ngIf="mensajeErrorCodigo" class="error"> {{mensajeErrorCodigo}}</span>
+  
+      <br>
+      <ion-button color="medium" type="submit">
+        Verificar
+      </ion-button>
+      <a (click)="irLogin()" style="text-decoration: none; padding-top: 1.5rem;color: white;">
+        Regresar
+      </a>
+    </form>
+
+      <!-- Paso 3 Restablecer contraseña -->
+  <form [formGroup]="formRestableceContrasenia" (ngSubmit)="restablecerContrasenia()" class="content" *ngIf="step == 3">
+    <ion-item class="ion-item-input" style="margin-bottom: 1rem; width: 100%;">
+      <ion-label position="floating"><span class="error">* Nueva contraseña</span></ion-label>
+      <ion-input type="password" formControlName="contrasenia" clearInput autocomplete></ion-input>
+    </ion-item>
+    <div *ngFor="let error of mensajesValidacion.contrasenia">
+      <ng-container *ngIf="contrasenia.hasError(error.type) && (contrasenia.dirty || contrasenia.touched)">
+        <small style="color: white;">{{error.message}}</small>
+      </ng-container>
+    </div>
+
+    <ion-item class="ion-item-input" style="margin-bottom: 8px; width: 100%;">
+      <ion-label position="floating"><span class="error">* Confirmar contraseña</span></ion-label>
+      <ion-input type="password" formControlName="confirmacionContrasenia" clearInput autocomplete></ion-input>
+    </ion-item>
+
+    <div *ngFor="let error of mensajesValidacion.confirmacionContrasenia">
+      <ng-container
+        *ngIf="confirmacionContrasenia.hasError(error.type) && (confirmacionContrasenia.dirty || confirmacionContrasenia.touched)">
+        <small style="color: white;">{{error.message}}</small>
+      </ng-container>
+    </div>
+
+    <div style="color: white;" *ngIf="contrasenia.value != '' && contrasenia.errors != null">
+      La contraseña debe contener al menos 6 caracteres, un número, una mayúscula y una minúscula.
+    </div>
+    <div style="color: white;" *ngIf="confirmacionContrasenia.value != '' && confirmacionContrasenia.errors != null">
+      Las contraseñas no coinciden.
+    </div>
+
+    <div style="color: white;" *ngIf="mensajeErrorCambioContrasenia">
+      {{ mensajeErrorCambioContrasenia}}</div>
+
+
+    <ion-button color="medium" type="submit">
+      Cambiar mi contraseña
+    </ion-button>
+
+    <a (click)="irLogin()" style="text-decoration: none; padding-top: 1.5rem; color:white">
+      Regresar
+    </a>
+  </form>
+  
+</ion-content>

@@ -39,6 +39,11 @@ ion-content {
   --spinner-color: linear-gradient(to bottom, #384147, #353e43, #333b40, #30383c, #2e3539);;
 }
 
+.boton-principal{
+  width: 70%;
+  height: 45px;
+  white-space: normal;
+}
 // ion-loading.custom-loading {
 //   .loading-wrapper {
 //     background: #ffffff url("assets/img/loading-personalizado.gif") no-repeat center;

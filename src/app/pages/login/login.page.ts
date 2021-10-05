@@ -123,4 +123,9 @@ export class LoginPage implements OnInit {
     }
   }
 
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public irRecuperarCuenta(){
+    this.navCtrl.navigateRoot('recuperar-cuenta');
+  }
+
 }

@@ -33,6 +33,10 @@ const routes: Routes = [
     resolve: { establecimiento: DataResolveService},
     loadChildren: () => import('./pages/alta-establecimiento/alta-establecimiento.module').then( m => m.AltaEstablecimientoPageModule)
   },
+  {
+    path: 'recuperar-cuenta',
+    loadChildren: () => import('./pages/login/recuperar-contrasena/recuperar-contrasena.module').then(m => m.RecuperarContrasenaPageModule)
+  },
 ];
 
 @NgModule({
