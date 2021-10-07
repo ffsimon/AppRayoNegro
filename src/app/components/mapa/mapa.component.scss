@@ -10,4 +10,11 @@
         }
       }
 
-    
+      .ion-item-input{
+        border: solid black 1px;
+        border-radius: 12px;
+        &:not(.datetime-placeholder) {
+        color: white;
+      }
+      height: 40px;
+      }

@@ -7,9 +7,17 @@
     </ion-col>
     <ion-col size="12">
       <span>Calle: </span> <span>{{ geocoderResult.thoroughfare }}</span>
+      <ion-item class="ion-item-input" *ngIf="geocoderResult.thoroughfare == ''">
+        <ion-input type="text" [(ngModel)]="calle" placeholder="Calle" maxlength="10">
+        </ion-input>
+      </ion-item>
     </ion-col>
     <ion-col size="12">
       <span>Municipio / Alcaldía: </span> <span> {{ geocoderResult.administrativeArea }}</span>
+      <ion-item class="ion-item-input" *ngIf="geocoderResult.administrativeArea == ''">
+        <ion-input type="text" [(ngModel)]="municipio" placeholder="Calle" maxlength="10">
+        </ion-input>
+      </ion-item>
     </ion-col>
     <ion-col size="12">
       <span>CP: </span> <span>{{ geocoderResult.postalCode }}</span>

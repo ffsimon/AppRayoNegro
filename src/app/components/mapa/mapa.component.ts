@@ -33,6 +33,8 @@ export class MapaComponent implements OnInit {
   public address: string;
   public marker: Marker;
   public geocoderResult: GeocoderResult = null;
+  public calle: string = "";
+  public municipio: string = "";
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private geolocation: Geolocation,
