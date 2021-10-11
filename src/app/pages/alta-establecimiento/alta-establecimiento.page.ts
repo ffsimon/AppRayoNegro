@@ -208,10 +208,13 @@ export class AltaEstablecimientoPage implements OnInit {
       }
       let datosUbicacionGeocoder: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
       console.log(datosUbicacionGeocoder)
-      if(datosUbicacionGeocoder.administrativeArea == '' || datosUbicacionGeocoder.thoroughfare == '' && this.calle == '' || this.municipio == '') {
-        this.utilitiesService.alert('', 'Agrega información en los campos habilitados.');
+      if(datosUbicacionGeocoder.administrativeArea == '' || datosUbicacionGeocoder.thoroughfare == '') {
+        if(this.calle == '' || this.municipio == ''){ 
+          this.utilitiesService.alert('', 'Agrega información en los campos habilitados.');
           return;
+        }
       }
+      
 
       
     }
