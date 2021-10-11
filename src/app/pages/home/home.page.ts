@@ -1,4 +1,5 @@
 import { Component, OnInit, LOCALE_ID } from '@angular/core';
+import { Network } from '@ionic-native/network/ngx';
 import { NavController, Platform } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
@@ -86,10 +87,22 @@ export class HomePage implements OnInit {
   public realizadas: any;
   public objetivoTrabajadas: any;
   public objetivoRealizadas: any;
+  public hayInternet: boolean = true;
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
     private utilitiesService: UtilitiesService, 
-    private webRayoService: WebRayoService) { 
+    private webRayoService: WebRayoService, private network: Network) { 
+
+    this.network.onDisconnect().subscribe(() => {
+      console.log('network was disconnected :-(');
+      this.hayInternet = false;
+    });
+
+    this.network.onConnect().subscribe(() => {
+      console.log('network connected!');
+      this.hayInternet = true;
+    });
+
     this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
     this.numeroEvaluacionesGuardadasLocal = JSON.parse(localStorage.getItem('evaluaciones_store_foward'));
@@ -181,6 +194,12 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarStoredFoward(){
+
+    if(!this.hayInternet){
+      await this.utilitiesService.alert('', 'Inténtalo cuando cuantes con internet');
+      return;
+    }
+
     if(this.numeroEvaluacionesGuardadasLocal == null || this.numeroEvaluacionesGuardadasLocal == 0){
       await this.utilitiesService.alert('', 'Por el momento no hay evaluaciones guardadas en el teléfono.');
       return;
