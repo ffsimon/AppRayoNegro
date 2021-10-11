@@ -147,14 +147,14 @@
       </ion-col>
     </div>
 
-    <br>
     <div *ngIf="datosUbicacionGeocoder != null">
-      <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.thoroughfare == ''">
+      <br>
+      <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.thoroughfare == '' || datosUbicacionGeocoder.thoroughfare == null">
         <ion-input type="text" [(ngModel)]="calle" placeholder="Calle" maxlength="10">
         </ion-input>
       </ion-item>
       <br>
-      <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.administrativeArea == ''">
+      <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.administrativeArea == '' || datosUbicacionGeocoder.administrativeArea == null">
         <ion-input type="text" [(ngModel)]="municipio" placeholder="Calle" maxlength="10">
         </ion-input>
       </ion-item>

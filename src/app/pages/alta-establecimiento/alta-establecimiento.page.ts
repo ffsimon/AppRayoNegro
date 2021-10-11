@@ -35,7 +35,6 @@ export class AltaEstablecimientoPage implements OnInit {
   public evaluacion = null;
   public calle: string = "";
   public municipio: string = "";
-  public datosUbicacionGeocoder: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
   public listaMastercardRadio: any[] = [
     { nombre: 'Sticker', valor: 'sticker' },
     { nombre: 'Reloj (open / close)', valor: 'reloj' },
@@ -102,7 +101,6 @@ export class AltaEstablecimientoPage implements OnInit {
     private route: ActivatedRoute,
     private network: Network) {    
 
-      console.log(this.datosUbicacionGeocoder)
     if(this.route.snapshot.data["establecimiento"]){
       this.esEdicion = true;
       this.evaluacion = this.route.snapshot.data["establecimiento"];
@@ -208,8 +206,9 @@ export class AltaEstablecimientoPage implements OnInit {
         this.utilitiesService.alert('', 'Agrega el número del establecimiento.');
           return;
       }
-
-      if(this.datosUbicacionGeocoder.administrativeArea == '' || this.datosUbicacionGeocoder.thoroughfare == '' && this.calle == '' || this.municipio){
+      let datosUbicacionGeocoder: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
+      console.log(datosUbicacionGeocoder)
+      if(datosUbicacionGeocoder.administrativeArea == '' || datosUbicacionGeocoder.thoroughfare == '' && this.calle == '' || this.municipio == '') {
         this.utilitiesService.alert('', 'Agrega información en los campos habilitados.');
           return;
       }
