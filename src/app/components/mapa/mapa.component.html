@@ -13,7 +13,7 @@
       </ion-item>
     </ion-col>
     <ion-col size="12">
-      <span>Municipio / Alcaldía: </span> <span> (geocoderResult.subAdministrativeArea != '' ? {{ geocoderResult.administrativeArea }} / {{ geocoderResult.subAdministrativeArea }} : {{ geocoderResult.administrativeArea }}) </span>
+      <span>Municipio / Alcaldía: </span> <span> {{ geocoderResult.subAdministrativeArea != '' ? (geocoderResult.administrativeArea / geocoderResult.subAdministrativeArea) :  geocoderResult.administrativeArea  }}</span>
       <ion-item class="ion-item-input" *ngIf="geocoderResult.administrativeArea == ''">
         <ion-input type="text" [(ngModel)]="municipio" placeholder="Calle" maxlength="10">
         </ion-input>
