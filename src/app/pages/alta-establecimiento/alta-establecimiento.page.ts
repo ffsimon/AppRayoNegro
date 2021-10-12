@@ -451,7 +451,7 @@ export class AltaEstablecimientoPage implements OnInit {
   public async camara(opcion?:number): Promise<string> {
     let fotoBase64 = '';
     const options: CameraOptions = {
-      quality: 50,
+      quality: 30,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
