@@ -89,7 +89,7 @@ export class AltaEstablecimientoPage implements OnInit {
     return this.seleccioneMaterial.get('localizacionItem');
   }
 
-
+  public datosUbicacionGeocoder: GeocoderResult = null;
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(
     private formBuilder: FormBuilder,
@@ -174,6 +174,18 @@ export class AltaEstablecimientoPage implements OnInit {
       this.listaTipoComercio = respuesta.response;
     }
   }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public validarGeocoder = () => {
+    const datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem('geocoder'));
+     if (datosUbicacion != null) {
+       this.datosUbicacionGeocoder = datosUbicacion;
+       return true;
+     } else {
+       return false;
+     }
+  };
+
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async validacionDatosGenerales() {
     if(this.pasoFormulario === 1){
@@ -206,17 +218,16 @@ export class AltaEstablecimientoPage implements OnInit {
         this.utilitiesService.alert('', 'Agrega el número del establecimiento.');
           return;
       }
-      let datosUbicacionGeocoder: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
+      const datosUbicacionGeocoder: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
       console.log(datosUbicacionGeocoder)
-      if(datosUbicacionGeocoder.administrativeArea == '' || datosUbicacionGeocoder.thoroughfare == '') {
-        if(this.calle == '' || this.municipio == ''){ 
-          this.utilitiesService.alert('', 'Agrega información en los campos habilitados.');
-          return;
+      if (datosUbicacionGeocoder != null) {
+        if(datosUbicacionGeocoder.administrativeArea == '' || datosUbicacionGeocoder.thoroughfare == '') {
+          if(this.calle == '' || this.municipio == ''){ 
+            this.utilitiesService.alert('', 'Agrega información en los campos habilitados.');
+            return;
+          }
         }
       }
-      
-
-      
     }
 
     if(this.pasoFormulario === 3){
@@ -229,8 +240,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
     let bandera = false;
     if (this.pasoFormulario === 4) {
-      if (this.opcionesParafoto.length === 0) {
-      
+      if (this.opcionesParafoto.length > 0) {
         this.opcionesParafoto.forEach(element => {
           if (element.fotoBase64 === '') {
             bandera = true;
@@ -264,7 +274,20 @@ export class AltaEstablecimientoPage implements OnInit {
         console.log(this.hayInternet)
         if(!this.hayInternet){
           await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
-          let datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
+          const datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
+          let stringCalle = '';
+          let stringMunicipio = '';
+
+          if (datosUbicacion != null) {
+            stringCalle = datosUbicacion.thoroughfare !== '' ? datosUbicacion.thoroughfare : this.calle;
+            if (datosUbicacion.administrativeArea !== '') {
+              stringMunicipio = datosUbicacion.subAdministrativeArea !== '' ?
+                `${datosUbicacion.administrativeArea}/${datosUbicacion.subAdministrativeArea}` : datosUbicacion.administrativeArea;
+            } else {
+              stringMunicipio = this.municipio;
+            }
+          }
+
           let objeto: EvaluacionesRequest = {
             evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
             evaluacion_razon_social: this.compartieronRazonSocial ? this.datosGenerales.value.razonSocial : null,
@@ -273,9 +296,9 @@ export class AltaEstablecimientoPage implements OnInit {
             evaluacion_outlet: this.estasEnOutlet == false? 0: 1,
             evaluacion_nombre_outlet: this.estasEnOutlet ?  this.datosGenerales.value.nombreOutlet: null,
             evaluacion_numero: this.datosUbicacion.value.numeroEstablecimiento,
-            evaluacion_calle: datosUbicacion != null ? datosUbicacion.thoroughfare: this.calle,
+            evaluacion_calle: stringCalle,
             evaluacion_colonia: datosUbicacion != null ? datosUbicacion.subLocality : null,
-            evaluacion_municipio_alcadia:  datosUbicacion != null ? datosUbicacion.administrativeArea: this.municipio,
+            evaluacion_municipio_alcadia:  stringMunicipio,
             evaluacion_cp: datosUbicacion != null ? datosUbicacion.postalCode: null,
             evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitude): null,
             evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitude): null,
@@ -285,31 +308,8 @@ export class AltaEstablecimientoPage implements OnInit {
             list_fotografias: this.ordenarListaFotos(),
             lista_competencias: this.ordenarCompetencias(),
             evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
-          }
+          };
 
-          // let objeto: EvaluacionesRequest = {
-          //   evaluacion_nombre_establecimiento: "store and forward",
-          //   evaluacion_razon_social: "razon social",
-          //   evaluacion_ca_tipo_comercio: 14,
-          //   evaluacion_ca_tipo_sub_comercio: 19,
-          //   evaluacion_outlet: this.estasEnOutlet == false? 0: 1,
-          //   evaluacion_nombre_outlet: this.estasEnOutlet ?  "siii" : null,
-          //   evaluacion_numero: "bc123",
-          //   evaluacion_calle: "Calle Santa Rosa",
-          //   evaluacion_colonia: "",
-          //   evaluacion_municipio_alcadia:  "Estado de México",
-          //   evaluacion_cp: "",
-          //   evaluacion_latitud: "19.755419000000003",
-          //   evaluacion_longitud: "-99.2126249",
-          //   evaluacion_renovacion: 0,
-          //   evaluacion_ca_id_comunicacion: 36,
-          //   evaluacion_localizacion_id: 40,
-          //   list_fotografias: [],
-          //   lista_competencias: [],
-          //   evaluacion_tbl_usuarios_id: 4
-          // }
-
-          
           await this.guardarEnStoredFoward(objeto)
           this.navCtrl.navigateRoot('home');
           return;
@@ -320,7 +320,7 @@ export class AltaEstablecimientoPage implements OnInit {
           await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
           return;
         }
-      }  
+      }
     }
 
     this.pasoFormulario = this.pasoFormulario + 1;
@@ -503,6 +503,18 @@ export class AltaEstablecimientoPage implements OnInit {
   public async enviarEvaluacion(){
     let datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));    
     const loading = await this.utilitiesService.loadingAsync();
+    let stringCalle = '';
+    let stringMunicipio = '';
+
+    if (datosUbicacion != null) {
+      stringCalle = datosUbicacion.thoroughfare !== '' ? datosUbicacion.thoroughfare : this.calle;
+      if (datosUbicacion.administrativeArea !== '') {
+        stringMunicipio = datosUbicacion.subAdministrativeArea !== '' ?
+          `${datosUbicacion.administrativeArea}/${datosUbicacion.subAdministrativeArea}` : datosUbicacion.administrativeArea;
+      } else {
+        stringMunicipio = this.municipio;
+      }
+    }
     loading.present();
     let objeto: EvaluacionesRequest = {
       evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
@@ -512,9 +524,9 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_outlet: this.estasEnOutlet == false? 0: 1,
       evaluacion_nombre_outlet: this.estasEnOutlet ?  this.datosGenerales.value.nombreOutlet: null,
       evaluacion_numero: this.datosUbicacion.value.numeroEstablecimiento,
-      evaluacion_calle: datosUbicacion != null ? datosUbicacion.thoroughfare: null,
+      evaluacion_calle: stringCalle,
       evaluacion_colonia: datosUbicacion != null ? datosUbicacion.subLocality : null,
-      evaluacion_municipio_alcadia:  datosUbicacion != null ? datosUbicacion.administrativeArea: null,
+      evaluacion_municipio_alcadia:  stringMunicipio,
       evaluacion_cp: datosUbicacion != null ? datosUbicacion.postalCode: null,
       evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitude): null,
       evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitude): null,
@@ -541,7 +553,7 @@ export class AltaEstablecimientoPage implements OnInit {
     let listafotos: Array<Fotografias> = [];
 
     // limpiamos la foto por default
-    if(this.tempImg != ''){
+    if(this.tempImg !== '' && this.tempImg != null){
       let stringBase64: string = "data:image/jpeg;base64," 
       let seEncuentraStringBase64 = this.tempImg.indexOf(stringBase64);
       if (seEncuentraStringBase64 !== -1){
