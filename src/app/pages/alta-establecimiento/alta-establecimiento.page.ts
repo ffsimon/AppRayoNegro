@@ -236,6 +236,7 @@ export class AltaEstablecimientoPage implements OnInit {
         if(datosUbicacionGeocoder.thoroughfare == ''){
           if(this.calle == ''){
             this.utilitiesService.alert('', 'Agrega la calle');
+            return;
           }
         }
 
@@ -243,6 +244,7 @@ export class AltaEstablecimientoPage implements OnInit {
         if(datosUbicacionGeocoder.subAdministrativeArea == ''){
           if(this.municipio == ''){
             this.utilitiesService.alert('', 'Agrega el municipio');
+            return;
           }
         }
       }
