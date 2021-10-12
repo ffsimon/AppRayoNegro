@@ -230,12 +230,9 @@ export class AltaEstablecimientoPage implements OnInit {
     let bandera = false;
     if (this.pasoFormulario === 4) {
       if (this.opcionesParafoto.length === 0) {
-        if (this.tempImg === '' || this.tempImg == null) {
-          bandera = true;
-        }
-      } else {
+      
         this.opcionesParafoto.forEach(element => {
-          if (element.fotoBase64 === '' || this.tempImg === '') {
+          if (element.fotoBase64 === '') {
             bandera = true;
           }
         });
@@ -544,14 +541,20 @@ export class AltaEstablecimientoPage implements OnInit {
     let listafotos: Array<Fotografias> = [];
 
     // limpiamos la foto por default
-    let stringBase64: string = "data:image/jpeg;base64," 
-    let seEncuentraStringBase64 = this.tempImg.indexOf(stringBase64);
-    if (seEncuentraStringBase64 !== -1){
-      this.tempImg = this.tempImg.replace(stringBase64, "")
+    if(this.tempImg != ''){
+      let stringBase64: string = "data:image/jpeg;base64," 
+      let seEncuentraStringBase64 = this.tempImg.indexOf(stringBase64);
+      if (seEncuentraStringBase64 !== -1){
+        this.tempImg = this.tempImg.replace(stringBase64, "")
+      }
+      // agregamos la foto de fachada que esta por default
+      let imagenFachadaDefault: Fotografias = { efotografia_catalogo_id_evidencia: 0, imagBase64: this.tempImg }
+      listafotos.push(imagenFachadaDefault)
     }
-    // agregamos la foto de fachada que esta por default
-     let imagenFachadaDefault: Fotografias = { efotografia_catalogo_id_evidencia: 0, imagBase64: this.tempImg }
-     listafotos.push(imagenFachadaDefault)
+    
+
+
+
      // se agregan las imagene para el carrusel
      for (let i = 0; i < this.opcionesParafoto.length; i++) {
       let stringBase64: string = "data:image/jpeg;base64," 
