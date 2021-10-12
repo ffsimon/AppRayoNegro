@@ -232,11 +232,17 @@ export class AltaEstablecimientoPage implements OnInit {
           }
         }
 
-        // validamos la ubicación 
-        if(datosUbicacionGeocoder.thoroughfare == '' || datosUbicacionGeocoder.subAdministrativeArea == '') {
-          if(this.calle == '' || this.municipio == ''){ 
-            this.utilitiesService.alert('', 'Agrega información en los campos habilitados.');
-            return;
+        // validamos la calle
+        if(datosUbicacionGeocoder.thoroughfare == ''){
+          if(this.calle == ''){
+            this.utilitiesService.alert('', 'Agrega la calle');
+          }
+        }
+
+        // validamos el municipio
+        if(datosUbicacionGeocoder.subAdministrativeArea == ''){
+          if(this.municipio == ''){
+            this.utilitiesService.alert('', 'Agrega el municipio');
           }
         }
       }
