@@ -148,16 +148,31 @@
     </div>
 
     <div *ngIf="validarGeocoder()">
+    
+      <br>
+      <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.administrativeArea === '' || datosUbicacionGeocoder.administrativeArea === null">
+        <ion-input type="text" [(ngModel)]="ciudad" placeholder="Ciudad" maxlength="10">
+        </ion-input>
+      </ion-item>
+     
+      <br>
+      <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.subAdministrativeArea === '' || datosUbicacionGeocoder.subAdministrativeArea === null">
+        <ion-input type="text" [(ngModel)]="municipio" placeholder="Municipio" maxlength="10">
+        </ion-input>
+      </ion-item>
+
       <br>
       <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.thoroughfare === '' || datosUbicacionGeocoder.thoroughfare === null">
         <ion-input type="text" [(ngModel)]="calle" placeholder="Calle" maxlength="10">
         </ion-input>
       </ion-item>
+
       <br>
-      <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.administrativeArea === '' || datosUbicacionGeocoder.administrativeArea === null">
-        <ion-input type="text" [(ngModel)]="municipio" placeholder="Calle" maxlength="10">
+      <ion-item class="ion-item-input" *ngIf="datosUbicacionGeocoder.postalCode === '' || datosUbicacionGeocoder.postalCode === null">
+        <ion-input type="text" [(ngModel)]="codigoPostal" placeholder="Código postal" maxlength="10">
         </ion-input>
       </ion-item>
+
     </div>
 
   </div>

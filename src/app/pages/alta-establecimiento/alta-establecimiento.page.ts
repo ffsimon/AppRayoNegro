@@ -35,6 +35,8 @@ export class AltaEstablecimientoPage implements OnInit {
   public evaluacion = null;
   public calle: string = "";
   public municipio: string = "";
+  public ciudad: string = "";
+  public codigoPostal: string = "";
   public listaMastercardRadio: any[] = [
     { nombre: 'Sticker', valor: 'sticker' },
     { nombre: 'Reloj (open / close)', valor: 'reloj' },
@@ -221,13 +223,25 @@ export class AltaEstablecimientoPage implements OnInit {
       const datosUbicacionGeocoder: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
       console.log(datosUbicacionGeocoder)
       if (datosUbicacionGeocoder != null) {
-        if(datosUbicacionGeocoder.administrativeArea == '' || datosUbicacionGeocoder.thoroughfare == '') {
+
+        // validamos el codigo postal
+        if(datosUbicacionGeocoder.postalCode == ''){
+          if(this.codigoPostal == ''){
+            this.utilitiesService.alert('', 'Agrega el código postal.');
+          return;
+          }
+        }
+
+        // validamos la ubicación 
+        if(datosUbicacionGeocoder.thoroughfare == '' || datosUbicacionGeocoder.subAdministrativeArea == '') {
           if(this.calle == '' || this.municipio == ''){ 
             this.utilitiesService.alert('', 'Agrega información en los campos habilitados.');
             return;
           }
         }
       }
+
+
     }
 
     if(this.pasoFormulario === 3){
@@ -276,18 +290,22 @@ export class AltaEstablecimientoPage implements OnInit {
           await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
           const datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));
           let stringCalle = '';
-          let stringMunicipio = '';
-
+          let ciudad = '';
+          let codigoPostal = '';
+          let municipio = '';
+          
           if (datosUbicacion != null) {
             stringCalle = datosUbicacion.thoroughfare !== '' ? datosUbicacion.thoroughfare : this.calle;
+            codigoPostal = datosUbicacion.postalCode !== '' ? datosUbicacion.postalCode : this.codigoPostal;
+            municipio = datosUbicacion.subAdministrativeArea !== '' ? datosUbicacion.subAdministrativeArea : this.municipio;
+
             if (datosUbicacion.administrativeArea !== '') {
-              stringMunicipio = datosUbicacion.subAdministrativeArea !== '' ?
-                `${datosUbicacion.administrativeArea}/${datosUbicacion.subAdministrativeArea}` : datosUbicacion.administrativeArea;
+              ciudad = datosUbicacion.subAdministrativeArea !== '' ?
+                `${datosUbicacion.administrativeArea}/${datosUbicacion.subAdministrativeArea}` : `${datosUbicacion.administrativeArea}/${municipio}`;
             } else {
-              stringMunicipio = this.municipio;
+              ciudad = this.ciudad;
             }
           }
-
           let objeto: EvaluacionesRequest = {
             evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
             evaluacion_razon_social: this.compartieronRazonSocial ? this.datosGenerales.value.razonSocial : null,
@@ -298,8 +316,8 @@ export class AltaEstablecimientoPage implements OnInit {
             evaluacion_numero: this.datosUbicacion.value.numeroEstablecimiento,
             evaluacion_calle: stringCalle,
             evaluacion_colonia: datosUbicacion != null ? datosUbicacion.subLocality : null,
-            evaluacion_municipio_alcadia:  stringMunicipio,
-            evaluacion_cp: datosUbicacion != null ? datosUbicacion.postalCode: null,
+            evaluacion_municipio_alcadia:  ciudad,
+            evaluacion_cp: codigoPostal,
             evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitude): null,
             evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitude): null,
             evaluacion_renovacion: 0,
@@ -504,15 +522,20 @@ export class AltaEstablecimientoPage implements OnInit {
     let datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem("geocoder"));    
     const loading = await this.utilitiesService.loadingAsync();
     let stringCalle = '';
-    let stringMunicipio = '';
-
+    let ciudad = '';
+    let codigoPostal = '';
+    let municipio = '';
+    
     if (datosUbicacion != null) {
       stringCalle = datosUbicacion.thoroughfare !== '' ? datosUbicacion.thoroughfare : this.calle;
+      codigoPostal = datosUbicacion.postalCode !== '' ? datosUbicacion.postalCode : this.codigoPostal;
+      municipio = datosUbicacion.subAdministrativeArea !== '' ? datosUbicacion.subAdministrativeArea : this.municipio;
+
       if (datosUbicacion.administrativeArea !== '') {
-        stringMunicipio = datosUbicacion.subAdministrativeArea !== '' ?
-          `${datosUbicacion.administrativeArea}/${datosUbicacion.subAdministrativeArea}` : datosUbicacion.administrativeArea;
+        ciudad = datosUbicacion.subAdministrativeArea !== '' ?
+          `${datosUbicacion.administrativeArea}/${datosUbicacion.subAdministrativeArea}` : `${datosUbicacion.administrativeArea}/${municipio}`;
       } else {
-        stringMunicipio = this.municipio;
+        ciudad = this.ciudad;
       }
     }
     loading.present();
@@ -526,8 +549,8 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_numero: this.datosUbicacion.value.numeroEstablecimiento,
       evaluacion_calle: stringCalle,
       evaluacion_colonia: datosUbicacion != null ? datosUbicacion.subLocality : null,
-      evaluacion_municipio_alcadia:  stringMunicipio,
-      evaluacion_cp: datosUbicacion != null ? datosUbicacion.postalCode: null,
+      evaluacion_municipio_alcadia:  ciudad,
+      evaluacion_cp: codigoPostal,
       evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitude): null,
       evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitude): null,
       evaluacion_renovacion: 0,
