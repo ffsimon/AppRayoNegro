@@ -149,30 +149,39 @@
 
     <div *ngIf="validarGeocoderGoogle()">
       <div *ngIf="datosUbicacionLocal != null">
-        <ion-item class="ion-item-input"  *ngIf="datosUbicacionLocal.codigoPostal == '' || datosUbicacionLocal.codigoPostal == null">
-          <ion-input type="text" [(ngModel)]="codigoPostal" placeholder="Código postal" maxlength="5">
-          </ion-input>
-          <br>
-         </ion-item>
 
-         <ion-item class="ion-item-input"  *ngIf="datosUbicacionLocal.calle == '' || datosUbicacionLocal.calle == null">
+        <div *ngIf="datosUbicacionLocal.codigoPostal == '' || datosUbicacionLocal.codigoPostal == null">
           <br>
-          <ion-input type="text" [(ngModel)]="calle" placeholder="Calle" maxlength="150">
-          </ion-input>
-         </ion-item>
+          <ion-item class="ion-item-input">
+            <ion-input type="text" [(ngModel)]="codigoPostal" placeholder="Código postal" maxlength="5">
+            </ion-input>
+           </ion-item>
+        </div>
+       
 
-         <ion-item class="ion-item-input"  *ngIf="datosUbicacionLocal.colonia == '' || datosUbicacionLocal.colonia == null">
+        <div *ngIf="datosUbicacionLocal.calle == '' || datosUbicacionLocal.calle == null">
           <br>
-          <ion-input type="text" [(ngModel)]="colonia" placeholder="Colonia" maxlength="150">
-          </ion-input>
-         </ion-item>
-
-
-         <ion-item class="ion-item-input"  *ngIf="datosUbicacionLocal.municipio == '' || datosUbicacionLocal.municipio == null">
+          <ion-item class="ion-item-input">
+            <ion-input type="text" [(ngModel)]="calle" placeholder="Calle" maxlength="150">
+            </ion-input>
+           </ion-item>
+        </div>
+         
+        <div *ngIf="datosUbicacionLocal.colonia == '' || datosUbicacionLocal.colonia == null">
           <br>
-          <ion-input type="text" [(ngModel)]="municipio" placeholder="Municipio" maxlength="150">
-          </ion-input>
-         </ion-item>
+          <ion-item class="ion-item-input">
+            <ion-input type="text" [(ngModel)]="colonia" placeholder="Colonia" maxlength="150">
+            </ion-input>
+           </ion-item>
+        </div>
+
+        <div *ngIf="datosUbicacionLocal.municipio == '' || datosUbicacionLocal.municipio == null">
+          <br>
+          <ion-item class="ion-item-input">
+            <ion-input type="text" [(ngModel)]="municipio" placeholder="Municipio" maxlength="150">
+            </ion-input>
+           </ion-item>
+        </div> 
       </div>
     </div>
 
