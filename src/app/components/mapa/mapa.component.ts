@@ -181,8 +181,8 @@ export class MapaComponent implements OnInit {
     });
     loading.dismiss();
     //await this.obtenerDireccionDeCoordenadas(this.latitud, this.longitud);
-     //await this.consultarDireccion(this.latLng);
-    await this.consultarDireccion("18.902657727624074, -99.17737910565803")
+     await this.consultarDireccion(this.latLng);
+    // await this.consultarDireccion("18.902657727624074, -99.17737910565803")
   }
 
 
