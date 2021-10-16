@@ -46,6 +46,7 @@ export class MapaComponent implements OnInit {
   public direccionCompleta:string = null;
   public codigoPostalGeocode:string = null;
   public coloniaGeocode:string = null;
+  public municipioCiudad: string = null;
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private geolocation: Geolocation,
     private nativeGeocoder: NativeGeocoder,
@@ -180,8 +181,8 @@ export class MapaComponent implements OnInit {
     });
     loading.dismiss();
     //await this.obtenerDireccionDeCoordenadas(this.latitud, this.longitud);
-     await this.consultarDireccion(this.latLng);
-    //await this.consultarDireccion("18.902657727624074, -99.17737910565803")
+     //await this.consultarDireccion(this.latLng);
+    await this.consultarDireccion("18.902657727624074, -99.17737910565803")
   }
 
 
@@ -300,6 +301,8 @@ export class MapaComponent implements OnInit {
             this.codigoPostalGeocode = direccion.address_components[i].long_name;
         }
       }
+
+      this.municipioCiudad = this.ciudadGeocode != null ? this.ciudadGeocode : '/ Sin ciudad'
     }
 
     let guardarDireccion: GeocoderGoogleResult = {
