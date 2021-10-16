@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild, ElementRef, NgZone, Input } from '@angula
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
-import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
-import { Platform } from '@ionic/angular';
+import { Platform, ModalController } from '@ionic/angular';
 import { GeolocationService } from 'src/app/services/geolocation.service';
-import { GeocoderResult } from './../../models/geocoder_model';
+import { GeocoderGoogleResult, GeocoderResult } from './../../models/geocoder_model';
+import { WebRayoService } from 'src/app/services/web-rayo.service';
+import { ModalPagePage } from '../../pages/modal-page/modal-page.page';
 
 declare let google;
 
@@ -28,27 +28,38 @@ export class MapaComponent implements OnInit {
   @Input() nombreEstablecimiento;
 
   public map: any = null;
-  public latitud: number =  null;
-  public longitud: number = null;
+  public latitud: any =  null;
+  public longitud: any = null;
   public address: string;
   public marker: Marker;
   public geocoderResult: GeocoderResult = null;
   public calle: string = "";
   public municipio: string = "";
+  public latLng: string = "";
+  public dataReturned: any = null;
+  public resultados: Array<any> = [];
 
+  public calleGeocode: string = null;
+  public municipioGeocode: string = null;
+  public ciudadGeocode: string = null;
+  public localidadGeocode: string = null;
+  public direccionCompleta:string = null;
+  public codigoPostalGeocode:string = null;
+  public coloniaGeocode:string = null;
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private geolocation: Geolocation,
     private nativeGeocoder: NativeGeocoder,
     public zone: NgZone, private platform: Platform,
     public utilitiesService: UtilitiesService,
-    public geolocationService: GeolocationService) {
+    public geolocationService: GeolocationService, 
+    private webRayoService: WebRayoService,
+    public modalCtrl : ModalController) {
      }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
-    this.loadMap();
+    await this.loadMap();
   }
-
 
   public pedirPermisos() {
     this.platform.ready().then(async platform => {
@@ -168,7 +179,9 @@ export class MapaComponent implements OnInit {
       mapEle.classList.add('show-map');
     });
     loading.dismiss();
-    await this.obtenerDireccionDeCoordenadas(this.latitud, this.longitud);
+    //await this.obtenerDireccionDeCoordenadas(this.latitud, this.longitud);
+     await this.consultarDireccion(this.latLng);
+    //await this.consultarDireccion("18.902657727624074, -99.17737910565803")
   }
 
 
@@ -178,6 +191,8 @@ export class MapaComponent implements OnInit {
       console.log(resp);
       this.latitud = resp.coords.latitude;
       this.longitud = resp.coords.longitude;
+      this.latLng = resp.coords.latitude + "," + resp.coords.longitude;
+      console.log(this.latLng)
     }, err => {
         console.log(err);
     });
@@ -201,21 +216,6 @@ export class MapaComponent implements OnInit {
 
         console.log('guardamos en memoria local');
         localStorage.setItem('geocoder', JSON.stringify(this.geocoderResult));
-
-        /* const responseAddress = [];
-        for (const [key, value] of Object.entries(result[0])) {
-          if(value.length > 0) {
-            responseAddress.push(value);
-          }
-        }
-        responseAddress.reverse();
-        console.log(responseAddress);
-        for (const value of responseAddress) {
-          this.address += value+', ';
-        }
-        this.address = this.address.slice(0, -2);
-        console.log(this.address);
-        this.utilitiesService.alert('', this.address); */
       })
       .catch((error: any) => {
         this.address = 'Address Not Available!';
@@ -235,4 +235,90 @@ export class MapaComponent implements OnInit {
       title: marker.title
     });
   }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async consultarDireccion(latLng: string){
+    console.log(latLng)
+    const params = this.webRayoService.fromObjectToGETString({
+      latlng: latLng,
+      key: 'AIzaSyDSVmDjbmmdQD_3B5NEZcO5lNsujDMzO2g'
+    });
+    let url: string = 'https://maps.googleapis.com/maps/api/geocode/json' + params;
+    let respuesta = await this.webRayoService.getCoordenadas(url);
+    console.log("*******")
+    console.log(respuesta);
+
+    if(respuesta.results == null){
+      console.log("no hay resultados")
+      return;
+    }
+    this.resultados = respuesta.results;
+    await this.openModal(this.resultados);
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  async openModal(resultadosDirecciones) {
+    const modal = await this.modalCtrl.create({
+      component: ModalPagePage,
+      componentProps: {
+        direcciones : resultadosDirecciones
+      }
+    });
+
+    modal.onDidDismiss().then((dataReturned) => {
+      console.log(dataReturned)
+      if (dataReturned != null) {
+        this.dataReturned = dataReturned.data;
+      }
+    });
+    return await modal.present();
+
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async tratarDireccion(direccion: any){
+    console.log(direccion)
+    
+    if(direccion.address_components != null){
+      this.direccionCompleta = direccion.formatted_address;
+      for (let i = 0; i < direccion.address_components.length; i++) {
+        let tipo = direccion.address_components[i].types;
+        for (let j = 0; j < tipo.length; j++) {
+          if(tipo[j] == 'route')
+            this.calleGeocode = direccion.address_components[i].long_name;
+
+          if(tipo[j] == 'sublocality' || tipo[i] == 'sublocality_level_1')
+            this.coloniaGeocode = direccion.address_components[i].long_name
+
+          if(tipo[j] == 'administrative_area_level_1')
+            this.ciudadGeocode = direccion.address_components[i].long_name;
+
+          if(tipo[j] == 'locality')
+            this.municipioGeocode = direccion.address_components[i].long_name;
+
+          if(tipo[j] == 'postal_code')
+            this.codigoPostalGeocode = direccion.address_components[i].long_name;
+        }
+      }
+    }
+
+    let guardarDireccion: GeocoderGoogleResult = {
+      calle: this.calleGeocode,
+      colonia: this.coloniaGeocode,
+      municipio: this.municipioGeocode,
+      estado: this.ciudadGeocode,
+      codigoPostal: this.codigoPostalGeocode,
+      latitud: this.latitud,
+      longitud: this.longitud
+    }
+
+    console.log(guardarDireccion);
+
+    localStorage.setItem("direccionLocal", JSON.stringify(guardarDireccion));
+  }
+
+  public hola(){
+  }
+
+
 }

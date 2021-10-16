@@ -11,3 +11,13 @@ export class GeocoderResult {
   thoroughfare?: string;
   subThoroughfare?: string;
 }
+
+export class GeocoderGoogleResult {
+  calle: string;
+  colonia: string;
+  municipio: string;
+  estado: string;
+  codigoPostal: string;
+  latitud: number;
+  longitud: number;
+}

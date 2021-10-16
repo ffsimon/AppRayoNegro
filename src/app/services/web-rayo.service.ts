@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WebService } from './web.service';
-import { PRODUCCION, CLOUD } from '../constants';
-
+import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
 export class WebRayoService  extends WebService {
 
   public serviceGateway: string = ("http://rayonegro-001-site1.dtempurl.com/");
+  public servicioGoogle: string = "https://maps.googleapis.com/"
   public pathOperaciones: string = "operaciones/";
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -32,6 +32,14 @@ export class WebRayoService  extends WebService {
           });
       return super.postAsync(this.serviceGateway + uri, objeto, headers);
   }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public getCoordenadas(uri: string): Promise<any> {
+    let headers = null;
+        headers = new HttpHeaders({
+        });
+        return super.getAsync(uri, headers);
+    }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Hace una petición get al servidor pms
@@ -82,5 +90,4 @@ export class WebRayoService  extends WebService {
           });
       return super.deleteAsync(this.serviceGateway + uri, objeto, headers);
   }
-
 }

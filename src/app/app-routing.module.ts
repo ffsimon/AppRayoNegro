@@ -37,6 +37,10 @@ const routes: Routes = [
     path: 'recuperar-cuenta',
     loadChildren: () => import('./pages/login/recuperar-contrasena/recuperar-contrasena.module').then(m => m.RecuperarContrasenaPageModule)
   },
+  {
+    path: 'modal-page',
+    loadChildren: () => import('./pages/modal-page/modal-page.module').then( m => m.ModalPagePageModule)
+  },
 ];
 
 @NgModule({

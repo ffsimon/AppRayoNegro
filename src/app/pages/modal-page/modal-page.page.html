@@ -1,0 +1,30 @@
+<ion-header no-border>
+
+  <ion-toolbar class="header ion-text-center ion-no-padding">
+      <ion-buttons slot="end">
+        <ion-button ion-button (click)="cerrarModal()" class="boton-cerrar">
+          <ion-icon name="close-circle-outline" style="zoom: 2;" color="light"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+  </ion-toolbar>
+  
+  </ion-header>
+  
+  
+  <ion-content padding>
+
+    <br>
+    <div class="padding" style="text-align: center;">
+      <span class="titulo padding">Selecciona la dirección correspondiente</span>
+    </div>
+    
+    <br><br><br>
+    <div>
+      <ion-item *ngFor="let direccion of direccionesFiltro" (click)="seleccionaDireccion(direccion)">
+        <span style="color: white;">{{direccion.formatted_address}}</span>
+      </ion-item>
+    </div>
+
+
+  
+  </ion-content>

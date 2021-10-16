@@ -98,6 +98,32 @@ export class WebService {
       });
   }
 
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // Hace una petición get genérica.
+  public getAsyncDireccion(url: string, headers): Promise<any> {
+    
+    if (headers == null) {
+        headers = new HttpHeaders({
+        });
+    }
+
+    let options = { headers: headers };
+    return new Promise(resolve => {
+        let subs = this.http.get(url, options).subscribe(data => {
+            subs.unsubscribe();
+            return resolve(data);
+        }, err => {
+            subs.unsubscribe();
+            return resolve(<any>{
+                success: false,
+                // message: err.message.toString(),
+                message: err.message,
+                content: null
+            });
+        });
+    });
+}
+
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // Hace una petición put genérica.
   public putAsync(url: string, objeto: any, headers?: HttpHeaders): Promise<any> {

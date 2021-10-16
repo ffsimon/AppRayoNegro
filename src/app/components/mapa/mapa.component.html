@@ -1,4 +1,5 @@
 <div id="map"></div>
+
 <br>
 <ion-col size="6" style="color: white;font-size: 12px;" *ngIf="geocoderResult !== null">
   <ion-row>
@@ -21,6 +22,25 @@
     </ion-col>
     <ion-col size="12">
       <span>CP: </span> <span>{{ geocoderResult.postalCode }}</span>
+    </ion-col>
+  </ion-row>
+</ion-col>
+
+<div *ngIf="dataReturned != null? tratarDireccion(dataReturned) : hola()" ></div>
+
+<ion-col size="6" style="color: white;font-size: 12px;" *ngIf="dataReturned !== null">
+  <ion-row>
+    <ion-col size="12">
+    <span>Nombre del establecimiento: </span>  <span>{{ nombreEstablecimiento }}</span>
+    </ion-col>
+    <ion-col size="12">
+      <span>Calle: </span> <span>  {{calleGeocode != null && calleGeocode != '' ?  calleGeocode : 'Sin calle'}}  </span>
+    </ion-col>
+    <ion-col size="12">
+      <span>Municipio: </span> <span> {{municipioGeocode != null && municipioGeocode != '' ?  municipioGeocode : 'Sin municipio'}} </span>
+    </ion-col>
+    <ion-col size="12">
+      <span>CP: </span> <span> {{codigoPostalGeocode != null && codigoPostalGeocode != '' ?  codigoPostalGeocode : 'Sin código postal'}}</span>
     </ion-col>
   </ion-row>
 </ion-col>
