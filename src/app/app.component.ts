@@ -43,7 +43,6 @@ export class AppComponent implements OnInit {
       let temporalTokenJWT = await this.obtenerTokenJWTAsync(const_jwt_credentials);
       if (temporalTokenJWT != null) {
         localStorage.setItem("token_jwt", temporalTokenJWT);
-        return;
       }
       
       this.oneSignal.startInit(this.oneSignalId, this.firebaseId);
