@@ -19,7 +19,7 @@ export class ModalPagePage {
 
     let listaDirecciones =[]; 
     for (let i = 0; i < this.direcciones.length; i++) {
-      if(this.direcciones[i].formatted_address.length > 40){
+      if(this.direcciones[i].formatted_address.length > 20){
         listaDirecciones.push(this.direcciones[i])
       }
     }
