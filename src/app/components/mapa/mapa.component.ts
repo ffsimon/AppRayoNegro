@@ -193,6 +193,7 @@ export class MapaComponent implements OnInit {
       this.latitud = resp.coords.latitude;
       this.longitud = resp.coords.longitude;
       this.latLng = resp.coords.latitude + "," + resp.coords.longitude;
+      localStorage.setItem('coordenadas', JSON.stringify(this.latLng));
       console.log(this.latLng)
     }, err => {
         console.log(err);

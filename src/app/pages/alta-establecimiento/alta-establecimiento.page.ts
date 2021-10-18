@@ -108,7 +108,6 @@ export class AltaEstablecimientoPage implements OnInit {
     if(this.route.snapshot.data["establecimiento"]){
       this.esEdicion = true;
       this.evaluacion = this.route.snapshot.data["establecimiento"];
-      console.log("route  ", this.evaluacion)
     }
 
     this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
@@ -125,12 +124,10 @@ export class AltaEstablecimientoPage implements OnInit {
     };
 
     this.network.onDisconnect().subscribe(() => {
-      console.log('network was disconnected :-(');
       this.hayInternet = false;
     });
 
     this.network.onConnect().subscribe(() => {
-      console.log('network connected!');
       this.hayInternet = true;
     });
 
@@ -225,13 +222,6 @@ export class AltaEstablecimientoPage implements OnInit {
     if(this.pasoFormulario === 2){
      
       const datosUbicacion: GeocoderGoogleResult = JSON.parse(localStorage.getItem("direccionLocal"));
-      console.log(datosUbicacion)
-      console.log(this.datosUbicacionLocal)
-
-      // if(datosUbicacion == null){
-      //   this.utilitiesService.alert('', 'Intenta obtener nuevamente tu dirección');
-      //     return;
-      // }
 
       if(this.datosUbicacion.value.numeroEstablecimiento == null || this.datosUbicacion.value.numeroEstablecimiento === ''){
         this.utilitiesService.alert('', 'Agrega el número del establecimiento.');
@@ -306,7 +296,6 @@ export class AltaEstablecimientoPage implements OnInit {
 
     if(this.pasoFormulario === 5){
       if(this.tercerOpcionPasoCinco && this.fotoIdentificastePublicidad === ''){
-        console.log('falta foto');
         this.utilitiesService.alert('', 'Captura foto de publicidad nueva.');
         return;
       }
@@ -320,19 +309,25 @@ export class AltaEstablecimientoPage implements OnInit {
 
       }else{
         
-        // revisamos si hay internet y si no hay lo mandamos a stored and foward
-        console.log(this.hayInternet)
-      
         if(!this.hayInternet){
           await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
           const datosUbicacion: GeocoderGoogleResult = JSON.parse(localStorage.getItem("direccionLocal"))
-          console.log(datosUbicacion)
           let stringCalle = '';
           let stringColonia = '';
           let municipio = '';
           let estado = '';
           let codigoPostal = '';
+          let latitud = '';
+          let longitug = '';
           
+          const coordenadas: string = JSON.parse(localStorage.getItem("coordenadas"))
+          if(coordenadas != null){
+            var stringCoordenadas = coordenadas;
+            var res = stringCoordenadas.split(",");
+            latitud = res[0];
+            longitug = res[1];
+          }
+                
           
           if (datosUbicacion != null) {
             stringCalle = datosUbicacion.calle != null && datosUbicacion.colonia != '' ? datosUbicacion.calle : this.calle;
@@ -357,8 +352,8 @@ export class AltaEstablecimientoPage implements OnInit {
             evaluacion_colonia: this.datosUbicacionLocal != null ? stringColonia : this.colonia,
             evaluacion_municipio_alcadia: this.datosUbicacionLocal != null ? estado : this.municipio,
             evaluacion_cp: this.datosUbicacionLocal != null ?  codigoPostal : this.codigoPostal,
-            evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitud): null,
-            evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitud): null,
+            evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitud): latitud,
+            evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitud): longitug,
             evaluacion_renovacion: 0,
             evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
             evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
@@ -369,6 +364,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
           await this.guardarEnStoredFoward(objeto)
           localStorage.removeItem('direccionLocal');
+          localStorage.removeItem('coordenadas');
           this.navCtrl.navigateRoot('home');
           return;
         }
@@ -378,6 +374,7 @@ export class AltaEstablecimientoPage implements OnInit {
           await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
           return;
         }
+        localStorage.removeItem('coordenadas');
       }
     }
 
@@ -548,10 +545,8 @@ export class AltaEstablecimientoPage implements OnInit {
   public async tomarFoto(opt: number, posicion?: number) {
     if (opt === 1) {
       this.tempImg = await this.camara();
-      console.log(this.tempImg);
     } else if (opt === 2) {
       this.opcionesParafoto[posicion].fotoBase64 = await this.camara();
-      console.log(this.opcionesParafoto);
     } else if (opt === 3){
       this.fotoIdentificastePublicidad = await this.camara(5);
     }
@@ -562,14 +557,21 @@ export class AltaEstablecimientoPage implements OnInit {
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
     const datosUbicacion: GeocoderGoogleResult = JSON.parse(localStorage.getItem("direccionLocal"))
-    console.log(datosUbicacion)
     let stringCalle = '';
     let stringColonia = '';
     let municipio = '';
     let estado = '';
     let codigoPostal = '';
-    
-    
+    let latitud = '';
+    let longitug = '';
+    const coordenadas: string = JSON.parse(localStorage.getItem("coordenadas"))
+    if(coordenadas != null){
+      var stringCoordenadas = coordenadas;
+      var res = stringCoordenadas.split(",");
+      latitud = res[0];
+      longitug = res[1];
+    }
+
     if (datosUbicacion != null) {
       stringCalle = datosUbicacion.calle != null && datosUbicacion.colonia != '' ? datosUbicacion.calle : this.calle;
       stringColonia = datosUbicacion.colonia != null && datosUbicacion.colonia != '' ? datosUbicacion.colonia : this.colonia;
@@ -594,8 +596,8 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_colonia: this.datosUbicacionLocal != null ? stringColonia : this.colonia,
       evaluacion_municipio_alcadia: this.datosUbicacionLocal != null ? estado : this.municipio,
       evaluacion_cp: this.datosUbicacionLocal != null ?  codigoPostal : this.codigoPostal,
-      evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitud): null,
-      evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitud): null,
+      evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitud): latitud,
+      evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitud): longitug,
       evaluacion_renovacion: 0,
       evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
       evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
@@ -860,9 +862,6 @@ export class AltaEstablecimientoPage implements OnInit {
           objeto.lista_competencias[j].img_modificada = 1
           objeto.lista_competencias[j].imagBase64 = this.limpiarFotos(this.fotoIdentificastePublicidad)
           objeto.lista_competencias[j].ecompentencia_foto = this.evaluacion.lista_competencias[i].ecompentencia_foto
-          // ecompentencia_foto
-          console.log("objeto edcion", this.evaluacion.lista_competencias[i].ecompentencia_foto)
-          console.log("objeto a enviar", objeto.lista_competencias[j])
         }else{
           objeto.lista_competencias[j].img_modificada = 0
         }
@@ -873,8 +872,7 @@ export class AltaEstablecimientoPage implements OnInit {
         }
       }
     }
-    
-    console.log(objeto)
+
     const url = 'Operaciones/Evaluacion/Put';
     const respuesta: any = await this.webRayoService.putAsync(url, objeto);
     if ( respuesta == null || respuesta.success === false ) {
