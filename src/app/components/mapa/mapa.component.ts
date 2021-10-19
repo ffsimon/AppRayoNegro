@@ -305,9 +305,11 @@ export class MapaComponent implements OnInit {
         }
       }
       
+      debugger
+
       if( this.ciudadGeocode != null){
         if(this.municipioGeocode != null){
-          this.municipioCiudad = this.ciudadGeocode + this.municipioGeocode
+          this.municipioCiudad = this.ciudadGeocode + "/" + this.municipioGeocode
         }else{
           this.municipioCiudad = this.ciudadGeocode + "/"
         }
