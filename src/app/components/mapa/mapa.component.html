@@ -37,10 +37,13 @@
       <span>Calle: </span> <span>  {{calleGeocode != null && calleGeocode != '' ?  calleGeocode : 'Sin calle'}}  </span>
     </ion-col>
     <ion-col size="12">
-      <span>Municipio: </span> <span> {{municipioGeocode != null && municipioGeocode != '' ?  (municipioGeocode + ', ' +municipioCiudad)  : 'Sin municipio'}} </span>
+      <span>Estado/Municipio: </span> <span> {{municipioCiudad}} </span>
     </ion-col>
     <ion-col size="12">
       <span>CP: </span> <span> {{codigoPostalGeocode != null && codigoPostalGeocode != '' ?  codigoPostalGeocode : 'Sin código postal'}}</span>
+    </ion-col>
+    <ion-col size="12">
+      <span>Dirección: </span> <span> {{direccionCompleta}}</span>
     </ion-col>
   </ion-row>
 </ion-col>

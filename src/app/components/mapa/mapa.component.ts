@@ -182,7 +182,9 @@ export class MapaComponent implements OnInit {
     loading.dismiss();
     //await this.obtenerDireccionDeCoordenadas(this.latitud, this.longitud);
      await this.consultarDireccion(this.latLng);
-    // await this.consultarDireccion("18.902657727624074, -99.17737910565803")
+   //await this.consultarDireccion("20.6582485,-100.3402784") // queretaro
+    // await this.consultarDireccion("19.3821427,-99.1811972") // CDMX
+    
   }
 
 
@@ -286,10 +288,10 @@ export class MapaComponent implements OnInit {
       for (let i = 0; i < direccion.address_components.length; i++) {
         let tipo = direccion.address_components[i].types;
         for (let j = 0; j < tipo.length; j++) {
-          if(tipo[j] == 'route')
+          if(tipo[j] == 'route' || tipo[j] == 'establishment' || tipo[j] == 'point_of_interest' || tipo[j] == 'transit_station')
             this.calleGeocode = direccion.address_components[i].long_name;
 
-          if(tipo[j] == 'sublocality' || tipo[i] == 'sublocality_level_1')
+          if(tipo[j] == 'sublocality' || tipo[j] == 'sublocality_level_1' || tipo[j] == 'neighborhood')
             this.coloniaGeocode = direccion.address_components[i].long_name
 
           if(tipo[j] == 'administrative_area_level_1')
@@ -302,8 +304,22 @@ export class MapaComponent implements OnInit {
             this.codigoPostalGeocode = direccion.address_components[i].long_name;
         }
       }
+      
+      if( this.ciudadGeocode != null){
+        if(this.municipioGeocode != null){
+          this.municipioCiudad = this.ciudadGeocode + this.municipioGeocode
+        }else{
+          this.municipioCiudad = this.ciudadGeocode + "/"
+        }
+      }else{
+       if(this.municipioGeocode != null){
+        this.municipioCiudad = "/" + this.municipioGeocode;
+       }else{
+        this.municipioCiudad = "/"
+       }
+      }
+      
 
-      this.municipioCiudad = this.ciudadGeocode != null ? this.ciudadGeocode : '/ Sin ciudad'
     }
 
     let guardarDireccion: GeocoderGoogleResult = {

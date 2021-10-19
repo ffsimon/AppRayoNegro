@@ -58,7 +58,10 @@ export class LoginPage implements OnInit {
     if(!this.form.valid){
       return;
     }
-  
+
+    localStorage.removeItem('direccionLocal');
+    localStorage.removeItem('coordenadas');
+    
     let loading = await this.utilitiesService.loadingAsync();
     loading.present();
 

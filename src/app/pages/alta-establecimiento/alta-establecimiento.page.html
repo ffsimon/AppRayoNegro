@@ -149,7 +149,6 @@
 
     <div *ngIf="validarGeocoderGoogle()">
       <div *ngIf="datosUbicacionLocal != null">
-
         <div *ngIf="datosUbicacionLocal.codigoPostal == '' || datosUbicacionLocal.codigoPostal == null">
           <br>
           <ion-item class="ion-item-input">
@@ -157,8 +156,6 @@
             </ion-input>
            </ion-item>
         </div>
-       
-
         <div *ngIf="datosUbicacionLocal.calle == '' || datosUbicacionLocal.calle == null">
           <br>
           <ion-item class="ion-item-input">
@@ -174,7 +171,6 @@
             </ion-input>
            </ion-item>
         </div>
-
         <div *ngIf="datosUbicacionLocal.municipio == '' || datosUbicacionLocal.municipio == null">
           <br>
           <ion-item class="ion-item-input">
@@ -213,7 +209,7 @@
 
 
 
-    <div *ngIf="validarGeocoder()">
+    <!-- <div *ngIf="validarGeocoder()">
       <ion-item class="ion-item-input" *ngIf="datosUbicacionLocal.subAdministrativeArea === '' || datosUbicacionGeocoder.subAdministrativeArea === null">
         <ion-input type="text" [(ngModel)]="municipio" placeholder="Municipio" maxlength="100">
         </ion-input>
@@ -231,7 +227,7 @@
         </ion-input>
       </ion-item>
 
-    </div>
+    </div> -->
 
   </div>
 
