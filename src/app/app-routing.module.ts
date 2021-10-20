@@ -41,6 +41,10 @@ const routes: Routes = [
     path: 'modal-page',
     loadChildren: () => import('./pages/modal-page/modal-page.module').then( m => m.ModalPagePageModule)
   },
+  {
+    path: 'modal-evaluaciones',
+    loadChildren: () => import('./pages/modal-evaluaciones/modal-evaluaciones.module').then( m => m.ModalEvaluacionesPageModule)
+  },
 ];
 
 @NgModule({

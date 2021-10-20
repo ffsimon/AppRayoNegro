@@ -1,47 +1,8 @@
 <div id="map"></div>
-
-<br>
-<ion-col size="6" style="color: white;font-size: 12px;" *ngIf="geocoderResult !== null">
-  <ion-row>
-    <ion-col size="12">
-    <span>Nombre del establecimiento: </span>  <span>{{ nombreEstablecimiento }}</span>
-    </ion-col>
-    <ion-col size="12">
-      <span>Calle: </span> <span>{{ geocoderResult.thoroughfare }}</span>
-      <ion-item class="ion-item-input" *ngIf="geocoderResult.thoroughfare == ''">
-        <ion-input type="text" [(ngModel)]="calle" placeholder="Calle" maxlength="10">
-        </ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col size="12">
-      <span>Municipio / Alcaldía: </span> <span> {{ geocoderResult.subAdministrativeArea != '' ? (geocoderResult.administrativeArea / geocoderResult.subAdministrativeArea) :  geocoderResult.administrativeArea  }}</span>
-      <ion-item class="ion-item-input" *ngIf="geocoderResult.administrativeArea == ''">
-        <ion-input type="text" [(ngModel)]="municipio" placeholder="Calle" maxlength="10">
-        </ion-input>
-      </ion-item>
-    </ion-col>
-    <ion-col size="12">
-      <span>CP: </span> <span>{{ geocoderResult.postalCode }}</span>
-    </ion-col>
-  </ion-row>
-</ion-col>
-
 <div *ngIf="dataReturned != null? tratarDireccion(dataReturned) : hola()" ></div>
 
 <ion-col size="6" style="color: white;font-size: 12px;" *ngIf="dataReturned !== null">
   <ion-row>
-    <ion-col size="12">
-    <span>Nombre del establecimiento: </span>  <span>{{ nombreEstablecimiento }}</span>
-    </ion-col>
-    <ion-col size="12">
-      <span>Calle: </span> <span>  {{calleGeocode != null && calleGeocode != '' ?  calleGeocode : 'Sin calle'}}  </span>
-    </ion-col>
-    <ion-col size="12">
-      <span>Estado/Municipio: </span> <span> {{municipioCiudad}} </span>
-    </ion-col>
-    <ion-col size="12">
-      <span>CP: </span> <span> {{codigoPostalGeocode != null && codigoPostalGeocode != '' ?  codigoPostalGeocode : 'Sin código postal'}}</span>
-    </ion-col>
     <ion-col size="12">
       <span>Dirección: </span> <span> {{direccionCompleta}}</span>
     </ion-col>

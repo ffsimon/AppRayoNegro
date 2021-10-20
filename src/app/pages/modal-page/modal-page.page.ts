@@ -28,8 +28,7 @@ export class ModalPagePage {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async cerrarModal(){
-    localStorage.removeItem('direccionLocal');
-    await this.modalController.dismiss(null);
+    await this.modalController.dismiss();
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

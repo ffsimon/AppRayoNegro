@@ -319,6 +319,7 @@ export class AltaEstablecimientoPage implements OnInit {
           let codigoPostal = '';
           let latitud = '';
           let longitug = '';
+          let direccionCompleta = '';
           
           const coordenadas: string = JSON.parse(localStorage.getItem("coordenadas"))
           if(coordenadas != null){
@@ -334,11 +335,17 @@ export class AltaEstablecimientoPage implements OnInit {
             stringColonia = datosUbicacion.colonia != null && datosUbicacion.colonia != '' ? datosUbicacion.colonia : this.colonia;
             municipio = datosUbicacion.municipio !== '' && datosUbicacion.municipio !== null ? datosUbicacion.municipio : this.municipio;
             codigoPostal = datosUbicacion.codigoPostal != null &&  datosUbicacion.codigoPostal != '' ? datosUbicacion.codigoPostal : this.codigoPostal;
+            direccionCompleta = datosUbicacion.direccion_completa != null && datosUbicacion.direccion_completa != null ? datosUbicacion.direccion_completa : '';
+
 
             if (datosUbicacion.estado != null && datosUbicacion.estado != '') {
               estado = datosUbicacion.municipio != null || datosUbicacion.municipio !=  '' ?
                 `${datosUbicacion.estado}/${datosUbicacion.municipio}` : `${datosUbicacion.estado}/${this.municipio}`;
             } 
+          }
+
+          if(datosUbicacion == null){
+            direccionCompleta = this.calle + ", " + this.colonia + ", " + this.municipio + ", " + this.codigoPostal;
           }
           let objeto: EvaluacionesRequest = {
             evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
@@ -354,6 +361,7 @@ export class AltaEstablecimientoPage implements OnInit {
             evaluacion_cp: this.datosUbicacionLocal != null ?  codigoPostal : this.codigoPostal,
             evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitud): latitud,
             evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitud): longitug,
+            direccion_completa: direccionCompleta,
             evaluacion_renovacion: 0,
             evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
             evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
@@ -564,6 +572,7 @@ export class AltaEstablecimientoPage implements OnInit {
     let codigoPostal = '';
     let latitud = '';
     let longitug = '';
+    let direccionCompleta = '';
     const coordenadas: string = JSON.parse(localStorage.getItem("coordenadas"))
     if(coordenadas != null){
       var stringCoordenadas = coordenadas;
@@ -577,11 +586,16 @@ export class AltaEstablecimientoPage implements OnInit {
       stringColonia = datosUbicacion.colonia != null && datosUbicacion.colonia != '' ? datosUbicacion.colonia : this.colonia;
       municipio = datosUbicacion.municipio !== '' && datosUbicacion.municipio !== null ? datosUbicacion.municipio : this.municipio;
       codigoPostal = datosUbicacion.codigoPostal != null &&  datosUbicacion.codigoPostal != '' ? datosUbicacion.codigoPostal : this.codigoPostal;
+      direccionCompleta = datosUbicacion.direccion_completa != null && datosUbicacion.direccion_completa != null ? datosUbicacion.direccion_completa : '';
 
       if (datosUbicacion.estado != null && datosUbicacion.estado != '') {
         estado = datosUbicacion.municipio != null || datosUbicacion.municipio !=  '' ?
           `${datosUbicacion.estado}/${datosUbicacion.municipio}` : `${datosUbicacion.estado}/${this.municipio}`;
       } 
+    }
+
+    if(datosUbicacion == null){
+      direccionCompleta = this.calle + ", " + this.colonia + ", " + this.municipio + ", " + this.codigoPostal;
     }
 
     let objeto: EvaluacionesRequest = {
@@ -598,6 +612,7 @@ export class AltaEstablecimientoPage implements OnInit {
       evaluacion_cp: this.datosUbicacionLocal != null ?  codigoPostal : this.codigoPostal,
       evaluacion_latitud: datosUbicacion != null ? String(datosUbicacion.latitud): latitud,
       evaluacion_longitud: datosUbicacion != null ? String(datosUbicacion.longitud): longitug,
+      direccion_completa: direccionCompleta,
       evaluacion_renovacion: 0,
       evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
       evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
@@ -753,43 +768,49 @@ export class AltaEstablecimientoPage implements OnInit {
 
     // paso 4:
     // aquí se hace match para la foto de fachada
-    evaluacion.list_fotografias.forEach(foto => {
-      if(foto.efotografia_catalogo_id_evidencia == 0){
-        this.tempImg = "data:image/jpeg;base64," + foto.fotografia_base64
-      }
-
-      this.sliderOne.slidesItems.forEach(sliders => {
-        if (sliders.cagenerico_clave == foto.efotografia_catalogo_id_evidencia) {
-          sliders.fotoBase64 = "data:image/jpeg;base64," + foto.fotografia_base64
+    if(evaluacion.list_fotografias != null){
+      evaluacion.list_fotografias.forEach(foto => {
+        if(foto.efotografia_catalogo_id_evidencia == 0){
+          this.tempImg = "data:image/jpeg;base64," + foto.fotografia_base64
         }
+  
+        this.sliderOne.slidesItems.forEach(sliders => {
+          if (sliders.cagenerico_clave == foto.efotografia_catalogo_id_evidencia) {
+            sliders.fotoBase64 = "data:image/jpeg;base64," + foto.fotografia_base64
+          }
+        });
       });
-    });
+    }
+
 
     // paso 5: 
     // primero se va a hacer lo de comentarios
     let arregloCompetenciasSeleccionadas = [];
 
-    for (let i = 0; i < evaluacion.lista_competencias.length; i++) {
-      // la seccion que viene por default
-      if(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico == 0){
-        // activamos el toogle
-        this.tercerOpcionPasoCinco = true;
-        if(evaluacion.lista_competencias[i].ecompentencia_comentario != null && evaluacion.lista_competencias[i].ecompentencia_comentario != ''){
-          this.comentarios = evaluacion.lista_competencias[i].ecompentencia_comentario;
+    if(evaluacion.list_fotografias != null){
+      for (let i = 0; i < evaluacion.lista_competencias.length; i++) {
+        // la seccion que viene por default
+        if(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico == 0){
+          // activamos el toogle
+          this.tercerOpcionPasoCinco = true;
+          if(evaluacion.lista_competencias[i].ecompentencia_comentario != null && evaluacion.lista_competencias[i].ecompentencia_comentario != ''){
+            this.comentarios = evaluacion.lista_competencias[i].ecompentencia_comentario;
+          }
+  
+          //se va a poner la foto
+          if (evaluacion.lista_competencias[i].fotografia_base64 != null && evaluacion.lista_competencias[i].fotografia_base64 != '') {
+            this.fotoIdentificastePublicidad = "data:image/jpeg;base64," + evaluacion.lista_competencias[i].fotografia_base64;
+          }
         }
-
-        //se va a poner la foto
-        if (evaluacion.lista_competencias[i].fotografia_base64 != null && evaluacion.lista_competencias[i].fotografia_base64 != '') {
-          this.fotoIdentificastePublicidad = "data:image/jpeg;base64," + evaluacion.lista_competencias[i].fotografia_base64;
+  
+        // las opciones que vienen de los catalogos
+        if(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico != 0){
+          arregloCompetenciasSeleccionadas.push(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico)
         }
+        
       }
-
-      // las opciones que vienen de los catalogos
-      if(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico != 0){
-        arregloCompetenciasSeleccionadas.push(evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico)
-      }
-      
     }
+
 
     // con esto colocamos lo de las competencias
     for (let i = 0; i < this.lstaCompetencia.length; i++) {
@@ -842,36 +863,36 @@ export class AltaEstablecimientoPage implements OnInit {
       foto.efotografia_bandera_modificacion = 1
     });
 
-    for (let i = 0; i < this.evaluacion.list_fotografias.length; i++) {
-      for (let j = 0; j < objeto.list_fotografias.length; j++) {
-        if(this.evaluacion.list_fotografias[i].efotografia_catalogo_id_evidencia == objeto.list_fotografias[j].efotografia_catalogo_id_evidencia){
-          objeto.list_fotografias[j].efotografia_fotografia = this.evaluacion.list_fotografias[i].efotografia_fotografia
-          objeto.list_fotografias[j].efotografia_id = this.evaluacion.list_fotografias[i].efotografia_id
-        }
-
-      }
-    }
-
-    // evaluacion.lista_competencias.ecompentencia_id
-
-    for (let i = 0; i < this.evaluacion.lista_competencias.length; i++) {
-
-      for (let j = 0; j < objeto.lista_competencias.length; j++) {
-        
-        if(objeto.lista_competencias[j].ecompentencia_catalogo_competencia == 0 && objeto.lista_competencias[j].ecompentencia_foto != ''){
-          objeto.lista_competencias[j].img_modificada = 1
-          objeto.lista_competencias[j].imagBase64 = this.limpiarFotos(this.fotoIdentificastePublicidad)
-          objeto.lista_competencias[j].ecompentencia_foto = this.evaluacion.lista_competencias[i].ecompentencia_foto
-        }else{
-          objeto.lista_competencias[j].img_modificada = 0
-        }
-
-        if (this.evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico == objeto.lista_competencias[j].ecompentencia_catalogo_competencia) {
-          objeto.lista_competencias[j].ecompentencia_id = this.evaluacion.lista_competencias[i].ecompentencia_id
-          objeto.lista_competencias[j].ecompentencia_evaluacion_id = this.evaluacion.lista_competencias[i].ecompentencia_evaluacion_id
+    if(this.evaluacion.list_fotografias != null){
+      for (let i = 0; i < this.evaluacion.list_fotografias.length; i++) {
+        for (let j = 0; j < objeto.list_fotografias.length; j++) {
+          if(this.evaluacion.list_fotografias[i].efotografia_catalogo_id_evidencia == objeto.list_fotografias[j].efotografia_catalogo_id_evidencia){
+            objeto.list_fotografias[j].efotografia_fotografia = this.evaluacion.list_fotografias[i].efotografia_fotografia
+            objeto.list_fotografias[j].efotografia_id = this.evaluacion.list_fotografias[i].efotografia_id
+          }
+  
         }
       }
     }
+
+    if(this.evaluacion.lista_competencias != null){
+      for (let i = 0; i < this.evaluacion.lista_competencias.length; i++) {
+        for (let j = 0; j < objeto.lista_competencias.length; j++) {
+          if(objeto.lista_competencias[j].ecompentencia_catalogo_competencia == 0 && objeto.lista_competencias[j].ecompentencia_foto != ''){
+            objeto.lista_competencias[j].img_modificada = 1
+            objeto.lista_competencias[j].imagBase64 = this.limpiarFotos(this.fotoIdentificastePublicidad)
+            objeto.lista_competencias[j].ecompentencia_foto = this.evaluacion.lista_competencias[i].ecompentencia_foto
+          }else{
+            objeto.lista_competencias[j].img_modificada = 0
+          }
+          if (this.evaluacion.lista_competencias[i].ecompentencia_ca_clave_generico == objeto.lista_competencias[j].ecompentencia_catalogo_competencia) {
+            objeto.lista_competencias[j].ecompentencia_id = this.evaluacion.lista_competencias[i].ecompentencia_id
+            objeto.lista_competencias[j].ecompentencia_evaluacion_id = this.evaluacion.lista_competencias[i].ecompentencia_evaluacion_id
+          }
+        }
+      }
+    }
+
 
     const url = 'Operaciones/Evaluacion/Put';
     const respuesta: any = await this.webRayoService.putAsync(url, objeto);

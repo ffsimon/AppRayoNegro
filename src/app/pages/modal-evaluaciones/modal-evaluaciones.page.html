@@ -1,0 +1,66 @@
+<ion-header no-border>
+
+  <ion-toolbar class="header ion-text-center ion-no-padding">
+      <ion-buttons slot="end">
+        <ion-button ion-button (click)="cerrarModal()" class="boton-cerrar">
+          <ion-icon name="close-circle-outline" style="zoom: 1.5;" color="light"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+  </ion-toolbar>
+  
+  </ion-header>
+
+<ion-content>
+
+  <ion-row>
+    <ion-col size="12">
+      <ion-row>
+        <ion-col size="12" class="ion-text-center">
+          <span> <b>{{evaluacion.evaluacion_nombre_establecimiento}}</b></span>
+        </ion-col>
+        <ion-col size="12">
+          <span><b>Calle: </b>  </span> <span>{{evaluacion.evaluacion_calle}}</span>
+        </ion-col>
+        <ion-col size="12">
+          <span><b>Colonia: </b> </span> <span>{{evaluacion.evaluacion_colonia}}</span>
+        </ion-col>
+        <ion-col size="12">
+          <span><b>Municipio / Alcaldía: </b>  </span> <span>{{evaluacion.evaluacion_municipio_alcadia}}</span>
+        </ion-col>
+        <ion-col size="12">
+          <span><b>CP:</b>  </span> <span>{{evaluacion.evaluacion_cp}}</span>
+        </ion-col>
+      </ion-row>
+    </ion-col>
+    <ion-col size="12" class="ion-padding">
+      <div id="map{{evaluacion.evaluacion_id}}" class="map"></div>
+    </ion-col>
+  </ion-row>
+
+  <div *ngIf="evaluacionCompleta != null && evaluacionCompleta.list_fotografias != null">
+    <ion-card style="width: 80%;margin-left: 10%;border-radius: 20px;" class="contenedor-card" *ngFor="let img of evaluacionCompleta.list_fotografias">
+      <div style="color: white;" class="ion-text-center">
+        <ion-col size="10" class="ion-text-center">
+        </ion-col>
+        <ion-col size="6" class="ion-padding">
+          <div class="ion-padding" style="height: 150px;">
+            <img src="assets/img/publicidad.png" alt="" width="80%" height="100%" *ngIf="img.fotografia_base64 == null || img.fotografia_base64 == ''">
+            <img src="{{'data:image/jpg;base64,' + img.fotografia_base64}}" alt="" width="80%" height="100%" *ngIf="img.fotografia_base64 != null && img.fotografia_base64 != ''">
+          </div>
+        </ion-col>
+      </div>
+    </ion-card>
+  </div>
+
+  <div *ngIf="evaluacionCompleta != null && evaluacionCompleta.list_fotografias.length == 0">
+    <ion-row>
+      <ion-col size="12" class="ion-text-center">
+        <span class="ion-text-center"> <b>Sin fotografías guardadas</b></span>
+      </ion-col>
+    </ion-row>
+  </div>
+
+
+
+
+</ion-content>

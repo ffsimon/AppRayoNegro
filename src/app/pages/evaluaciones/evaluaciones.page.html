@@ -21,7 +21,8 @@
     </ion-col>
   </ion-row>
 
-  <ion-card style="color: white;" (click)="item.visible = !item.visible" class="contenedor-card" *ngFor="let item of listaEvaluacionesUsuario">
+  <!-- <ion-card style="color: white;" (click)="item.visible = !item.visible" class="contenedor-card" *ngFor="let item of listaEvaluacionesUsuario"> -->
+    <ion-card style="color: white;" class="contenedor-card" *ngFor="let item of listaEvaluacionesUsuario" (click)="verDetalleEvaluacion(item)">
       <ion-row *ngIf="item.visible">
         <ion-col class="ion-text-center" size="12">
           <ion-icon name="ellipse"  [ngStyle]="{'color': item.estatus_evaluacion, 'zoom': '1.5', 'margin-right': '5px', 'margin-top': '5px'}"> &nbsp; &nbsp; </ion-icon> <span>{{item.evaluacion_nombre_establecimiento}}</span> <br>

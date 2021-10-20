@@ -256,12 +256,35 @@ export class MapaComponent implements OnInit {
       console.log("no hay resultados")
       return;
     }
-    this.resultados = respuesta.results;
-    await this.openModal(this.resultados);
+    await this.openModal(respuesta.results);
   }
 
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+  
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async openModal(resultadosDirecciones) {
+    for (let i = 0; i < resultadosDirecciones.length; i++) {
+      if(resultadosDirecciones[i].address_components != null){
+        for (let j = 0; j < resultadosDirecciones[i].address_components.length; j++) {
+          for (let k = 0; k < resultadosDirecciones[i].address_components[j].types.length; k++) {
+            if(resultadosDirecciones[i].address_components[j].types[k] == 'postal_code'){
+              console.log(resultadosDirecciones[i].address_components[j].types[k])
+              this.resultados.push(resultadosDirecciones[i])
+            }
+          }
+        }
+      } 
+    }
+
+    console.log(this.resultados)
+    if(this.resultados.length == 0){
+      this.utilitiesService.toast("No se encontraron direcciones.", 5000)
+      localStorage.removeItem('direccionLocal');
+      await this.modalCtrl.dismiss(null);
+      return;
+    }
     const modal = await this.modalCtrl.create({
       component: ModalPagePage,
       componentProps: {
@@ -305,8 +328,6 @@ export class MapaComponent implements OnInit {
         }
       }
       
-      debugger
-
       if( this.ciudadGeocode != null){
         if(this.municipioGeocode != null){
           this.municipioCiudad = this.ciudadGeocode + "/" + this.municipioGeocode
@@ -331,7 +352,8 @@ export class MapaComponent implements OnInit {
       estado: this.ciudadGeocode,
       codigoPostal: this.codigoPostalGeocode,
       latitud: this.latitud,
-      longitud: this.longitud
+      longitud: this.longitud,
+      direccion_completa: this.direccionCompleta
     }
 
     console.log(guardarDireccion);

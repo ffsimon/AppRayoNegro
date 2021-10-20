@@ -20,4 +20,5 @@ export class GeocoderGoogleResult {
   codigoPostal: string;
   latitud: number;
   longitud: number;
+  direccion_completa?: string;
 }

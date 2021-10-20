@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { GeolocationModel } from 'src/app/models/geolocation_model';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { GeolocationService } from 'src/app/services/geolocation.service';
 import { DataService } from 'src/app/services/params/data.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
-
+import { ModalEvaluacionesPage } from '../../pages/modal-evaluaciones/modal-evaluaciones.page';
 declare let google;
 interface Marker {
   position: {
@@ -39,7 +39,7 @@ export class EvaluacionesPage implements OnInit {
     private webRayoService: WebRayoService,
     private utilitiesService: UtilitiesService,
     private geolocationService: GeolocationService,
-    private dataService: DataService) {
+    private dataService: DataService,  public modalCtrl : ModalController) {
     this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
     console.log(this.usuarioSesion);
   }
@@ -48,7 +48,8 @@ export class EvaluacionesPage implements OnInit {
   public async ngOnInit() {
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
-    await this.obtenerEvaluacionesUsuario();
+    await this.obtenerEvaluacionesUsuarioSinFoto()
+    // await this.obtenerEvaluacionesUsuario();
     setTimeout(async () => {
       await this.cargarMapas();
     }, 1000);
@@ -70,6 +71,41 @@ export class EvaluacionesPage implements OnInit {
         this.listaEvaluacionesUsuario[i].visible = false;
       }
     }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async obtenerEvaluacionesUsuarioSinFoto(){
+    const params = this.webRayoService.fromObjectToGETString({
+      evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
+    });
+    const url = 'Operaciones/Evaluacion/GetEvaluacionesTotal' + params;
+    const respuesta: any = await this.webRayoService.getAsync(url);
+    console.log(respuesta);
+    if ( respuesta === null || respuesta.success === false ||respuesta.response.length === 0 ) {
+      this.listaEvaluacionesUsuario = [];
+    } else {
+      this.listaEvaluacionesUsuario = respuesta.response;
+      for (let i = 0; i < this.listaEvaluacionesUsuario.length; i++) {
+        this.listaEvaluacionesUsuario[i].visible = false;
+      }
+    }
+  }
+
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public async verDetalleEvaluacion(evaluacion: any){
+    console.log(evaluacion)
+    const modal = await this.modalCtrl.create({
+      component: ModalEvaluacionesPage,
+      swipeToClose: true,
+      animated: true,
+      cssClass: 'setting-modal',
+      mode: "ios",
+      componentProps: {
+        evaluacion : evaluacion
+      }
+    });
+
+    return await modal.present();
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -102,8 +138,6 @@ export class EvaluacionesPage implements OnInit {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async cargarMapas() {
-    /* const loading = await this.utilitiesService.loadingAsync();
-    loading.present(); */
     if (this.listaEvaluacionesUsuario.length > 0) {
       this.listaEvaluacionesUsuario.forEach(async element => {
         const cordenadas = {
@@ -113,10 +147,7 @@ export class EvaluacionesPage implements OnInit {
         await this.loadMap(cordenadas, element.evaluacion_id);
       });
     }
-    /* loading.dismiss(); */
   }
-
-    //#region Load Mapa
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async loadMap(coordenadas: any, idMapa: string) {
     const geolocationModel: GeolocationModel = {
@@ -251,5 +282,6 @@ export class EvaluacionesPage implements OnInit {
     this.navCtrl.navigateForward("alta-establecimiento/establecimiento");
     console.log(evaluacion);
   }
-  //#endregion
+
+  
 }

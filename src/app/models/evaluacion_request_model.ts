@@ -26,6 +26,7 @@ export class EvaluacionesRequest {
   evaluacion_cp?: string;
   evaluacion_latitud?: string;
   evaluacion_longitud?: string;
+  direccion_completa?: string;
   evaluacion_renovacion?: number;
   evaluacion_ca_id_comunicacion?: number;
   evaluacion_localizacion_id?: number;
