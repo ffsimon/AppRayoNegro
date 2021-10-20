@@ -184,6 +184,7 @@ export class MapaComponent implements OnInit {
      await this.consultarDireccion(this.latLng);
    //await this.consultarDireccion("20.6582485,-100.3402784") // queretaro
     // await this.consultarDireccion("19.3821427,-99.1811972") // CDMX
+    //await this.consultarDireccion("18.9027224,-99.1773815") // morelos
     
   }
 
@@ -259,10 +260,6 @@ export class MapaComponent implements OnInit {
     await this.openModal(respuesta.results);
   }
 
-
-  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-  
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async openModal(resultadosDirecciones) {
     for (let i = 0; i < resultadosDirecciones.length; i++) {
@@ -288,7 +285,7 @@ export class MapaComponent implements OnInit {
     const modal = await this.modalCtrl.create({
       component: ModalPagePage,
       componentProps: {
-        direcciones : resultadosDirecciones
+        direcciones : this.resultados
       }
     });
 
