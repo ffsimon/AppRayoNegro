@@ -160,7 +160,8 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async obtenerTipoComercion(){
     const params = this.webRayoService.fromObjectToGETString({
-      cagenerico_ca_tipo_id: 1
+      cagenerico_ca_tipo_id: 1,
+      cagenerico_ca_tipo_activo: 1
     });
     const url = 'Catalogos/CatalogoGenerico/Get' + params;
     const respuesta: any = await this.webRayoService.getAsync(url);
@@ -321,7 +322,8 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async obtenerListaComunicacion(){
     const params = this.webRayoService.fromObjectToGETString({
-      cagenerico_ca_tipo_id: 4
+      cagenerico_ca_tipo_id: 4,
+      cagenerico_ca_tipo_activo: 1
     });
     const url = 'Catalogos/CatalogoGenerico/Get' + params;
     const respuesta: any = await this.webRayoService.getAsync(url);
@@ -335,7 +337,8 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async obtenerListaLocalizacion(){
     const params = this.webRayoService.fromObjectToGETString({
-      cagenerico_ca_tipo_id: 5
+      cagenerico_ca_tipo_id: 5,
+      cagenerico_ca_tipo_activo: 1
     });
     const url = 'Catalogos/CatalogoGenerico/Get' + params;
     const respuesta: any = await this.webRayoService.getAsync(url);
@@ -349,7 +352,8 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async obtenerBaners(){
     const params = this.webRayoService.fromObjectToGETString({
-      cagenerico_ca_tipo_id: 2
+      cagenerico_ca_tipo_id: 2,
+      cagenerico_ca_tipo_activo: 1
     });
     const url = 'Catalogos/CatalogoGenerico/Get' + params;
     const respuesta: any = await this.webRayoService.getAsync(url);
@@ -367,7 +371,8 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async obtenerCompetencia(){
     const params = this.webRayoService.fromObjectToGETString({
-      cagenerico_ca_tipo_id: 6
+      cagenerico_ca_tipo_id: 6,
+      cagenerico_ca_tipo_activo: 1
     });
     const url = 'Catalogos/CatalogoGenerico/Get' + params;
     const respuesta: any = await this.webRayoService.getAsync(url);
@@ -386,7 +391,8 @@ export class AltaEstablecimientoPage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async obtenerCompetenciaCaracteristica(idPadre:number){
     const params = this.webRayoService.fromObjectToGETString({
-      crelacion_id_padre: idPadre
+      crelacion_id_padre: idPadre,
+      crelacion_activo: 1
     });
     const url = 'Catalogos/CatalogoArbol/Get' + params;
     const respuesta: any = await this.webRayoService.getAsync(url);
@@ -439,7 +445,8 @@ export class AltaEstablecimientoPage implements OnInit {
     loading.present();
 
     const params = this.webRayoService.fromObjectToGETString({
-      crelacion_id_padre: idPadre
+      crelacion_id_padre: idPadre,
+      crelacion_activo: 1
     });
     const url = 'Catalogos/CatalogoArbol/Get' + params;
     const respuesta: any = await this.webRayoService.getAsync(url);
