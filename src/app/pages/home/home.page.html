@@ -217,7 +217,7 @@
                 <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" chartType="bar" [legend]="false"
                     [options]="barChartOptions" height="150" [colors]="barChartColors"></canvas>
                 <br>
-                <span style="color: white;" *ngIf="objetivos != null">21/06/2021 al 25/06/2021</span>
+                <span style="color: white;" *ngIf="objetivos != null">{{ primerDia |date:"shortDate" }} al {{ ultimoDia |date:"shortDate" }}</span>
             </div>
         </div>
     </ion-row>

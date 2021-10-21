@@ -15,6 +15,9 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+  public primerDia: Date = null;
+  public ultimoDia: Date = null;
+  
   public numeroEvaluacionesGuardadasLocal: any = null;
   public evaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
   public espejoEvaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
@@ -112,6 +115,7 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
+    this.obtenerSemana()
     await this.obtenerObjetivos();
     let valoresGraficas = [];
     let valoresLabels = [];
@@ -227,5 +231,18 @@ export class HomePage implements OnInit {
     }
     // this.refrescarPantalla();
   }
-}
 
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  public obtenerSemana() {
+
+    var curr = new Date; // get current date
+    var first = curr.getDate() - curr.getDay() + 1; // First day is the day of the month - the day of the week
+    var last = first + 5; // last day is the first day + 6
+    this.primerDia = new Date(curr.setDate(first));
+    this.ultimoDia = new Date(curr.setDate(last));
+
+    console.log(this.primerDia)
+    console.log(this.ultimoDia)
+  }
+}
