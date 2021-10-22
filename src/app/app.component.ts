@@ -71,7 +71,10 @@ export class AppComponent implements OnInit {
   public async cerrarSesion() {
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
-    await this.cerrarSesionAsync(this.usuarioSesion.user_id)
+    if(this.usuarioSesion != null){
+      await this.cerrarSesionAsync(this.usuarioSesion.user_id)
+    }
+   
     this.navCtrl.navigateRoot('login');
     this.menuCtrl.toggle();
     localStorage.removeItem('usuario_sesion');
