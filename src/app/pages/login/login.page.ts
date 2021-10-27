@@ -23,6 +23,7 @@ export class LoginPage implements OnInit {
     contrasenia: ["", Validators.required]
   });
   public idNotificacion: string = null;
+  public sliderOne: any;
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private formBuilder: FormBuilder,
@@ -31,6 +32,16 @@ export class LoginPage implements OnInit {
      public geolocationService: GeolocationService,
      public utilitiesService: UtilitiesService,
      public appComponent: AppComponent) { 
+    this.sliderOne = {
+      initialSlide: 0,
+      slidesPerView: 1,
+      speed: 400,
+      pagination: {
+        el: '.swiper-pagination',
+        dynamicBullets: true,
+      },
+      slidesItems: []
+    };
       this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
       if(this.usuarioSesion != null){
         this.navCtrl.navigateRoot("home");
@@ -48,6 +59,7 @@ export class LoginPage implements OnInit {
         this.geolocationService.checkGPSPermission();
       }
     })
+
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -79,8 +91,23 @@ export class LoginPage implements OnInit {
       return;
     }
     let usuario_sesion: usuario_sesion_model = respuesta.response[0];
+
+    // borrar
+    // usuario_sesion.tbl_bandera_offline = 1;
+    // console.log(usuario_sesion)
+    // borrar
+
     localStorage.setItem("token_jwt", usuario_sesion.auth_token);
     localStorage.setItem("usuario_sesion", JSON.stringify(usuario_sesion));
+
+    // si tiene la bandera tbl_bandera_offline, entonces vamos a descargar y guardar los catalogos
+    if(usuario_sesion.tbl_bandera_offline == 1){
+      await this.obtenerBaners();
+      await this.obtenerCompetencia();
+      await this.obtenerListaComunicacion();
+      await this.obtenerListaLocalizacion();
+      await this.obtenerTipoComercion();
+    }
     
     //ingresamos el id de la notificacion
     this.idNotificacion =  this.appComponent.oneSignalUserId;
@@ -131,4 +158,106 @@ export class LoginPage implements OnInit {
     this.navCtrl.navigateRoot('recuperar-cuenta');
   }
 
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    public async obtenerListaComunicacion(){
+      const params = this.webRayoService.fromObjectToGETString({
+        cagenerico_ca_tipo_id: 4,
+        cagenerico_ca_tipo_activo: 1
+      });
+      const url = 'Catalogos/CatalogoGenerico/Get' + params;
+      const respuesta: any = await this.webRayoService.getAsync(url);
+      if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+        localStorage.setItem("subListaTipoComunicacion", null);
+      } else {
+        localStorage.setItem("subListaTipoComunicacion", JSON.stringify(respuesta.response));
+      }
+    }
+  
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    public async obtenerListaLocalizacion(){
+      const params = this.webRayoService.fromObjectToGETString({
+        cagenerico_ca_tipo_id: 5,
+        cagenerico_ca_tipo_activo: 1
+      });
+      const url = 'Catalogos/CatalogoGenerico/Get' + params;
+      const respuesta: any = await this.webRayoService.getAsync(url);
+      if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+        localStorage.setItem("subListaTipoLocalizacion", null);
+      } else {
+        localStorage.setItem("subListaTipoLocalizacion", JSON.stringify(respuesta.response));
+      }
+    }
+  
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    public async obtenerBaners(){
+      const params = this.webRayoService.fromObjectToGETString({
+        cagenerico_ca_tipo_id: 2,
+        cagenerico_ca_tipo_activo: 1
+      });
+      const url = 'Catalogos/CatalogoGenerico/Get' + params;
+      const respuesta: any = await this.webRayoService.getAsync(url);
+      if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+        localStorage.setItem("slidesItems", null);
+      } else {
+        this.sliderOne.slidesItems = respuesta.response;
+        for (let i = 0; i < this.sliderOne.slidesItems.length; i++) {
+          this.sliderOne.slidesItems[i].seleccionado = false;
+          this.sliderOne.slidesItems[i].fotoBase64 = '';
+          localStorage.setItem("slidesItems", JSON.stringify(this.sliderOne));
+        }
+      }
+    }
+  
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    public async obtenerCompetencia(){
+      const params = this.webRayoService.fromObjectToGETString({
+        cagenerico_ca_tipo_id: 6,
+        cagenerico_ca_tipo_activo: 1
+      });
+      const url = 'Catalogos/CatalogoGenerico/Get' + params;
+      const respuesta: any = await this.webRayoService.getAsync(url);
+      if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+        localStorage.setItem("listaCompetencia", null);
+      } else {
+        for (let i = 0; i < respuesta.response.length; i++) {
+          let hijoCompetencia =  await this.obtenerCompetenciaCaracteristica(respuesta.response[i].cagenerico_clave);
+          respuesta.response[i].arregloHijos = hijoCompetencia;
+         }
+        localStorage.setItem("listaCompetencia", JSON.stringify(respuesta.response));
+      }
+    }
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    public async obtenerTipoComercion(){
+      const params = this.webRayoService.fromObjectToGETString({
+        cagenerico_ca_tipo_id: 1,
+        cagenerico_ca_tipo_activo: 1
+      });
+      const url = 'Catalogos/CatalogoGenerico/Get' + params;
+      const respuesta: any = await this.webRayoService.getAsync(url);
+      if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+        localStorage.setItem("tipoComercio", null);
+      } else {
+        localStorage.setItem("tipoComercio", JSON.stringify(respuesta.response));
+      }
+    }
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    public async obtenerCompetenciaCaracteristica(idPadre:number){
+      const params = this.webRayoService.fromObjectToGETString({
+        crelacion_id_padre: idPadre,
+        crelacion_activo: 1
+      });
+      const url = 'Catalogos/CatalogoArbol/Get' + params;
+      const respuesta: any = await this.webRayoService.getAsync(url);
+      if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+       return [];
+      } else {
+        for (let i = 0; i < respuesta.response.length; i++) {
+          respuesta.response[i].estatus = false;
+        }
+        return respuesta.response;
+      }
+    }
+  
 }

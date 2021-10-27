@@ -141,7 +141,11 @@
       </ion-item>
     </form>
 
-    <div class="ion-padding">
+    <div *ngIf="usuarioSesion.tbl_bandera_offline == 1">
+      <br>
+    </div>
+
+    <div class="ion-padding" *ngIf="usuarioSesion.tbl_bandera_offline == 0">
       <ion-col size="12">
         <app-mapa [nombreEstablecimiento]="datosGenerales.value.nombreEstablecimiento"></app-mapa>
       </ion-col>

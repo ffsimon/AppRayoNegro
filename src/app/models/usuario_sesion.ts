@@ -25,6 +25,7 @@ export class usuario_sesion_model {
   user_token_notificacion: string;
   user_usuario: string;
   user_version_app: number;
+  tbl_bandera_offline?: number;
 }
 
 export class user_pass_model {

@@ -7,7 +7,6 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
 import { Competencias, EvaluacionesRequest, Fotografias } from 'src/app/models/evaluacion_request_model';
 import { GeocoderGoogleResult, GeocoderResult } from 'src/app/models/geocoder_model';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
-import { ConnectivityService } from 'src/app/services/connectivity.service';
 import { ActivatedRoute } from '@angular/router';
 import { Network } from '@ionic-native/network/ngx';
 
@@ -100,8 +99,7 @@ export class AltaEstablecimientoPage implements OnInit {
     private navCtrl: NavController,
     private utilitiesService: UtilitiesService,
     private webRayoService: WebRayoService,
-    private camera: Camera, 
-    private connectivity: ConnectivityService,
+    private camera: Camera,
     private route: ActivatedRoute,
     private network: Network) {    
 
@@ -109,7 +107,6 @@ export class AltaEstablecimientoPage implements OnInit {
       this.esEdicion = true;
       this.evaluacion = this.route.snapshot.data["establecimiento"];
     }
-
     this.usuarioSesion = JSON.parse(localStorage.getItem("usuario_sesion"));
     this.sliderOne =
     {
@@ -138,12 +135,24 @@ export class AltaEstablecimientoPage implements OnInit {
 
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
-
-    await this.obtenerTipoComercion();
-    await this.obtenerListaComunicacion();
-    await this.obtenerListaLocalizacion();
-    await this.obtenerBaners();
-    await this.obtenerCompetencia();
+    if(this.usuarioSesion.tbl_bandera_offline == 1){
+      this.listaTipoComercio = JSON.parse(localStorage.getItem("tipoComercio"));
+      this.subListaTipoComunicacion = JSON.parse(localStorage.getItem("subListaTipoComunicacion"));
+      this.subListaTipoLocalizacion = JSON.parse(localStorage.getItem("subListaTipoLocalizacion"));
+      this.sliderOne = JSON.parse(localStorage.getItem("slidesItems"));
+      this.lstaCompetencia = JSON.parse(localStorage.getItem("listaCompetencia"))
+      console.log(this.listaTipoComercio)
+      console.log(this.subListaTipoComunicacion)
+      console.log(this.subListaTipoLocalizacion)
+      console.log(this.sliderOne)
+      console.log(this.lstaCompetencia)
+    }else{
+      await this.obtenerTipoComercion();
+      await this.obtenerListaComunicacion();
+      await this.obtenerListaLocalizacion();
+      await this.obtenerBaners();
+      await this.obtenerCompetencia(); 
+    }
     
     if (this.esEdicion) {
       this.llenarDatos(this.evaluacion);
@@ -180,8 +189,8 @@ export class AltaEstablecimientoPage implements OnInit {
 
   public hola(){}
 
-    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    public validarGeocoderGoogle = () => {
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public validarGeocoderGoogle = () => {
       const datosUbicacion: GeocoderResult = JSON.parse(localStorage.getItem('direccionLocal'));
        if (datosUbicacion != null || datosUbicacion != undefined) {
          this.datosUbicacionLocal = datosUbicacion;
@@ -190,7 +199,7 @@ export class AltaEstablecimientoPage implements OnInit {
         this.datosUbicacionLocal = null;
          return false;
        }
-    };
+  };
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async validacionDatosGenerales() {
@@ -263,10 +272,6 @@ export class AltaEstablecimientoPage implements OnInit {
           return;
         }
       }
-
-
-
-
     }
 
     if(this.pasoFormulario === 3){
@@ -308,7 +313,36 @@ export class AltaEstablecimientoPage implements OnInit {
         }
 
       }else{
-        
+        if(this.usuarioSesion.tbl_bandera_offline == 1){
+          await this.utilitiesService.alert("", "Tus evaluaciones se guardaran en la memoria del dispositivo, ya que tienes habilitada la opción 'Guardar offline'.");
+          let objeto: EvaluacionesRequest = {
+            evaluacion_nombre_establecimiento: this.datosGenerales.value.nombreEstablecimiento,
+            evaluacion_razon_social: this.compartieronRazonSocial ? this.datosGenerales.value.razonSocial : null,
+            evaluacion_ca_tipo_comercio: this.datosGenerales.value.tipoComercio,
+            evaluacion_ca_tipo_sub_comercio: this.datosGenerales.value.subTipoComercio,
+            evaluacion_outlet: this.estasEnOutlet == false? 0: 1,
+            evaluacion_nombre_outlet: this.estasEnOutlet ?  this.datosGenerales.value.nombreOutlet: null,
+            evaluacion_numero: this.datosUbicacion.value.numeroEstablecimiento,
+            evaluacion_calle: this.calle,
+            evaluacion_colonia: this.colonia,
+            evaluacion_municipio_alcadia: this.municipio,
+            evaluacion_cp: this.codigoPostal,
+            evaluacion_latitud: "19.42847",
+            evaluacion_longitud: "-99.12766",
+            direccion_completa: this.calle + ", " + this.colonia + ", " + this.municipio + ", " + this.codigoPostal,
+            evaluacion_renovacion: 0,
+            evaluacion_ca_id_comunicacion: this.seleccioneMaterial.value.comunicacion,
+            evaluacion_localizacion_id: this.seleccioneMaterial.value.localizacionItem,
+            list_fotografias: this.ordenarListaFotos(),
+            lista_competencias: this.ordenarCompetencias(),
+            evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
+          };
+          await this.guardarEnStoredFoward(objeto)
+          localStorage.removeItem('direccionLocal');
+          localStorage.removeItem('coordenadas');
+          this.navCtrl.navigateRoot('home');
+          return;
+        }
         if(!this.hayInternet){
           await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
           const datosUbicacion: GeocoderGoogleResult = JSON.parse(localStorage.getItem("direccionLocal"))
