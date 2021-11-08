@@ -246,7 +246,7 @@ export class MapaComponent implements OnInit {
     console.log(latLng)
     const params = this.webRayoService.fromObjectToGETString({
       latlng: latLng,
-      key: 'AIzaSyDSVmDjbmmdQD_3B5NEZcO5lNsujDMzO2g'
+      key: 'AIzaSyC0a5OXu4KVTOQs1BhjoVOD5KJuXvdUz04'
     });
     let url: string = 'https://maps.googleapis.com/maps/api/geocode/json' + params;
     let respuesta = await this.webRayoService.getCoordenadas(url);
