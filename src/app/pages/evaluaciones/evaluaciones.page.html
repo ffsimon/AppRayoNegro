@@ -45,7 +45,7 @@
               <ion-col size="12" class="ion-text-center" *ngIf="!item.visible">
                 <ion-icon name="ellipse" [ngStyle]="{'color': item.estatus_evaluacion, 'zoom': 1.5}"></ion-icon>
               </ion-col>
-              <ion-col size="12" *ngIf="!item.visible">
+              <!-- <ion-col size="12" *ngIf="!item.visible">
                 <span> <b>{{item.evaluacion_nombre_establecimiento}}</b></span>
               </ion-col>
               <ion-col size="12">
@@ -59,7 +59,10 @@
               </ion-col>
               <ion-col size="12">
                 <span><b>CP:</b>  </span> <span>{{item.evaluacion_cp}}</span>
-              </ion-col>
+              </ion-col> -->
+              <ion-col size="12">
+                <span><b>Dirección completa:</b>  </span> <span>{{item.direccion_completa}}</span>
+              </ion-col> 
             </ion-row>
           </ion-col>
           <ion-col size="6" class="ion-padding">

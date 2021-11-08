@@ -6,8 +6,8 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class WebRayoService  extends WebService {
-
-  public serviceGateway: string = ("http://rayonegro-001-site1.dtempurl.com/");
+  //http://rayonegro-001-site1.dtempurl.com/
+  public serviceGateway: string = ("https://servicio.rayonegro-consolacentral.com.mx/");
   public servicioGoogle: string = "https://maps.googleapis.com/"
   public pathOperaciones: string = "operaciones/";
 
