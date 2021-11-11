@@ -552,6 +552,21 @@ export class AltaEstablecimientoPage implements OnInit {
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
 
+    // validamos el offline
+    if(this.usuarioSesion.tbl_bandera_offline == 1){
+      this.subListaTipoComercio = [];
+      let listaSubtipoComercio = JSON.parse(localStorage.getItem("subTipoComercio"));
+      if(listaSubtipoComercio != null){
+        for (let i = 0; i < listaSubtipoComercio.length; i++) {
+          if(listaSubtipoComercio[i].crelacion_id_padre == idPadre){
+            this.subListaTipoComercio.push(listaSubtipoComercio[i])
+          }
+        }
+      }
+      loading.dismiss()
+      return this.subListaTipoComercio;
+    }
+    
     const params = this.webRayoService.fromObjectToGETString({
       crelacion_id_padre: idPadre,
       crelacion_activo: 1

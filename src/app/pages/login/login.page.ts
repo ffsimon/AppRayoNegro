@@ -46,7 +46,6 @@ export class LoginPage implements OnInit {
       if(this.usuarioSesion != null){
         this.navCtrl.navigateRoot("home");
       }
-      console.log(this.usuarioSesion)
     }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -59,7 +58,6 @@ export class LoginPage implements OnInit {
         this.geolocationService.checkGPSPermission();
       }
     })
-
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -91,7 +89,7 @@ export class LoginPage implements OnInit {
       return;
     }
     let usuario_sesion: usuario_sesion_model = respuesta.response[0];
-
+    
     // borrar
     // usuario_sesion.tbl_bandera_offline = 1;
     // console.log(usuario_sesion)
@@ -107,6 +105,7 @@ export class LoginPage implements OnInit {
       await this.obtenerListaComunicacion();
       await this.obtenerListaLocalizacion();
       await this.obtenerTipoComercion();
+      await this.obtenerSubtipoComercio();
     }
     
     //ingresamos el id de la notificacion
@@ -259,5 +258,39 @@ export class LoginPage implements OnInit {
         return respuesta.response;
       }
     }
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    public async obtenerSubtipoComercio(){
+      let listaTipoComercio = JSON.parse(localStorage.getItem("tipoComercio"));
+      
+      if(listaTipoComercio == null){
+        return;
+      }
+      
+      console.log(listaTipoComercio);
+      const params = this.webRayoService.fromObjectToGETString({
+        crelacion_activo: 1
+      });
+      const url = 'Catalogos/CatalogoArbol/Get' + params;
+      const respuesta: any = await this.webRayoService.getAsync(url);
+      if ( respuesta == null || respuesta.success === false ||respuesta.response.length === 0 ) {
+        localStorage.setItem("subTipoComercio", null);
+      } else {
+        let listaSubtipos = [];
+        for (let i = 0; i < listaTipoComercio.length; i++) {
+         for (let j = 0; j < respuesta.response.length; j++) {
+         
+          if(listaTipoComercio[i].cagenerico_clave == respuesta.response[j].crelacion_id_padre){
+            console.log(respuesta.response[j].crelacion_id_padre);
+            listaSubtipos.push(respuesta.response[j])
+            // break;
+          }
+         }
+      }
+      console.log(listaSubtipos)
+      localStorage.setItem("subTipoComercio", JSON.stringify(respuesta.response));
+    }
   
+  }
+
 }
