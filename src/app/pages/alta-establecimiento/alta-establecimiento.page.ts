@@ -9,6 +9,8 @@ import { GeocoderGoogleResult, GeocoderResult } from 'src/app/models/geocoder_mo
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { ActivatedRoute } from '@angular/router';
 import { Network } from '@ionic-native/network/ngx';
+import { NetworkService } from '../../services/network.service';
+import { debounceTime } from 'rxjs/operators';
 
 
 @Component({
@@ -29,7 +31,7 @@ export class AltaEstablecimientoPage implements OnInit {
   public pasoFormulario = 1;
   public opcionesParafoto: any = [];
   public sliderOne: any;
-  public hayInternet: boolean = true;
+  public hayInternet: boolean = null;
   public esEdicion: boolean = false;
   public evaluacion = null;
   public colonia: string = "";
@@ -101,7 +103,8 @@ export class AltaEstablecimientoPage implements OnInit {
     private webRayoService: WebRayoService,
     private camera: Camera,
     private route: ActivatedRoute,
-    private network: Network) {    
+    private network: Network, 
+    public networkService: NetworkService) {    
 
     if(this.route.snapshot.data["establecimiento"]){
       this.esEdicion = true;
@@ -119,15 +122,6 @@ export class AltaEstablecimientoPage implements OnInit {
       },
       slidesItems: []
     };
-
-    this.network.onDisconnect().subscribe(() => {
-      this.hayInternet = false;
-    });
-
-    this.network.onConnect().subscribe(() => {
-      this.hayInternet = true;
-    });
-
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -141,11 +135,6 @@ export class AltaEstablecimientoPage implements OnInit {
       this.subListaTipoLocalizacion = JSON.parse(localStorage.getItem("subListaTipoLocalizacion"));
       this.sliderOne = JSON.parse(localStorage.getItem("slidesItems"));
       this.lstaCompetencia = JSON.parse(localStorage.getItem("listaCompetencia"))
-      console.log(this.listaTipoComercio)
-      console.log(this.subListaTipoComunicacion)
-      console.log(this.subListaTipoLocalizacion)
-      console.log(this.sliderOne)
-      console.log(this.lstaCompetencia)
     }else{
       await this.obtenerTipoComercion();
       await this.obtenerListaComunicacion();
@@ -157,8 +146,19 @@ export class AltaEstablecimientoPage implements OnInit {
     if (this.esEdicion) {
       this.llenarDatos(this.evaluacion);
     }
-
+    this.networkSubscriber();
     loading.dismiss();
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  networkSubscriber(): void {
+    this.networkService
+        .getNetworkStatus()
+        .pipe(debounceTime(300))
+        .subscribe((connected: boolean) => {
+          this.hayInternet = connected
+          console.log(this.hayInternet);
+        });
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -711,10 +711,6 @@ export class AltaEstablecimientoPage implements OnInit {
       let imagenFachadaDefault: Fotografias = { efotografia_catalogo_id_evidencia: 0, imagBase64: this.tempImg }
       listafotos.push(imagenFachadaDefault)
     }
-    
-
-
-
      // se agregan las imagene para el carrusel
      for (let i = 0; i < this.opcionesParafoto.length; i++) {
       let stringBase64: string = "data:image/jpeg;base64," 
