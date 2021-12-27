@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { AltaEstablecimientoPageRoutingModule } from './alta-establecimiento-routing.module';
 import { AltaEstablecimientoPage } from './alta-establecimiento.page';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { NetworkService } from '../../services/network.service';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { ComponentsModule } from 'src/app/components/components.module';
     ComponentsModule,
     AltaEstablecimientoPageRoutingModule
   ],
-  declarations: [AltaEstablecimientoPage]
+  declarations: [AltaEstablecimientoPage],
+  providers: [NetworkService]
 })
 export class AltaEstablecimientoPageModule { }
