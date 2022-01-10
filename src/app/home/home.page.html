@@ -32,12 +32,15 @@
       <ion-col>{{locationCoords.timestamp | date:'medium'}}</ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-button (click)="captureImage()">
+    Click Picture
+  </ion-button>
+  
+  <img [src]="clickedImage" />
+  
 </ion-content>
 
 
-<ion-button (click)="captureImage()">
-  Click Picture
-</ion-button>
 
-<img [src]="clickedImage" />
 
