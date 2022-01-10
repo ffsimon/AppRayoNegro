@@ -1,4 +1,5 @@
 import { Component, OnInit, LOCALE_ID } from '@angular/core';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { NavController, Platform } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
@@ -18,7 +19,7 @@ import { WebRayoService } from 'src/app/services/web-rayo.service';
 export class HomePage implements OnInit {
   public primerDia: Date = null;
   public ultimoDia: Date = null;
-  
+  clickedImage: string = '';
   public numeroEvaluacionesGuardadasLocal: any = null;
   public evaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
   public espejoEvaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
@@ -91,7 +92,8 @@ export class HomePage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
     private utilitiesService: UtilitiesService, 
-    private webRayoService: WebRayoService, private network: Network) { 
+    private webRayoService: WebRayoService, 
+    private network: Network, public camera: Camera) { 
 
     this.network.onDisconnect().subscribe(() => {
       console.log('network was disconnected :-(');
@@ -264,4 +266,25 @@ export class HomePage implements OnInit {
     console.log(this.primerDia)
     console.log(this.ultimoDia)
   }
+
+     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     captureImage() {
+      
+    let options: CameraOptions = {
+          quality: 30,
+          destinationType: this.camera.DestinationType.DATA_URL,
+          encodingType: this.camera.EncodingType.JPEG,
+          mediaType: this.camera.MediaType.PICTURE
+        }
+  
+      this.camera.getPicture(options).then((imageData) => {
+        // imageData is either a base64 encoded string or a file URI
+        // If it's base64 (DATA_URL):
+        let base64Image = 'data:image/jpeg;base64,' + imageData;
+        this.clickedImage = base64Image;
+      }, (err) => {
+        console.log(err);
+        // Handle error
+      });
+    }
 }
