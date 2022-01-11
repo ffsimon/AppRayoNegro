@@ -287,7 +287,7 @@ export class HomePage implements OnInit {
       allowEdit: false,
       targetWidth: 400,
       targetHeight: 600,
-      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
+      sourceType: this.camera.PictureSourceType.CAMERA,
       // sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.JPEG,
