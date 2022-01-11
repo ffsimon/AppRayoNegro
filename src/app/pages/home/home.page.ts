@@ -294,9 +294,18 @@ export class HomePage implements OnInit {
       mediaType: this.camera.MediaType.PICTURE
      }
 
-      console.log (JSON.stringify (galleryOptions));
+     const options: CameraOptions = {
+      quality: 20,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.PNG,
+      mediaType: this.camera.MediaType.PICTURE,
+      correctOrientation: true,
+      targetWidth: 400
+    }
 
-      this.camera.getPicture(galleryOptions).then((imageData) => {
+      console.log (JSON.stringify (options));
+
+      this.camera.getPicture(options).then(async (imageData) => {
         // imageData is either a base64 encoded string or a file URI
         // If it's base64 (DATA_URL):
         let base64Image = 'data:image/jpeg;base64,' + imageData;
