@@ -52,7 +52,7 @@ export class LoginPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
-    
+  
     this.platform.ready().then(platform => {
       console.log("entramos a platform ready")
       if(this.platform.is("android")){
@@ -60,6 +60,15 @@ export class LoginPage implements OnInit {
         this.geolocationService.checkGPSPermission();
         // console.log(this.deviceService.name, this.deviceService.model, this.deviceService.osVersion, this.deviceService.platform, this.deviceService.uuid)
         console.log(this.device.model, this.device.cordova, this.device.serial, this.device.uuid)
+        let modeloProhibidoXD: string = "ZTE Blade V10";
+
+        if(this.device.model != null && this.device.model != ''){
+          if(modeloProhibidoXD.indexOf(this.device.model) == 0){
+            localStorage.setItem("esModeloProhibido", "si");
+          }else{
+            localStorage.setItem("esModeloProhibido", "no");
+          }
+        }
       }
     })
   }

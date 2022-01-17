@@ -416,7 +416,13 @@ export class AltaEstablecimientoPage implements OnInit {
 
         let envioEvaluacion = await this.enviarEvaluacion();
         if(!envioEvaluacion){
-          await this.utilitiesService.alert("", "¡Algo salió mal, intentálo más tarde!");
+          await this.utilitiesService.alert("¡Algo salió mal!", "Se guardará en el dispositivo.");
+         
+          let objeto = await this.enviarEvaluacion(true);
+          await this.guardarEnStoredFoward(objeto)
+          localStorage.removeItem('direccionLocal');
+          localStorage.removeItem('coordenadas');
+          this.navCtrl.navigateRoot('home');
           return;
         }
         localStorage.removeItem('coordenadas');
@@ -525,6 +531,9 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async camara(opcion?:number): Promise<string> {
+    
+    const modeloProhibido: string = localStorage.getItem("esModeloProhibido");
+
     let fotoBase64 = '';
     const options: CameraOptions = {
       quality: 30,
@@ -532,7 +541,7 @@ export class AltaEstablecimientoPage implements OnInit {
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
       correctOrientation: true,
-      sourceType: this.camera.PictureSourceType.CAMERA
+      sourceType: modeloProhibido == 'si' ? this.camera.PictureSourceType.PHOTOLIBRARY : this.camera.PictureSourceType.CAMERA, 
     };
 
     await this.camera.getPicture(options).then((imageData) => {
@@ -628,7 +637,7 @@ export class AltaEstablecimientoPage implements OnInit {
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  public async enviarEvaluacion(){
+  public async enviarEvaluacion(guardamosEnMemoria?){
     const loading = await this.utilitiesService.loadingAsync();
     loading.present();
     const datosUbicacion: GeocoderGoogleResult = JSON.parse(localStorage.getItem("direccionLocal"))
@@ -686,6 +695,11 @@ export class AltaEstablecimientoPage implements OnInit {
       list_fotografias: this.ordenarListaFotos(),
       lista_competencias: this.ordenarCompetencias(),
       evaluacion_tbl_usuarios_id: this.usuarioSesion.user_id
+    }
+
+    if(guardamosEnMemoria == true){
+      loading.dismiss();
+      return objeto;
     }
     const url = 'Operaciones/Evaluacion';
     const respuesta: any = await this.webRayoService.postAsync(url, objeto);
