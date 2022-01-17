@@ -7,6 +7,7 @@ import { GeolocationService } from 'src/app/services/geolocation.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
 import { AppComponent } from 'src/app/app.component';
+import { Device } from '@awesome-cordova-plugins/device/ngx';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,8 @@ export class LoginPage implements OnInit {
      public webRayoService: WebRayoService, 
      public geolocationService: GeolocationService,
      public utilitiesService: UtilitiesService,
-     public appComponent: AppComponent) { 
+     public appComponent: AppComponent,
+     private device: Device) { 
     this.sliderOne = {
       initialSlide: 0,
       slidesPerView: 1,
@@ -56,6 +58,7 @@ export class LoginPage implements OnInit {
       if(this.platform.is("android")){
         console.log("entramos a platform android")
         this.geolocationService.checkGPSPermission();
+        console.log(device.cordova, device.model, device.platform, device.uuid, device.version, device.manufacturer, device.isVirtual, device.serial)
       }
     })
   }
