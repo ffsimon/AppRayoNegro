@@ -206,6 +206,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async validacionDatosGenerales() {
+    console.log(this.pasoFormulario)
     if(this.pasoFormulario === 1){
       if(!this.datosGenerales.valid){
         this.utilitiesService.alert('', 'Verifica que los datos esten completos.');
@@ -346,6 +347,8 @@ export class AltaEstablecimientoPage implements OnInit {
           this.navCtrl.navigateRoot('home');
           return;
         }
+
+        // no hay internet
         if(!this.hayInternet){
           await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
           const datosUbicacion: GeocoderGoogleResult = JSON.parse(localStorage.getItem("direccionLocal"))
@@ -412,28 +415,31 @@ export class AltaEstablecimientoPage implements OnInit {
           localStorage.removeItem('coordenadas');
           this.navCtrl.navigateRoot('home');
           return;
-        }
+        }else{
 
-        let envioEvaluacion = await this.enviarEvaluacion();
-        if(!envioEvaluacion){
-          await this.utilitiesService.alert("¡Algo salió mal!", "Se guardará en el dispositivo.");
-         
-          let objeto = await this.enviarEvaluacion(true);
-          await this.guardarEnStoredFoward(objeto)
-          localStorage.removeItem('direccionLocal');
-          localStorage.removeItem('coordenadas');
-          this.navCtrl.navigateRoot('home');
-          return;
+          // hay internet
+          debugger
+          let envioEvaluacion = await this.enviarEvaluacion();
+          if(!envioEvaluacion){
+            await this.utilitiesService.alert("¡Algo salió mal!", "Se guardará en el dispositivo.");
+          
+            let objeto = await this.enviarEvaluacion(true);
+            await this.guardarEnStoredFoward(objeto)
+            localStorage.removeItem('direccionLocal');
+            localStorage.removeItem('coordenadas');
+            this.navCtrl.navigateRoot('home');
+            return;
+          }else{
+            localStorage.removeItem('coordenadas');
+            this.utilitiesService.alert('¡Éxito!', 'Se ha guardado exitosamente el establecimiento.');
+            this.navCtrl.navigateRoot('home');
+          }
+        
         }
-        localStorage.removeItem('coordenadas');
       }
     }
 
     this.pasoFormulario = this.pasoFormulario + 1;
-    if (this.pasoFormulario === 6) {
-      this.utilitiesService.alert('¡Éxito!', 'Se ha guardado exitosamente el establecimiento.');
-      this.navCtrl.navigateRoot('home');
-    }
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
