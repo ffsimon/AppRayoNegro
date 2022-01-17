@@ -418,7 +418,6 @@ export class AltaEstablecimientoPage implements OnInit {
         }else{
 
           // hay internet
-          debugger
           let envioEvaluacion = await this.enviarEvaluacion();
           if(!envioEvaluacion){
             await this.utilitiesService.alert("¡Algo salió mal!", "Se guardará en el dispositivo.");
