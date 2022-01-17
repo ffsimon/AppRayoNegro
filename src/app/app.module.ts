@@ -17,6 +17,7 @@ import { customTransition } from './transition';
 import { Network } from '@ionic-native/network/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { Device } from '@ionic-native/device/ngx';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -38,6 +39,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
     HttpClientModule,
     LocationAccuracy,
     UtilitiesService,
+    Device,
     Network,
     HTTP, 
     OneSignal,

@@ -7,7 +7,8 @@ import { GeolocationService } from 'src/app/services/geolocation.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
 import { AppComponent } from 'src/app/app.component';
-import { Device } from '@awesome-cordova-plugins/device/ngx';
+import { DeviceDetailsService } from 'src/app/services/device.service';
+import { Device } from '@ionic-native/device/ngx';
 
 @Component({
   selector: 'app-login',
@@ -32,8 +33,7 @@ export class LoginPage implements OnInit {
      public webRayoService: WebRayoService, 
      public geolocationService: GeolocationService,
      public utilitiesService: UtilitiesService,
-     public appComponent: AppComponent,
-     private device: Device) { 
+     public appComponent: AppComponent, public device: Device) { 
     this.sliderOne = {
       initialSlide: 0,
       slidesPerView: 1,
@@ -58,7 +58,8 @@ export class LoginPage implements OnInit {
       if(this.platform.is("android")){
         console.log("entramos a platform android")
         this.geolocationService.checkGPSPermission();
-        console.log(device.cordova, device.model, device.platform, device.uuid, device.version, device.manufacturer, device.isVirtual, device.serial)
+        // console.log(this.deviceService.name, this.deviceService.model, this.deviceService.osVersion, this.deviceService.platform, this.deviceService.uuid)
+        console.log(this.device.model, this.device.cordova, this.device.serial, this.device.uuid)
       }
     })
   }
