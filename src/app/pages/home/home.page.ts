@@ -7,9 +7,10 @@ import { Label, Color } from 'ng2-charts';
 import { EvaluacionesRequest } from 'src/app/models/evaluacion_request_model';
 import { objetivos_usuario } from 'src/app/models/objetivos';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
+import { NetworkService } from 'src/app/services/network.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
-
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -93,17 +94,9 @@ export class HomePage implements OnInit {
   constructor(private navCtrl: NavController,  
     private utilitiesService: UtilitiesService, 
     private webRayoService: WebRayoService, 
-    private network: Network, public camera: Camera) { 
-
-    this.network.onDisconnect().subscribe(() => {
-      console.log('network was disconnected :-(');
-      this.hayInternet = false;
-    });
-
-    this.network.onConnect().subscribe(() => {
-      console.log('network connected!');
-      this.hayInternet = true;
-    });
+    private network: Network, 
+    public camera: Camera, 
+    public networkService: NetworkService) { 
 
     this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
@@ -127,6 +120,17 @@ export class HomePage implements OnInit {
         this.evaluacionesStoredFoward = JSON.parse(localStorage.getItem('evaluaciones_store_foward'));
       }
   }
+
+    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    networkSubscriber(): void {
+      this.networkService
+          .getNetworkStatus()
+          .pipe(debounceTime(300))
+          .subscribe((connected: boolean) => {
+            this.hayInternet = connected
+            console.log(this.hayInternet);
+          });
+    }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
@@ -160,6 +164,7 @@ export class HomePage implements OnInit {
        this.barChartData = [{ data: valoresGraficas}]
        this.barChartLabels = valoresLabels;
     }
+    this.networkSubscriber()
     
   }
 
@@ -196,6 +201,8 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarStoredFoward(){
+
+    console.log(this.hayInternet)
 
     if(!this.hayInternet){
       await this.utilitiesService.alert('', 'Inténtalo cuando cuantes con internet');
