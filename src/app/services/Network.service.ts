@@ -15,7 +15,11 @@ export class NetworkService {
     this.online$ = Observable.create(observer => {
       observer.next(true)}).pipe(mapTo(true));
 
-      if (this.platform.is('cordova')) {
+      console.log("platform")
+      console.log(this.platform);
+
+
+      if (this.platform.is('android')) {
         // on Device
         this.online$ = merge(
             this.network.onConnect().pipe(mapTo(true)),

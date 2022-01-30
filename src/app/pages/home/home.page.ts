@@ -96,7 +96,8 @@ export class HomePage implements OnInit {
     private webRayoService: WebRayoService, 
     private network: Network, 
     public camera: Camera, 
-    public networkService: NetworkService) { 
+    public networkService: NetworkService,
+    public platform: Platform) { 
 
     this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
@@ -203,6 +204,8 @@ export class HomePage implements OnInit {
   public async guardarStoredFoward(){
 
     console.log(this.hayInternet)
+    console.log(this.platform.resume)
+    console.log(this.platform.is('android'))
 
     if(!this.hayInternet){
       await this.utilitiesService.alert('', 'Inténtalo cuando cuantes con internet');
