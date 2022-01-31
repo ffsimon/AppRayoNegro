@@ -122,9 +122,9 @@ export class HomePage implements OnInit {
       }
   }
 
-    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    networkSubscriber(): void {
-      this.networkService
+//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+networkSubscriber(): void {
+  this.networkService
           .getNetworkStatus()
           .pipe(debounceTime(300))
           .subscribe((connected: boolean) => {
@@ -202,12 +202,14 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarStoredFoward(){
+    
+    if (navigator.onLine) {
+      console.log('Internet is connected');
+   } else {
+      console.log('No internet connection');
+   }
 
-    console.log(this.hayInternet)
-    console.log(this.platform.resume)
-    console.log(this.platform.is('android'))
-
-    if(!this.hayInternet){
+     if(!navigator.onLine){
       await this.utilitiesService.alert('', 'Inténtalo cuando cuantes con internet');
       return;
     }
