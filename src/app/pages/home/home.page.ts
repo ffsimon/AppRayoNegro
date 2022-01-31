@@ -1,7 +1,7 @@
 import { Component, OnInit, LOCALE_ID } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Network } from '@ionic-native/network/ngx';
-import { NavController, Platform } from '@ionic/angular';
+import { NavController, Platform, ToastController } from '@ionic/angular';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, Color } from 'ng2-charts';
 import { EvaluacionesRequest } from 'src/app/models/evaluacion_request_model';
@@ -11,13 +11,24 @@ import { NetworkService } from 'src/app/services/network.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
 import { debounceTime } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
+
+export enum ConnectionStatus {
+  Online,
+  Offline
+}
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
+
+
 export class HomePage implements OnInit {
+  
+
+  public status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Offline);
   public primerDia: Date = null;
   public ultimoDia: Date = null;
   clickedImage: string = '';
@@ -89,7 +100,6 @@ export class HomePage implements OnInit {
   public realizadas: any;
   public objetivoTrabajadas: any;
   public objetivoRealizadas: any;
-  public hayInternet: boolean = true;
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
     private utilitiesService: UtilitiesService, 
@@ -97,7 +107,8 @@ export class HomePage implements OnInit {
     private network: Network, 
     public camera: Camera, 
     public networkService: NetworkService,
-    public platform: Platform) { 
+    public platform: Platform,
+    private toastController: ToastController) { 
 
     this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
@@ -121,17 +132,6 @@ export class HomePage implements OnInit {
         this.evaluacionesStoredFoward = JSON.parse(localStorage.getItem('evaluaciones_store_foward'));
       }
   }
-
-//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-networkSubscriber(): void {
-  this.networkService
-          .getNetworkStatus()
-          .pipe(debounceTime(300))
-          .subscribe((connected: boolean) => {
-            this.hayInternet = connected
-            console.log(this.hayInternet);
-          });
-    }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
@@ -165,8 +165,7 @@ networkSubscriber(): void {
        this.barChartData = [{ data: valoresGraficas}]
        this.barChartLabels = valoresLabels;
     }
-    this.networkSubscriber()
-    
+    this.initializeNetworkEvents();
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -201,13 +200,39 @@ networkSubscriber(): void {
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public initializeNetworkEvents() {
+    this.network.onDisconnect().subscribe(() => {
+      if (this.status.getValue() === ConnectionStatus.Online) {
+        console.log('WE ARE OFFLINE');
+        this.updateNetworkStatus(ConnectionStatus.Offline);
+      }
+    });
+ 
+    this.network.onConnect().subscribe(() => {
+      if (this.status.getValue() === ConnectionStatus.Offline) {
+        console.log('WE ARE ONLINE');
+        this.updateNetworkStatus(ConnectionStatus.Online);
+      }
+    });
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  private async updateNetworkStatus(status: ConnectionStatus) {
+    this.status.next(status);
+ 
+    let connection = status == ConnectionStatus.Offline ? 'Offline' : 'Online';
+    let toast = this.toastController.create({
+      message: `You are now ${connection}`,
+      duration: 3000,
+      position: 'bottom'
+    });
+    toast.then(toast => toast.present());
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarStoredFoward(){
-    
-    if (navigator.onLine) {
-      console.log('Internet is connected');
-   } else {
-      console.log('No internet connection');
-   }
+
+    console.log(this.status.getValue());
 
      if(!navigator.onLine){
       await this.utilitiesService.alert('', 'Inténtalo cuando cuantes con internet');

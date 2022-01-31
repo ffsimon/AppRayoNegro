@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonSlides, NavController } from '@ionic/angular';
+import { IonSlides, NavController, ToastController } from '@ionic/angular';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
@@ -11,7 +11,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Network } from '@ionic-native/network/ngx';
 import { NetworkService } from '../../services/network.service';
 import { debounceTime } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
+export enum ConnectionStatus {
+  Online,
+  Offline
+}
 
 @Component({
   selector: 'app-alta-establecimiento',
@@ -21,6 +26,7 @@ import { debounceTime } from 'rxjs/operators';
 export class AltaEstablecimientoPage implements OnInit {
 
   @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
+  public status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Offline);
   public usuarioSesion: usuario_sesion_model; 
   public tempImg: string;
   public fotoIdentificastePublicidad = '';
@@ -31,7 +37,6 @@ export class AltaEstablecimientoPage implements OnInit {
   public pasoFormulario = 1;
   public opcionesParafoto: any = [];
   public sliderOne: any;
-  public hayInternet: boolean = null;
   public esEdicion: boolean = false;
   public evaluacion = null;
   public colonia: string = "";
@@ -107,7 +112,8 @@ export class AltaEstablecimientoPage implements OnInit {
     private camera: Camera,
     private route: ActivatedRoute,
     private network: Network, 
-    public networkService: NetworkService) {    
+    public networkService: NetworkService,
+    private toastController: ToastController) {    
 
     if(this.route.snapshot.data["establecimiento"]){
       this.esEdicion = true;
@@ -149,19 +155,8 @@ export class AltaEstablecimientoPage implements OnInit {
     if (this.esEdicion) {
       this.llenarDatos(this.evaluacion);
     }
-    this.networkSubscriber();
+    this.initializeNetworkEvents();
     loading.dismiss();
-  }
-
-  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  networkSubscriber(): void {
-    this.networkService
-        .getNetworkStatus()
-        .pipe(debounceTime(300))
-        .subscribe((connected: boolean) => {
-          this.hayInternet = connected
-          console.log(this.hayInternet);
-        });
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -206,7 +201,8 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async validacionDatosGenerales() {
-    console.log(this.pasoFormulario)
+    console.log(this.status.getValue())
+
     if(this.pasoFormulario === 1){
       if(!this.datosGenerales.valid){
         this.utilitiesService.alert('', 'Verifica que los datos esten completos.');
@@ -511,7 +507,6 @@ export class AltaEstablecimientoPage implements OnInit {
     }
   }
 
-
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async obtenerCompetenciaCaracteristica(idPadre:number){
     const params = this.webRayoService.fromObjectToGETString({
@@ -529,7 +524,6 @@ export class AltaEstablecimientoPage implements OnInit {
       return respuesta.response;
     }
   }
-
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public cerrarFormularios() {
@@ -1007,4 +1001,33 @@ export class AltaEstablecimientoPage implements OnInit {
     
   }
  
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  public initializeNetworkEvents() {
+      this.network.onDisconnect().subscribe(() => {
+        if (this.status.getValue() === ConnectionStatus.Online) {
+          console.log('WE ARE OFFLINE');
+          this.updateNetworkStatus(ConnectionStatus.Offline);
+        }
+      });
+   
+      this.network.onConnect().subscribe(() => {
+        if (this.status.getValue() === ConnectionStatus.Offline) {
+          console.log('WE ARE ONLINE');
+          this.updateNetworkStatus(ConnectionStatus.Online);
+        }
+      });
+    }
+  
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  private async updateNetworkStatus(status: ConnectionStatus) {
+      this.status.next(status);
+   
+      let connection = status == ConnectionStatus.Offline ? 'Offline' : 'Online';
+      let toast = this.toastController.create({
+        message: `You are now ${connection}`,
+        duration: 3000,
+        position: 'bottom'
+      });
+      toast.then(toast => toast.present());
+    }
 }
