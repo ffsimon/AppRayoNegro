@@ -234,8 +234,8 @@ export class HomePage implements OnInit {
 
     console.log(this.status.getValue());
 
-     if(!navigator.onLine){
-      await this.utilitiesService.alert('', 'Inténtalo cuando cuantes con internet');
+     if(this.status.getValue() == 1){
+      await this.utilitiesService.alert('', 'Inténtalo cuando cuentes con internet');
       return;
     }
 

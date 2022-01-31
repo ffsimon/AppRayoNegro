@@ -347,7 +347,7 @@ export class AltaEstablecimientoPage implements OnInit {
         // no hay internet
         console.log(navigator.onLine)
        
-        if(!navigator.onLine){
+        if(this.status.getValue() == 1){
           await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
           const datosUbicacion: GeocoderGoogleResult = JSON.parse(localStorage.getItem("direccionLocal"))
           let stringCalle = '';
