@@ -8,15 +8,7 @@ import { Competencias, EvaluacionesRequest, Fotografias } from 'src/app/models/e
 import { GeocoderGoogleResult, GeocoderResult } from 'src/app/models/geocoder_model';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
 import { ActivatedRoute } from '@angular/router';
-import { Network } from '@ionic-native/network/ngx';
-import { NetworkService } from '../../services/network.service';
-import { debounceTime } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
 
-export enum ConnectionStatus {
-  Online,
-  Offline
-}
 
 @Component({
   selector: 'app-alta-establecimiento',
@@ -26,7 +18,6 @@ export enum ConnectionStatus {
 export class AltaEstablecimientoPage implements OnInit {
 
   @ViewChild('slideWithNav', { static: false }) slideWithNav: IonSlides;
-  public status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Offline);
   public usuarioSesion: usuario_sesion_model; 
   public tempImg: string;
   public fotoIdentificastePublicidad = '';
@@ -78,6 +69,7 @@ export class AltaEstablecimientoPage implements OnInit {
   public primerOpcionPasoCinco = false;
   public segundaOpcionPasoCinco = false;
   public tercerOpcionPasoCinco = false;
+  public isConnected: boolean = false;
 
   get nombreEstablecimiento() {
     return this.datosGenerales.get('nombreEstablecimiento');
@@ -110,10 +102,7 @@ export class AltaEstablecimientoPage implements OnInit {
     private utilitiesService: UtilitiesService,
     private webRayoService: WebRayoService,
     private camera: Camera,
-    private route: ActivatedRoute,
-    private network: Network, 
-    public networkService: NetworkService,
-    private toastController: ToastController) {    
+    private route: ActivatedRoute) {    
 
     if(this.route.snapshot.data["establecimiento"]){
       this.esEdicion = true;
@@ -155,7 +144,6 @@ export class AltaEstablecimientoPage implements OnInit {
     if (this.esEdicion) {
       this.llenarDatos(this.evaluacion);
     }
-    this.initializeNetworkEvents();
     loading.dismiss();
   }
 
@@ -201,8 +189,7 @@ export class AltaEstablecimientoPage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async validacionDatosGenerales() {
-    console.log(this.status.getValue())
-
+   
     if(this.pasoFormulario === 1){
       if(!this.datosGenerales.valid){
         this.utilitiesService.alert('', 'Verifica que los datos esten completos.');
@@ -346,8 +333,9 @@ export class AltaEstablecimientoPage implements OnInit {
 
         // no hay internet
         console.log(navigator.onLine)
-       
-        if(this.status.getValue() == 1){
+        await this.testNetworkConnection();
+
+        if(!this.isConnected){
           await this.utilitiesService.alert("", "Por el momento no cuentas con internet, la evaluación se guardará en la memoria del dispositivo.");
           const datosUbicacion: GeocoderGoogleResult = JSON.parse(localStorage.getItem("direccionLocal"))
           let stringCalle = '';
@@ -1000,34 +988,14 @@ export class AltaEstablecimientoPage implements OnInit {
     }
     
   }
+
+  public async testNetworkConnection() {
+    let resultado = await this.webRayoService.getCoordenadas("https://jsonplaceholder.typicode.com/todos/1");
+    if(resultado.success === false){
+      this.isConnected = false;
+    }else{
+      this.isConnected = true;
+    }
+  }
  
-  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  public initializeNetworkEvents() {
-      this.network.onDisconnect().subscribe(() => {
-        if (this.status.getValue() === ConnectionStatus.Online) {
-          console.log('WE ARE OFFLINE');
-          this.updateNetworkStatus(ConnectionStatus.Offline);
-        }
-      });
-   
-      this.network.onConnect().subscribe(() => {
-        if (this.status.getValue() === ConnectionStatus.Offline) {
-          console.log('WE ARE ONLINE');
-          this.updateNetworkStatus(ConnectionStatus.Online);
-        }
-      });
-    }
-  
-  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  private async updateNetworkStatus(status: ConnectionStatus) {
-      this.status.next(status);
-   
-      let connection = status == ConnectionStatus.Offline ? 'Offline' : 'Online';
-      let toast = this.toastController.create({
-        message: `You are now ${connection}`,
-        duration: 3000,
-        position: 'bottom'
-      });
-      toast.then(toast => toast.present());
-    }
 }

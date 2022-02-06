@@ -1,17 +1,14 @@
-import { Component, OnInit, LOCALE_ID } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { Network } from '@ionic-native/network/ngx';
-import { NavController, Platform, ToastController } from '@ionic/angular';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { Label, Color } from 'ng2-charts';
+import { NavController, Platform } from '@ionic/angular';
+import { ChartOptions, ChartType } from 'chart.js';
 import { EvaluacionesRequest } from 'src/app/models/evaluacion_request_model';
 import { objetivos_usuario } from 'src/app/models/objetivos';
 import { usuario_sesion_model } from 'src/app/models/usuario_sesion';
-import { NetworkService } from 'src/app/services/network.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { WebRayoService } from 'src/app/services/web-rayo.service';
-import { debounceTime } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+
 
 export enum ConnectionStatus {
   Online,
@@ -28,7 +25,7 @@ export enum ConnectionStatus {
 export class HomePage implements OnInit {
   
 
-  public status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Offline);
+  // public status: BehaviorSubject<ConnectionStatus> = new BehaviorSubject(ConnectionStatus.Offline);
   public primerDia: Date = null;
   public ultimoDia: Date = null;
   clickedImage: string = '';
@@ -36,6 +33,7 @@ export class HomePage implements OnInit {
   public evaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
   public espejoEvaluacionesStoredFoward: Array<EvaluacionesRequest> = null;
   public seDieronDeAltaTodasLasEvaluaciones: boolean = true;
+  public isConnected = false;
   public datasets: [{
     label: 'My First Dataset',
     data: [65, 59, 80, 81, 56, 55, 40],
@@ -59,7 +57,6 @@ export class HomePage implements OnInit {
     ],
     borderWidth: 1
   }]
-
   public barChartOptions: (ChartOptions & { annotation: any }) = {
     scales: {
       xAxes: [{
@@ -81,7 +78,6 @@ export class HomePage implements OnInit {
       ],
     }
   };
-
   public barChartLabels: any[] = [];
   public barChartType: ChartType = 'bar';
   public barChartLegend = false;
@@ -106,9 +102,7 @@ export class HomePage implements OnInit {
     private webRayoService: WebRayoService, 
     private network: Network, 
     public camera: Camera, 
-    public networkService: NetworkService,
-    public platform: Platform,
-    private toastController: ToastController) { 
+    public platform: Platform) { 
 
     this.usuarioSesion = JSON.parse(localStorage.getItem('usuario_sesion'));
     this.mesActual = this.utilitiesService.obtenerMesStringActual();
@@ -165,7 +159,7 @@ export class HomePage implements OnInit {
        this.barChartData = [{ data: valoresGraficas}]
        this.barChartLabels = valoresLabels;
     }
-    this.initializeNetworkEvents();
+
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -200,41 +194,10 @@ export class HomePage implements OnInit {
   }
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  public initializeNetworkEvents() {
-    this.network.onDisconnect().subscribe(() => {
-      if (this.status.getValue() === ConnectionStatus.Online) {
-        console.log('WE ARE OFFLINE');
-        this.updateNetworkStatus(ConnectionStatus.Offline);
-      }
-    });
- 
-    this.network.onConnect().subscribe(() => {
-      if (this.status.getValue() === ConnectionStatus.Offline) {
-        console.log('WE ARE ONLINE');
-        this.updateNetworkStatus(ConnectionStatus.Online);
-      }
-    });
-  }
-
-  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  private async updateNetworkStatus(status: ConnectionStatus) {
-    this.status.next(status);
- 
-    let connection = status == ConnectionStatus.Offline ? 'Offline' : 'Online';
-    let toast = this.toastController.create({
-      message: `You are now ${connection}`,
-      duration: 3000,
-      position: 'bottom'
-    });
-    toast.then(toast => toast.present());
-  }
-
-  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarStoredFoward(){
 
-    console.log(this.status.getValue());
-
-     if(this.status.getValue() == 1){
+    await this.testNetworkConnection();
+    if(!this.isConnected){
       await this.utilitiesService.alert('', 'Inténtalo cuando cuentes con internet');
       return;
     }
@@ -304,8 +267,8 @@ export class HomePage implements OnInit {
     console.log(this.ultimoDia)
   }
 
-     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-     captureImage() {
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  captureImage() {
       
       let options2: CameraOptions = {
         quality: 30,
@@ -351,5 +314,14 @@ export class HomePage implements OnInit {
         console.log(err);
         this.utilitiesService.alert(err, err)
       });
+  }
+
+  public async testNetworkConnection() {
+    let resultado = await this.webRayoService.getCoordenadas("https://jsonplaceholder.typicode.com/todos/1");
+    if(resultado.success === false){
+      this.isConnected = false;
+    }else{
+      this.isConnected = true;
     }
+  }
 }
