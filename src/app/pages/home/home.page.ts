@@ -96,6 +96,8 @@ export class HomePage implements OnInit {
   public realizadas: any;
   public objetivoTrabajadas: any;
   public objetivoRealizadas: any;
+  public evaluacionPorDia: number = 0;
+  public diaString: string = '';
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   constructor(private navCtrl: NavController,  
     private utilitiesService: UtilitiesService, 
@@ -129,7 +131,8 @@ export class HomePage implements OnInit {
 
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async ngOnInit() {
-    this.obtenerSemana()
+    this.obtenemosDia();
+    this.obtenerSemana();
     await this.obtenerObjetivos();
     let valoresGraficas = [];
     let valoresLabels = [];
@@ -182,12 +185,22 @@ export class HomePage implements OnInit {
     }
     const url = 'Operaciones/ObjetivosUsuario/Get';
     const respuesta: any = await this.webRayoService.postAsync(url, objeto);
+    console.log(respuesta)
     if ( respuesta == null || respuesta.success === false ) {
       this.objetivos = null;
       loading.dismiss();
       return;
     } else{
       this.objetivos = respuesta.response[0];
+
+      for (let i = 0; i < respuesta.response[0].informacion_graficas.length; i++) {
+      console.log(respuesta.response[0].informacion_graficas[i])
+        if (this.diaString == respuesta.response[0].informacion_graficas[i].dia) {
+          this.evaluacionPorDia = respuesta.response[0].informacion_graficas[i].evaluaciones;
+        }
+      }
+
+      this.evaluacionPorDia
       loading.dismiss();
       return;
     }
@@ -196,14 +209,15 @@ export class HomePage implements OnInit {
   //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   public async guardarStoredFoward(){
 
-    await this.testNetworkConnection();
-    if(!this.isConnected){
-      await this.utilitiesService.alert('', 'Inténtalo cuando cuentes con internet');
+    if(this.numeroEvaluacionesGuardadasLocal == null || this.numeroEvaluacionesGuardadasLocal == 0){
+      await this.utilitiesService.alert('', 'Por el momento no hay evaluaciones guardadas en el teléfono.');
       return;
     }
 
-    if(this.numeroEvaluacionesGuardadasLocal == null || this.numeroEvaluacionesGuardadasLocal == 0){
-      await this.utilitiesService.alert('', 'Por el momento no hay evaluaciones guardadas en el teléfono.');
+
+    await this.testNetworkConnection();
+    if(!this.isConnected){
+      await this.utilitiesService.alert('', 'Inténtalo cuando cuentes con internet');
       return;
     }
 
@@ -221,6 +235,7 @@ export class HomePage implements OnInit {
     const evaluacionesGuardadas: Array<EvaluacionesRequest> = [];
     const evalaucionesNoGuardadas: Array<EvaluacionesRequest> = [];
 
+   
     if (this.evaluacionesStoredFoward.length > 0) {
       this.evaluacionesStoredFoward.forEach(async element => {
         const url = 'Operaciones/Evaluacion';
@@ -316,12 +331,45 @@ export class HomePage implements OnInit {
       });
   }
 
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
   public async testNetworkConnection() {
+    const loading = await this.utilitiesService.loadingAsync();
+    loading.present();
     let resultado = await this.webRayoService.getCoordenadas("https://jsonplaceholder.typicode.com/todos/1");
     if(resultado.success === false){
       this.isConnected = false;
     }else{
       this.isConnected = true;
+    }
+    loading.dismiss();
+  }
+
+  //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
+  public obtenemosDia(){
+    let fecha = new Date().getDay();
+    switch (fecha) {
+      case 0:
+        this.diaString = 'D'
+        break;
+      case 1:
+        this.diaString = 'L'
+      break;
+      case 2:
+        this.diaString = 'M'
+        break;
+      case 3:
+        this.diaString = 'Mi'
+      break;
+      case 4:
+        this.diaString = 'J'
+        break;
+      case 5:
+        this.diaString = 'V'
+      break;
+      case 6:
+        this.diaString = 'S'
+        break;
+      
     }
   }
 }

@@ -39,25 +39,21 @@
     <!-- sección evaluaciones -->
     <!-- <div (click)="verObjetivos = !verObjetivos" *ngIf="!verObjetivos"> -->
     <div>
-        <ion-row class="ion-padding-horizontal" style="height: 126px;">
+        <ion-row class="ion-padding-horizontal" style="height: 110px;">
+           
             <ion-col size="6" style="height: 100%;">
-                <ion-row style="height: 50%;">
-                    <ion-col size="12" style="padding: 0px 5px 5px 0px;">
-                        <div style="height: 100%; background-color: rgb(142,160,174); font-size: 17px; display: flex;
-                        justify-content: center; align-items: center;" class="border-redondos">
-                            <span style="font-weight: bold;color: white;" (click)="guardarStoredFoward()">Sincronizar</span>
-                        </div>
-                    </ion-col>
-                </ion-row>
-                <ion-row style="height: 50%;">
-                    <ion-col size="12" style="padding: 5px 5px 0px 0px;">
-                        <div style="height: 100%; background-color: rgb(56, 65, 71); font-weight: bold; display: grid;"
+                <ion-row style="height: 100%;">
+                    <ion-col size="12" style="padding: 0px;">
+                        <div style="height: 100%; background-color:white;padding: 15px;font-weight: bold; display: grid;"
                             class="border-redondos">
-                            <ion-row style="justify-content: center; align-items: center;">
-                                <span style="color: white; font-size: 14px;">Mes</span>
+                            <ion-row style="display: grid;">
+                                <ion-row style="justify-content: center; align-items: center;">
+                                    <span style="color: black; font-size: 14px;">Evaluaciones </span> <br>
+                                    <span style="color: black; font-size: 14px;">del día </span>
+                                </ion-row>
                             </ion-row>
                             <ion-row style="justify-content: center; align-items: center;">
-                                <span style="color: white; font-size: 17px;">{{mesActual}}</span>
+                                <span style="color: black; font-size: 35px;">{{evaluacionPorDia}}</span>
                             </ion-row>
                         </div>
                     </ion-col>
@@ -88,7 +84,27 @@
     
         <ion-row class="ion-padding-horizontal">
             <ion-col size="12" class="ion-text-center">
-                <div style="height: 60px; background-color: rgb(56, 65, 71);padding-top: 20px;font-weight: bold;"
+                <div style="height: 50px; background-color:  #8EA0AE;padding-top: 15px;font-weight: bold;"
+                    class="border-redondos"  (click)="guardarStoredFoward()">
+                    <span style="font-weight: bold;color: white;">Sincronizar</span>
+                </div>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class="ion-padding-horizontal">
+            <ion-col size="12" class="ion-text-center">
+                <div style="height: 50px; background-color: rgb(56, 65, 71);padding-top: 10px;font-weight: bold;"
+                    class="border-redondos">
+                    <span style="color: white; font-size: 16px;">Mes</span> <br>
+                    <span style="color: white; font-size: 16px;">{{mesActual}}</span>  
+                </div>
+            </ion-col>
+        </ion-row>
+
+        
+        <ion-row class="ion-padding-horizontal">
+            <ion-col size="12" class="ion-text-center">
+                <div style="height: 50px; background-color: rgb(56, 65, 71);padding-top: 20px;font-weight: bold;"
                     class="border-redondos">
                     <span style="color: white; font-size: 16px;">{{usuarioSesion.user_sesion_municipio_alcadia}} {{usuarioSesion.user_sesion_colonia}} {{usuarioSesion.user_sesion_Calle}}</span>
                 </div>
@@ -97,7 +113,7 @@
     
         <ion-row class="ion-padding-horizontal">
             <ion-col size="12" class="ion-text-center" (click)="irNuevaEvaluacion()">
-                <div style="height: 60px; background-color:  #8EA0AE;padding-top: 20px;font-weight: bold;"
+                <div style="height: 50px; background-color:  #8EA0AE;padding-top: 20px;font-weight: bold;"
                     class="border-redondos">
                     <span style="color: white; font-size: 16px;">Nueva Evaluación</span>
                 </div>
